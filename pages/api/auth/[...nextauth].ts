@@ -1,11 +1,10 @@
 import { NextApiHandler } from "next";
 import NextAuth from "next-auth";
 import Providers from "next-auth/providers";
-import { PrismaAdapter } from '@next-auth/prisma-adapter'
-import GitHubProvider from 'next-auth/providers/github'
-import EmailProvider from 'next-auth/providers/email'
-import prisma from '../../../lib/prisma'
-
+import { PrismaAdapter } from "@next-auth/prisma-adapter";
+import GitHubProvider from "next-auth/providers/github";
+import EmailProvider from "next-auth/providers/email";
+import prisma from "../../../lib/prisma";
 
 const authHandler: NextApiHandler = (req, res) => NextAuth(req, res, options);
 export default authHandler;
@@ -30,4 +29,10 @@ const options = {
   ],
   adapter: PrismaAdapter(prisma),
   secret: process.env.SECRET,
+  callbacks: {
+    async session({ session, token, user }) {
+      session.user.role = user.role; // Add role value to user object so it is passed along with session
+      return session;
+    },
+  },
 };

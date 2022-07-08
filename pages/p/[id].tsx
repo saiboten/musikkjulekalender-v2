@@ -6,6 +6,7 @@ import Router from "next/router";
 import { DayProps } from "../../components/Day";
 import prisma from "../../lib/prisma";
 import { useSession } from "next-auth/react";
+import { Heading, Text } from "@chakra-ui/react";
 
 export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   const post = await prisma.day.findUnique({
@@ -13,17 +14,17 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
       id: Number(params?.id) || -1,
     },
   });
+
+  const postWithFixedDates = {
+    ...post,
+    solutionDate: post.solutionDate.toString(),
+    revealDate: post.revealDate.toString(),
+  };
+
   return {
-    props: post,
+    props: postWithFixedDates,
   };
 };
-
-async function publishPost(id: number): Promise<void> {
-  await fetch(`/api/publish/${id}`, {
-    method: "PUT",
-  });
-  await Router.push("/");
-}
 
 async function deletePost(id: number): Promise<void> {
   await fetch(`/api/post/${id}`, {
@@ -43,7 +44,8 @@ const Post: React.FC<DayProps> = (props) => {
   return (
     <Layout>
       <div>
-        <h2>{props?.description}</h2>
+        <Heading>Dag 1</Heading>
+        <Text>{props?.description}</Text>
         {/* <ReactMarkdown>{props.content}</ReactMarkdown> */}
 
         {/* {userHasValidSession && postBelongsToUser && (

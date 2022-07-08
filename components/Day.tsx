@@ -21,8 +21,7 @@ export type DayProps = {
   image?: string;
   description?: string;
   solutionVideo?: string;
-  solutionDate?: Date;
-  revealDate?: Date;
+  date: Date;
   solutionArtist: string;
   solutionSong: string;
   // Solution       Solution[]

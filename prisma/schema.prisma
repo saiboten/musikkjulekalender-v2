@@ -14,8 +14,7 @@ model Day {
   image          String?
   description    String?
   solutionVideo  String?
-  solutionDate   DateTime
-  revealDate     DateTime
+  date           DateTime
   solutionArtist String
   solutionSong   String
   Solution       Solution[]
@@ -68,6 +67,7 @@ model User {
   updatedAt     DateTime  @updatedAt @map(name: "updated_at")
   accounts      Account[]
   sessions      Session[]
+  role          String?
 
   @@map(name: "users")
 }
