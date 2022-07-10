@@ -1,29 +1,17 @@
 import React from "react";
 import styled from "styled-components";
-import Link from "next/link";
+import NextLink from "next/link";
 import { useRouter } from "next/router";
 import { signOut, useSession } from "next-auth/react";
+import { Link, Text } from "@chakra-ui/react";
 
 const Nav = styled.nav`
   display: flex;
-  -webkit-box-pack: end;
-  justify-content: flex-end;
-`;
-
-const NavItem = styled.div`
-  font-size: 1rem;
-  padding: 0.5rem;
-  min-width: 5rem;
-  justify-content: center;
-  align-items: center;
-  display: flex;
-  text-align: center;
-  text-decoration: none;
-  overflow-wrap: break-word;
-  border-radius: 5px;
-  box-shadow: black 0px 2px 5px;
-  background-color: white;
-  margin-right: 0.5rem;
+  justify-content: space-between;
+  width: 100%;
+  background-color: red;
+  padding: 1.5rem 1rem;
+  color: #fff;
 `;
 
 const Header: React.FC = () => {
@@ -33,77 +21,50 @@ const Header: React.FC = () => {
 
   const { data: session, status } = useSession();
 
-  let left = (
-    <NavItem>
-      <Link href="/">
-        <a data-active={isActive("/")}>Forsiden</a>
-      </Link>
-    </NavItem>
-  );
-
   let right = null;
 
   if (status === "loading") {
-    right = (
-      <NavItem>
-        <p>Validating session ...</p>
-      </NavItem>
-    );
+    right = <p>Validating session ...</p>;
   }
 
   if (!session) {
     right = (
-      <NavItem>
-        <Link href="/api/auth/signin">
-          <a data-active={isActive("/signup")}>Logg inn</a>
-        </Link>
-      </NavItem>
+      <NextLink href="/api/auth/signin" passHref>
+        <Link>Logg inn</Link>
+      </NextLink>
     );
   }
 
   if (session) {
-    left = (
-      <NavItem>
-        <Link href="/">
-          <a className="bold" data-active={isActive("/")}>
-            Forsiden
-          </a>
-        </Link>
-      </NavItem>
-    );
     right = (
       <>
-        <NavItem>
-          <Link href="/create">
-            <button>
-              <a>Opprett dag</a>
-            </button>
-          </Link>
-        </NavItem>
-        <NavItem>
-          <button onClick={() => signOut()}>
-            <a>Logg ut</a>
-          </button>
-        </NavItem>
+        <NextLink href="/create" passHref>
+          <Link mr="2">Opprett dag</Link>
+        </NextLink>
+        <Link onClick={() => signOut()}>
+          <a>Logg ut</a>
+        </Link>
       </>
     );
   }
 
   return (
     <Nav>
-      {session?.user ? (
-        <p>
-          {session.user.name} ({session.user.email})
-        </p>
-      ) : null}
-
-      {left}
-      <NavItem>
-        <Link href="/about">
-          <a data-active={isActive("/about")}>Om</a>
-        </Link>
-      </NavItem>
-      {right}
+      <div>
+        <NextLink href="/" passHref>
+          <Link display="inline" mr="5" pl="2">
+            Musikkjulekalender!
+          </Link>
+        </NextLink>
+      </div>
+      <div>
+        {session?.user ? (
+          <Text display="inline" mr="2">
+            {session.user.name} ({session.user.email})
+          </Text>
+        ) : null}
+        {right}
+      </div>
     </Nav>
   );
 };

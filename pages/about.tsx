@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import Layout from "../components/Layout";
 import Router from "next/router";
 import styled from "styled-components";
-import { H2 } from "../components/lib/Heading";
 import { UnorderedList, ListElement } from "../components/lib/ListElement";
 import { P } from "../components/lib/Paragraph";
 import { Profile } from "../components/Profile";
@@ -13,6 +12,7 @@ import skoyerfanden from "../img/skoyerfanden.png";
 import kim from "../img/kim.png";
 import matt from "../img/matt.png";
 import tobias from "../img/tobias.png";
+import { Heading } from "@chakra-ui/react";
 
 const StyledBack = styled.a`
   margin-left: 1rem;
@@ -25,13 +25,13 @@ const StyledSubmit = styled.input`
 `;
 
 const StyledContent = styled.div`
-  font-size: 1.5rem;
-  padding: 2rem;
+  font-size: 1rem;
+  padding: 1.5rem;
   background-color: #fff;
 `;
 
 const StyledParagraph = styled.p`
-  margin-bottom: 1rem;
+  margin-bottom: 0.5rem;
 `;
 
 const StyledTextArea = styled.textarea`
@@ -46,7 +46,7 @@ const About: React.FC = () => {
   return (
     <Layout>
       <StyledContent>
-        <H2>Hva er dette for noe?</H2>
+        <Heading size="lg">Hva er dette for noe?</Heading>
         <StyledParagraph>
           Musikkjulekalenderen er en musikkquiz-konkurranse. Hver dag åpnes det
           en ny luke i kalenderen, og en luke er et lydklipp - din oppgave er å
@@ -64,7 +64,7 @@ const About: React.FC = () => {
           Den beste brukeren blir premiert med et krus for to, og et diplom!
         </StyledParagraph>
 
-        <H2>Bidragsytere</H2>
+        <Heading>Bidragsytere</Heading>
 
         <div
           style={{
@@ -172,7 +172,7 @@ const About: React.FC = () => {
           </Profile>
         </div>
 
-        <H2>Kontakt</H2>
+        <Heading>Kontakt</Heading>
         <StyledParagraph>
           Den enkleste måten å ta kontakt med folket bak kalenderen er å bruke
           vår{" "}

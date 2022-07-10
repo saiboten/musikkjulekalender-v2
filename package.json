@@ -29,6 +29,8 @@
     "react-dom": "18.2.0",
     "react-hook-form": "^7.33.1",
     "react-markdown": "8.0.3",
+    "react-spring": "^9.4.5",
+    "react-with-gesture": "^4.0.8",
     "styled-components": "^5.3.5"
   },
   "devDependencies": {

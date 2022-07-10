@@ -2,6 +2,8 @@ import { SessionProvider } from "next-auth/react";
 import { AppProps } from "next/app";
 import styled, { createGlobalStyle, ThemeProvider } from "styled-components";
 import { ChakraProvider } from "@chakra-ui/react";
+import { Footer } from "../components/Footer";
+import Header from "../components/Header";
 
 const GlobalStyle = createGlobalStyle`
 html {
@@ -27,16 +29,19 @@ const Wrapper = styled.div`
   border-radius: 5px;
   margin: 0px auto;
   max-width: 120rem;
+  min-height: 95vh;
 `;
 
 const App = ({ Component, pageProps }: AppProps) => {
   return (
     <SessionProvider session={pageProps.session}>
       <ChakraProvider>
+        <Header />
         <Wrapper>
           <GlobalStyle />
           <Component {...pageProps} />
         </Wrapper>
+        <Footer />
       </ChakraProvider>
     </SessionProvider>
   );

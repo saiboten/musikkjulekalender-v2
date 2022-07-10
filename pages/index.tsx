@@ -8,14 +8,15 @@ import Day, { DayProps } from "../components/Day";
 import prisma from "../lib/prisma";
 import { Grid, GridItem } from "../components/Grid";
 import { useSession } from "next-auth/react";
+import { HorisontalDraggable } from "../components/HorizontalDraggable";
+import { Heading } from "@chakra-ui/react";
 
 export const getServerSideProps: GetServerSideProps = async () => {
   const feed = await prisma.day.findMany();
 
   const feedWithFixedDates = feed.map((el) => ({
-    ...el,
-    solutionDate: el.solutionDate.toString(),
-    revealDate: el.revealDate.toString(),
+    id: el.id,
+    date: el.date.toString(),
   }));
   return {
     props: { feed: feedWithFixedDates },
@@ -27,8 +28,21 @@ type Props = {
 };
 
 const ImageContainer = styled.div`
-  height: 30rem;
+  height: 20rem;
   text-align: center;
+`;
+
+const StyledHeader = styled.div`
+  text-align: left;
+  padding-top: 1rem;
+  display: flex;
+
+  @media screen and (max-width: 45rem) {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem;
+  }
 `;
 
 const Blog: React.FC<Props> = (props) => {
@@ -45,14 +59,20 @@ const Blog: React.FC<Props> = (props) => {
   return (
     <Layout>
       <div>
-        <ImageContainer>
-          <Image
-            src={nisse}
-            alt="Rockete julsenisse med gitar"
-            width={300}
-            height={300}
-          />
-        </ImageContainer>
+        <StyledHeader>
+          <Heading>Musikkjulekalender!</Heading>
+          <HorisontalDraggable>
+            <ImageContainer>
+              <Image
+                draggable={false}
+                src={nisse}
+                alt="Rockete julsenisse med gitar"
+                width={300}
+                height={300}
+              />
+            </ImageContainer>
+          </HorisontalDraggable>
+        </StyledHeader>
         <main>
           <Grid>
             {props.feed.map((day) => (
