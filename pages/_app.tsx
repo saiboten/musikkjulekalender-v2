@@ -29,7 +29,6 @@ const Wrapper = styled.div`
   border-radius: 5px;
   margin: 0px auto;
   max-width: 120rem;
-  min-height: 95vh;
 `;
 
 const App = ({ Component, pageProps }: AppProps) => {
@@ -41,7 +40,6 @@ const App = ({ Component, pageProps }: AppProps) => {
           <GlobalStyle />
           <Component {...pageProps} />
         </Wrapper>
-        <Footer />
       </ChakraProvider>
     </SessionProvider>
   );

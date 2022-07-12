@@ -8,17 +8,21 @@ datasource db {
 }
 
 model Day {
-  id          Int        @id @default(autoincrement())
-  difficulty  Int?
-  points      Int?
-  image       String?
-  description String?
-  video       String?
-  date        DateTime
-  artist      String
-  song        String
-  madeBy      String?
-  solution    Solution[]
+  id            Int        @id @default(autoincrement())
+  difficulty    Int?
+  points        Int?
+  image         String?
+  description   String?
+  video         String?
+  solutionVideo String?
+  date          DateTime
+  artist        String
+  song          String
+  hint1         String?
+  hint2         String?
+  hint3         String?
+  madeBy        String?
+  solution      Solution[]
 }
 
 model Solution {

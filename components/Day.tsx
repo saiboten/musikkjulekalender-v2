@@ -12,8 +12,11 @@ export type DayProps = {
   date: Date;
   artist: string;
   song: string;
-  solutions: string[];
+  solution: { solution: string; id: string; dayId: string }[];
+  madeBy?: string;
   isToday: boolean;
+  isDayPassed: boolean;
+  solutionVideo?: string;
 };
 
 const Button = styled.button`

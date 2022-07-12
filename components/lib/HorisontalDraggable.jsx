@@ -1,5 +1,5 @@
 import React from "react";
-import { useSpring, animated, interpolate } from "react-spring";
+import { useSpring, animated, to } from "react-spring";
 import { useGesture } from "react-with-gesture";
 
 export function HorisontalDraggable({ children }) {
@@ -17,7 +17,7 @@ export function HorisontalDraggable({ children }) {
     <animated.div {...bind()} style={{ background: bg }}>
       <animated.div
         style={{
-          transform: interpolate([x], x => `translate3d(${x}px,0,0)`)
+          transform: to([x], x => `translate3d(${x}px,0,0)`)
         }}
       >
         {children}

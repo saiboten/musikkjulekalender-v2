@@ -8,8 +8,9 @@ import Day, { DayProps } from "../components/Day";
 import prisma from "../lib/prisma";
 import { Grid, GridItem } from "../components/Grid";
 import { useSession } from "next-auth/react";
-import { HorisontalDraggable } from "../components/HorizontalDraggable";
 import { Heading } from "@chakra-ui/react";
+import { Footer } from "../components/Footer";
+import { HorisontalDraggable } from "../components/lib/HorisontalDraggable";
 
 export const getServerSideProps: GetServerSideProps = async () => {
   const feed = await prisma.day.findMany();
@@ -83,6 +84,7 @@ const Blog: React.FC<Props> = (props) => {
           </Grid>
         </main>
       </div>
+      <Footer />
     </Layout>
   );
 };
