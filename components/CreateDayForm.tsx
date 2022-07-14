@@ -14,12 +14,15 @@ import {
   Radio,
   RadioGroup,
   Stack,
+  Textarea,
 } from "@chakra-ui/react";
 import styled from "styled-components";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { Spacer } from "../components/lib/Spacer";
 import { SingleDatepicker } from "chakra-dayzed-datepicker";
 import { DeleteIcon } from "@chakra-ui/icons";
+import { YoutubeVideo } from "./lib/YoutubeVideo";
+import { UiFileInputButton } from "./lib/UiFileUploadButton";
 
 const StyledBack = styled.a`
   margin-left: 1rem;
@@ -33,6 +36,7 @@ const StyledSubmit = styled.input`
 
 interface CreateDayFormProps extends DayProps {
   onSubmit: (data: FormData) => Promise<void>;
+  submitButtonText?: string;
 }
 
 export type FormData = {
@@ -43,9 +47,13 @@ export type FormData = {
   solutions: { id: string; value: string }[];
   madeBy: string;
   video: string;
+  file: string;
+  solutionVideo: string;
+  difficulty: string;
 };
 
 export const CreateDayForm: React.FC<CreateDayFormProps> = (props) => {
+  console.log(props);
   const [solution, setSolution] = useState("");
 
   const {
@@ -63,6 +71,8 @@ export const CreateDayForm: React.FC<CreateDayFormProps> = (props) => {
       song: props.song,
       video: props.video,
       solutions: props.solution?.map((el) => ({ value: el.solution })),
+      file: props.file,
+      difficulty: `${props.difficulty}`,
     },
   });
 
@@ -76,98 +86,8 @@ export const CreateDayForm: React.FC<CreateDayFormProps> = (props) => {
       <div>
         <form onSubmit={handleSubmit(props.onSubmit)}>
           <Spacer />
-          <Heading size="lg">Endre luke</Heading>
+          <Heading size="lg">Luke</Heading>
           <Spacer />
-
-          <FormControl>
-            <FormLabel htmlFor="description">Beskrivelse</FormLabel>
-            <Input
-              name="description"
-              autoFocus
-              {...register("description", { required: true })}
-              placeholder="Description"
-              type="text"
-            />
-          </FormControl>
-
-          <Spacer multiply={0.5} />
-
-          <Controller
-            name="madeBy"
-            control={control}
-            render={({ field }) => (
-              <RadioGroup {...field}>
-                <Stack direction="row">
-                  <Radio value="stein">Stein</Radio>
-                  <Radio value="tobias">Tobias</Radio>
-                  <Radio value="skoyerfanden">Skøyerfanden</Radio>
-                  <Radio value="bjarte">Bjarte</Radio>
-                  <Radio value="tomas">Tomas</Radio>
-                  <Radio value="Kim">Kim</Radio>
-                  <Radio value="Matt">Matt</Radio>
-                  <Radio value="Annen">Annen</Radio>
-                </Stack>
-              </RadioGroup>
-            )}
-          />
-
-          <Spacer multiply={0.5} />
-
-          <FormControl>
-            <FormLabel htmlFor="artist">Artist</FormLabel>
-            <Input
-              name="artist"
-              autoFocus
-              {...register("artist", { required: true })}
-              placeholder="Artist"
-              type="text"
-            />
-          </FormControl>
-
-          <Spacer multiply={0.5} />
-
-          <FormControl>
-            <FormLabel htmlFor="song">Sang</FormLabel>
-            <Input
-              name="song"
-              autoFocus
-              {...register("song", { required: true })}
-              placeholder="Sang"
-              type="text"
-            />
-          </FormControl>
-
-          <Spacer multiply={0.5} />
-
-          <FormControl>
-            <FormLabel htmlFor="video">Video</FormLabel>
-            <Input
-              name="video"
-              autoFocus
-              {...register("video")}
-              placeholder="Video"
-              type="text"
-            />
-          </FormControl>
-
-          <Spacer multiply={0.5} />
-
-          {/* <Video link={watch("video")} /> */}
-
-          <Spacer multiply={0.5} />
-
-          <FormControl>
-            <FormLabel htmlFor="madeBy">Laget av</FormLabel>
-            <Input
-              name="madeBy"
-              autoFocus
-              {...register("madeBy")}
-              placeholder="Laget av"
-              type="text"
-            />
-          </FormControl>
-
-          <Spacer multiply={0.5} />
 
           <FormControl>
             <FormLabel>Dato</FormLabel>
@@ -187,11 +107,137 @@ export const CreateDayForm: React.FC<CreateDayFormProps> = (props) => {
           <Spacer multiply={0.5} />
 
           <FormControl>
+            <FormLabel htmlFor="description">Beskrivelse</FormLabel>
+            <Textarea
+              name="description"
+              {...register("description", { required: true })}
+              placeholder="Description"
+            />
+          </FormControl>
+
+          <Spacer multiply={0.5} />
+
+          <Controller
+            name="madeBy"
+            control={control}
+            render={({ field }) => (
+              <RadioGroup {...field}>
+                <Stack direction="row">
+                  <Radio value="Stein">Stein</Radio>
+                  <Radio value="Tobias">Tobias</Radio>
+                  <Radio value="Skoyerfanden">Skøyerfanden</Radio>
+                  <Radio value="Bjarte">Bjarte</Radio>
+                  <Radio value="Tomas">Tomas</Radio>
+                  <Radio value="Kim">Kim</Radio>
+                  <Radio value="Matt">Matt</Radio>
+                  <Radio value="Annen">Annen</Radio>
+                </Stack>
+              </RadioGroup>
+            )}
+          />
+
+          <Spacer multiply={0.5} />
+
+          <FormControl>
+            <Controller
+              name="file"
+              control={control}
+              render={({ field }) => (
+                <UiFileInputButton
+                  label="Klikk her for å laste opp sang"
+                  uploadFileName="theFiles"
+                  onChange={field.onChange}
+                />
+              )}
+            />
+          </FormControl>
+
+          <Spacer multiply={0.5} />
+
+          <audio controls src={watch("file")}>
+            Your browser does not support the
+            <code>audio</code> element.
+          </audio>
+
+          <Spacer multiply={0.5} />
+
+          <FormControl>
+            <FormLabel htmlFor="video">Valgfri oppgavevideo</FormLabel>
+            <Input
+              name="video"
+              {...register("video")}
+              placeholder="Video"
+              type="text"
+            />
+          </FormControl>
+
+          <Spacer multiply={0.5} />
+
+          <YoutubeVideo link={watch("video")} />
+
+          <Spacer multiply={0.5} />
+
+          <FormControl>
+            <FormLabel htmlFor="artist">Artist</FormLabel>
+            <Input
+              name="artist"
+              {...register("artist", { required: true })}
+              placeholder="Artist"
+              type="text"
+            />
+          </FormControl>
+
+          <Spacer multiply={0.5} />
+
+          <FormControl>
+            <FormLabel htmlFor="song">Sang</FormLabel>
+            <Input
+              name="song"
+              {...register("song", { required: true })}
+              placeholder="Sang"
+              type="text"
+            />
+          </FormControl>
+
+          <Spacer multiply={0.5} />
+
+          <Controller
+            name="difficulty"
+            control={control}
+            render={({ field }) => (
+              <RadioGroup {...field}>
+                <Stack direction="row">
+                  <Radio value="1">Enkel</Radio>
+                  <Radio value="2">Medium</Radio>
+                  <Radio value="3">Vanskelig</Radio>
+                </Stack>
+              </RadioGroup>
+            )}
+          />
+
+          <Spacer multiply={0.5} />
+
+          <FormControl>
+            <FormLabel htmlFor="solutionVideo">Løsningsvideo</FormLabel>
+            <Input
+              name="solutionVideo"
+              {...register("solutionVideo")}
+              placeholder="Løsningsvideo"
+              type="text"
+            />
+          </FormControl>
+
+          <Spacer multiply={0.5} />
+
+          <YoutubeVideo link={watch("solutionVideo")} />
+
+          <Spacer multiply={0.5} />
+
+          <FormControl>
             <FormLabel htmlFor="singlesolution">Legg til løsning</FormLabel>
             <Flex>
               <Input
                 id="singlesolution"
-                autoFocus
                 value={solution}
                 placeholder="Løsning"
                 type="text"
@@ -228,7 +274,9 @@ export const CreateDayForm: React.FC<CreateDayFormProps> = (props) => {
           <StyledSubmit
             disabled={!isDirty || !isValid} // here
             type="submit"
-            value="Opprett rute"
+            value={
+              props.submitButtonText ? props.submitButtonText : "Opprett rute"
+            }
           />
           <StyledBack href="#" onClick={() => Router.push("/")}>
             eller avbryt

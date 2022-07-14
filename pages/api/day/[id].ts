@@ -7,22 +7,53 @@ export default async function handle(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const postId = req.query.id;
+  const dayId = req.query.id;
+  const { solutions, ...body } = req.body;
+
+  const storeSolutions = solutions.map((solution) => ({
+    dayId: Number(dayId),
+    solution,
+  }));
 
   const session = await getSession({ req });
 
   if (req.method === "DELETE") {
     if (session) {
       const post = await prisma.day.delete({
-        where: { id: Number(postId) },
+        where: { id: Number(dayId) },
       });
       res.json(post);
     } else {
       res.status(401).send({ message: "Unauthorized" });
     }
+  } else if (req.method === "PUT") {
+    await prisma.day.update({
+      where: { id: Number(dayId) },
+      data: {
+        ...body,
+        difficulty: parseInt(body.difficulty),
+      },
+    });
+
+    await prisma.solution.deleteMany({
+      where: { dayId: Number(dayId) },
+    });
+
+    await prisma.solution.createMany({
+      data: storeSolutions,
+    });
+    res.json({ success: true });
   } else {
     throw new Error(
       `The HTTP ${req.method} method is not supported at this route.`
     );
   }
 }
+
+export const config = {
+  api: {
+    bodyParser: {
+      sizeLimit: "10mb",
+    },
+  },
+};

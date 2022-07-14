@@ -13,7 +13,11 @@ import { Footer } from "../components/Footer";
 import { HorisontalDraggable } from "../components/lib/HorisontalDraggable";
 
 export const getServerSideProps: GetServerSideProps = async () => {
-  const feed = await prisma.day.findMany();
+  const feed = await prisma.day.findMany({
+    orderBy: {
+      date: "asc",
+    },
+  });
 
   const feedWithFixedDates = feed.map((el) => ({
     id: el.id,

@@ -11,8 +11,11 @@ import prisma from "../../lib/prisma";
 import { useSession } from "next-auth/react";
 import { Box, Button, Heading, Link, Text } from "@chakra-ui/react";
 import { Difficulty } from "../../components/Difficulty";
-import { Video } from "../../components/lib/Video";
+import { YoutubeVideo } from "../../components/lib/YoutubeVideo";
 import NextLink from "next/link";
+import { Spacer } from "../../components/lib/Spacer";
+import { Audio } from "../../components/lib/Audio";
+import { Thumbnail } from "../../components/Thumbnail";
 
 export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   const post = await prisma.day.findUnique({
@@ -73,7 +76,13 @@ const Today: React.FC<DayWithAdmin> = (props) => {
       <AdminEditLink />
       <div>
         <Heading>{format(new Date(props.date), "d 'dag jul")}</Heading>
-        <Video link={props.video}></Video>
+        {props.video ? <YoutubeVideo link={props.video}></YoutubeVideo> : null}
+        {props.file ? (
+          <Audio controls src={props.file}>
+            Your browser does not support the
+            <code>audio</code> element.
+          </Audio>
+        ) : null}
         <Text>{props.description}</Text>
         <Difficulty difficulty={props.difficulty ?? 1} />
       </div>
@@ -88,20 +97,35 @@ const OldDay: React.FC<DayWithAdmin> = (props) => {
     <Layout>
       <AdminEditLink />
       <Box textAlign="center">
+        <Box display="flex" justifyContent="space-between" alignItems="center">
+          <Difficulty difficulty={props.difficulty ?? 1} />
+          <Thumbnail image={props.madeBy} />
+        </Box>
         <Heading>{format(new Date(props.date), "d 'dag jul")}</Heading>
-        <Video link={props.video} />
-        <Text>{props.description}</Text>
-        <Difficulty difficulty={props.difficulty ?? 1} />
-        {showSolution ? null : (
-          <Button onClick={() => setShowSolution(true)}>Vis løsning</Button>
-        )}
-        {showSolution ? (
-          <>
-            <Text>{props.solutionVideo}</Text>
-            <Text>Artist: {props.artist}</Text>
-            <Text>Sang: {props.song}</Text>
-          </>
+        <Spacer multiply={0.5} />
+        {props.video ? <YoutubeVideo link={props.video}></YoutubeVideo> : null}
+        {props.file ? (
+          <Audio controls src={props.file}>
+            Your browser does not support the
+            <code>audio</code> element.
+          </Audio>
         ) : null}
+        <Spacer multiply={0.5} />
+        <Box textAlign="left" maxWidth="30rem" m="0 auto">
+          <Text>{props.description}</Text>
+          <Spacer multiply={0.5} />
+          {showSolution ? null : (
+            <Button onClick={() => setShowSolution(true)}>Vis løsning</Button>
+          )}
+          {showSolution ? (
+            <>
+              <YoutubeVideo link={props.solutionVideo} />
+              <Text>Artist: {props.artist}</Text>
+              <Text>Sang: {props.song}</Text>
+            </>
+          ) : null}
+          <Spacer multiply={1} />
+        </Box>
       </Box>
     </Layout>
   );

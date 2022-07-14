@@ -7,8 +7,16 @@ export default async function handle(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const { description, artist, date, madeBy, solutions, song, video } =
-    req.body;
+  const {
+    description,
+    artist,
+    date,
+    madeBy,
+    solutions,
+    song,
+    video,
+    difficulty,
+  } = req.body;
 
   const session = await getSession({ req });
   if (session) {
@@ -20,6 +28,7 @@ export default async function handle(
         song,
         madeBy,
         video,
+        difficulty: parseInt(difficulty),
         solution: {
           create: solutions.map((el) => ({ solution: el })),
         },
@@ -30,3 +39,11 @@ export default async function handle(
     res.status(401).send({ message: "Unauthorized" });
   }
 }
+
+export const config = {
+  api: {
+    bodyParser: {
+      sizeLimit: "10mb",
+    },
+  },
+};

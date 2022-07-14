@@ -23,6 +23,7 @@ model Day {
   hint3         String?
   madeBy        String?
   solution      Solution[]
+  file          String?
 }
 
 model Solution {
