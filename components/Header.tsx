@@ -3,7 +3,7 @@ import styled from "styled-components";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
 import { signOut, useSession } from "next-auth/react";
-import { Link, Text } from "@chakra-ui/react";
+import { Box, Link, Text } from "@chakra-ui/react";
 
 const Nav = styled.nav`
   display: flex;
@@ -55,14 +55,19 @@ const Header: React.FC = () => {
           </Link>
         </NextLink>
       </div>
-      <div>
+      <Box
+        display="flex"
+        flexDirection={{ base: "column", md: "row" }}
+        justifyContent="flex-end"
+      >
         {session?.user ? (
-          <Text display="inline" mr="2">
-            {session.user.name} ({session.user.email})
-          </Text>
+          <>
+            <Text mr="2">{session.user.name}</Text>
+            <Text mr="2">({session.user.email})</Text>
+          </>
         ) : null}
         {right}
-      </div>
+      </Box>
     </Nav>
   );
 };
