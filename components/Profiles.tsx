@@ -10,7 +10,7 @@ import matt from "../img/matt.png";
 import tobias from "../img/tobias.png";
 import React from "react";
 import { useRouter } from "next/router";
-import { Box, Button } from "@chakra-ui/react";
+import { Box, Button, propNames } from "@chakra-ui/react";
 import { Spacer } from "./lib/Spacer";
 
 interface Profile {
@@ -18,7 +18,13 @@ interface Profile {
   profile: JSX.Element;
 }
 
-export const Profiles = ({ filterBy }: { filterBy?: string }) => {
+export const Profiles = ({
+  filterBy,
+  showBackLink,
+}: {
+  filterBy?: string;
+  showBackLink?: boolean;
+}) => {
   const router = useRouter();
 
   let profiles: Profile[] = [
@@ -161,11 +167,14 @@ export const Profiles = ({ filterBy }: { filterBy?: string }) => {
 
   return (
     <>
+      {showBackLink ? (
+        <Box display="flex" justifyContent="flex-end">
+          <Button onClick={() => router.back()}>Tilbake</Button>
+        </Box>
+      ) : null}
+
       {profiles.map((el, index) => (
         <React.Fragment key={index}>
-          <Box display="flex" justifyContent="flex-end">
-            <Button onClick={() => router.back()}>Tilbake</Button>
-          </Box>
           <Spacer />
           {el.profile}
         </React.Fragment>

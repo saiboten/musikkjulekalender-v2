@@ -12,7 +12,7 @@ const Post: React.FC<DayProps> = (props) => {
 
   return (
     <Layout>
-      <Profiles filterBy={name as string} />
+      <Profiles filterBy={name as string} showBackLink />
     </Layout>
   );
 };

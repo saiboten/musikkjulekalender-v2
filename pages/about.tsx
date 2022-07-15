@@ -4,32 +4,14 @@ import styled from "styled-components";
 import { Heading } from "@chakra-ui/react";
 import { Profiles } from "../components/Profiles";
 
-const StyledBack = styled.a`
-  margin-left: 1rem;
-`;
-
-const StyledSubmit = styled.input`
-  background: #ececec;
-  border: 0;
-  padding: 1rem 2rem;
-`;
-
 const StyledContent = styled.div`
   font-size: 1rem;
-  padding: 1.5rem;
+  padding: 0.5rem;
   background-color: #fff;
 `;
 
 const StyledParagraph = styled.p`
   margin-bottom: 0.5rem;
-`;
-
-const StyledTextArea = styled.textarea`
-  width: 100%;
-  padding: 0.5rem;
-  margin: 0.5rem 0;
-  border-radius: 0.25rem;
-  border: 0.125rem solid rgba(0, 0, 0, 0.2);
 `;
 
 const About: React.FC = () => {
@@ -55,18 +37,7 @@ const About: React.FC = () => {
         </StyledParagraph>
 
         <Heading>Bidragsytere</Heading>
-
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(25rem, 1fr))",
-            gridGap: "1rem",
-            justifyItems: "center",
-          }}
-        >
-          <Profiles />
-        </div>
-
+        <Profiles />
         <Heading>Kontakt</Heading>
         <StyledParagraph>
           Den enkleste måten å ta kontakt med folket bak kalenderen er å bruke
