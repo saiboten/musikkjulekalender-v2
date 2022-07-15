@@ -22,8 +22,9 @@ model Day {
   hint2         String?
   hint3         String?
   madeBy        String?
-  solution      Solution[]
   file          String?
+  solution      Solution[]
+  answers       Answer[]
 }
 
 model Solution {
@@ -31,6 +32,14 @@ model Solution {
   solution String
   dayId    Int
   day      Day    @relation(fields: [dayId], references: [id])
+}
+
+model Answer {
+  id          Int      @id @default(autoincrement())
+  points      Int
+  timeOfEntry DateTime
+  dayId       Int
+  day         Day      @relation(fields: [dayId], references: [id])
 }
 
 model Account {

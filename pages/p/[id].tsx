@@ -9,7 +9,7 @@ import Router from "next/router";
 import { DayProps } from "../../components/Day";
 import prisma from "../../lib/prisma";
 import { useSession } from "next-auth/react";
-import { Box, Button, Heading, Link, Text } from "@chakra-ui/react";
+import { Box, Button, Heading, Input, Link, Text } from "@chakra-ui/react";
 import { Difficulty } from "../../components/Difficulty";
 import { YoutubeVideo } from "../../components/lib/YoutubeVideo";
 import NextLink from "next/link";
@@ -71,11 +71,22 @@ const AdminEditLink = () => {
 };
 
 const Today: React.FC<DayWithAdmin> = (props) => {
+  const [answer, setAnswer] = useState("");
+
+  async function handleAnswer() {
+    const res = await fetch(`/api/answer?guess=${answer}`);
+  }
+
   return (
     <Layout>
       <AdminEditLink />
       <div>
+        <Box display="flex" justifyContent="space-between" alignItems="center">
+          <Difficulty difficulty={props.difficulty ?? 1} />
+          <Thumbnail image={props.madeBy} />
+        </Box>
         <Heading>{format(new Date(props.date), "d 'dag jul")}</Heading>
+        <Spacer multiply={0.5} />
         {props.video ? <YoutubeVideo link={props.video}></YoutubeVideo> : null}
         {props.file ? (
           <Audio controls src={props.file}>
@@ -83,8 +94,23 @@ const Today: React.FC<DayWithAdmin> = (props) => {
             <code>audio</code> element.
           </Audio>
         ) : null}
+        <Spacer multiply={0.5} />
         <Text>{props.description}</Text>
-        <Difficulty difficulty={props.difficulty ?? 1} />
+        <Spacer />
+        <Heading size="md">Svar</Heading>
+        <Spacer multiply={0.5} />
+        <Box display="flex">
+          <Input
+            placeholder="Legg inn ditt svar her"
+            name="svar"
+            value={answer}
+            onChange={(e) => setAnswer(e.target.value)}
+            mr="10px"
+          ></Input>
+          <Button disabled={answer === ""} onClick={handleAnswer}>
+            Gjett
+          </Button>
+        </Box>
       </div>
     </Layout>
   );
@@ -115,13 +141,15 @@ const OldDay: React.FC<DayWithAdmin> = (props) => {
           <Text>{props.description}</Text>
           <Spacer multiply={0.5} />
           {showSolution ? null : (
-            <Button onClick={() => setShowSolution(true)}>Vis løsning</Button>
+            <Button onClick={() => setShowSolution(true)}>Vis fasit</Button>
           )}
           {showSolution ? (
             <>
+              <Heading>Fasit</Heading>
+              <Text textAlign="center" fontWeight="bold" fontSize="22px">
+                {props.artist} - {props.song}
+              </Text>
               <YoutubeVideo link={props.solutionVideo} />
-              <Text>Artist: {props.artist}</Text>
-              <Text>Sang: {props.song}</Text>
             </>
           ) : null}
           <Spacer multiply={1} />
