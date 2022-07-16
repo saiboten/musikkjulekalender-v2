@@ -1,4 +1,4 @@
-import Link from "next/link";
+import NextLink from "next/link";
 import Image from "next/image";
 import stein from "../img/thumbnail/stein.png";
 import tobias from "../img/thumbnail/tobias.png";
@@ -7,6 +7,7 @@ import kim from "../img/thumbnail/kim.png";
 import bjarte from "../img/thumbnail/bjarte.png";
 import tomas from "../img/thumbnail/tomas.png";
 import skoyerfanden from "../img/thumbnail/skoyerfanden.png";
+import { Link } from "@chakra-ui/react";
 
 const thumbnailMap = {
   Stein: stein,
@@ -24,8 +25,11 @@ export const Thumbnail = ({ image }: { image: string }) => {
   return (
     <>
       {imageSrc ? (
-        <Link href={`/profile/${image}`} passHref>
-          <a>
+        <NextLink href={`/profile/${image}`} passHref>
+          <Link
+            transition="transform 0.2s"
+            _hover={{ transform: "scale(1.1)" }}
+          >
             <Image
               src={imageSrc}
               alt="Profile picture"
@@ -33,8 +37,8 @@ export const Thumbnail = ({ image }: { image: string }) => {
               height="132px"
               style={{ borderRadius: "50%", cursor: "pointer" }}
             />
-          </a>
-        </Link>
+          </Link>
+        </NextLink>
       ) : null}
     </>
   );

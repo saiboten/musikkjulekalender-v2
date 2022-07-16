@@ -4,15 +4,18 @@ import NextLink from "next/link";
 import { useRouter } from "next/router";
 import { signOut, useSession } from "next-auth/react";
 import { Box, Link, Text } from "@chakra-ui/react";
+import { Admin } from "./Admin";
+import { PrimaryRed } from "./constants";
 
 const Nav = styled.nav`
   display: flex;
   justify-content: space-between;
   width: 100%;
-  background-color: #8e1515;
+  background-color: ${PrimaryRed};
   padding: 1rem;
   gap: 1.5rem;
   color: #fff;
+  align-items: center;
 
   @media screen and (max-width: 45rem) {
     flex-direction: column;
@@ -25,8 +28,6 @@ const Header: React.FC = () => {
     router.pathname === pathname;
 
   const { data: session, status } = useSession();
-
-  const isAdmin = session?.user?.role === "admin";
 
   <NextLink href="/create" passHref>
     <Link mr="2">Opprett dag</Link>
@@ -49,11 +50,11 @@ const Header: React.FC = () => {
   if (session) {
     right = (
       <>
-        {isAdmin ? (
+        <Admin>
           <NextLink href="/create" passHref>
             <Link mr="2">Opprett dag</Link>
           </NextLink>
-        ) : null}
+        </Admin>
 
         <Link onClick={() => signOut({ callbackUrl: "/" })}>Logg ut</Link>
       </>

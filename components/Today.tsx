@@ -2,6 +2,7 @@ import { Box, Button, Heading, Input, Text } from "@chakra-ui/react";
 import { format } from "date-fns";
 import { useState } from "react";
 import { AdminEditLink, DayWithAdmin } from "../pages/p/[id]";
+import { PrimaryRed } from "./constants";
 import { Difficulty } from "./Difficulty";
 import Layout from "./Layout";
 import { Audio } from "./lib/Audio";
@@ -18,13 +19,20 @@ export const Today: React.FC<DayWithAdmin> = (props) => {
   const [solved, setSolved] = useState(props.solved);
 
   async function handleAnswer() {
-    const res = await (await fetch(`/api/answer?guess=${answer}`)).json();
+    setAnswer("");
+    const res = await (
+      await fetch(`/api/answer?guess=${answer.trim()}`)
+    ).json();
+    setAnswerFeedback(
+      res.success ? "Riktig" : "Det var dessverre feil, prøv igjen!"
+    );
 
-    setAnswerFeedback(res.success ? "Riktig" : "No way hosey");
-    setArtist(res.artist);
-    setSong(res.song);
-    setSolutionVideo(res.solutionVideo);
-    setSolved(true);
+    if (res.success) {
+      setArtist(res.artist);
+      setSong(res.song);
+      setSolutionVideo(res.solutionVideo);
+      setSolved(true);
+    }
   }
 
   return (
@@ -76,7 +84,9 @@ export const Today: React.FC<DayWithAdmin> = (props) => {
               </Button>
             </Box>
             <Spacer multiply={0.5} />
-            <Text>{answerFeedback}</Text>
+            <Text p="3" borderRadius="5" border={`1px solid ${PrimaryRed}`}>
+              {answerFeedback}
+            </Text>
           </>
         )}
       </div>

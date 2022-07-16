@@ -64,7 +64,11 @@ const Blog: React.FC<Props> = (props) => {
         <StyledHeader>
           <Heading>Musikkjulekalender 2022!</Heading>
           <HorisontalDraggable>
-            <Box textAlign="center">
+            <Box
+              textAlign="center"
+              transition="transform .2s"
+              _hover={{ transform: "scale(1.1)" }}
+            >
               <Image
                 draggable={false}
                 src={nisse}

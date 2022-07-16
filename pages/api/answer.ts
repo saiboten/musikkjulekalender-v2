@@ -23,9 +23,9 @@ export default async function handler(req, res) {
     },
   });
 
-  const rightAnswerList = result.map((el) => el.solution);
+  const rightAnswerList = result.map((el) => el.solution.toLowerCase());
 
-  if (rightAnswerList.includes(guess)) {
+  if (rightAnswerList.includes(guess.toLowerCase())) {
     await prisma.answer.create({
       data: {
         timeOfEntry: new Date(),

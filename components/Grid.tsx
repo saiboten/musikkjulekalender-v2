@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { PrimaryRed } from "./constants";
 
 export const Grid = styled.div`
   display: grid;
@@ -16,4 +17,9 @@ export const GridItem = styled.div`
   background-color: white;
   color: black;
   aspect-ratio: 1 / 1; /* ↔️ is double the ↕️ */
+  transition: transform 0.2s;
+
+  &:hover {
+    transform: scale(1.05);
+  }
 `;

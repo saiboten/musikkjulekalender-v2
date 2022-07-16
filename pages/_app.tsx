@@ -1,9 +1,17 @@
 import { SessionProvider } from "next-auth/react";
 import { AppProps } from "next/app";
-import styled, { createGlobalStyle, ThemeProvider } from "styled-components";
+import styled, { createGlobalStyle } from "styled-components";
 import { ChakraProvider } from "@chakra-ui/react";
-import { Footer } from "../components/Footer";
+
 import Header from "../components/Header";
+import { extendTheme } from "@chakra-ui/react";
+
+const theme = extendTheme({
+  fonts: {
+    heading: `'Rubik', sans-serif`,
+    body: `'Rubik', sans-serif`,
+  },
+});
 
 const GlobalStyle = createGlobalStyle`
 html {
@@ -33,15 +41,17 @@ const Wrapper = styled.div`
 
 const App = ({ Component, pageProps }: AppProps) => {
   return (
-    <SessionProvider session={pageProps.session}>
-      <ChakraProvider>
-        <Header />
-        <Wrapper>
-          <GlobalStyle />
-          <Component {...pageProps} />
-        </Wrapper>
-      </ChakraProvider>
-    </SessionProvider>
+    <>
+      <SessionProvider session={pageProps.session}>
+        <ChakraProvider theme={theme}>
+          <Header />
+          <Wrapper>
+            <GlobalStyle />
+            <Component {...pageProps} />
+          </Wrapper>
+        </ChakraProvider>
+      </SessionProvider>
+    </>
   );
 };
 
