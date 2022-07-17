@@ -1,6 +1,6 @@
 import { Box, Button, Heading, Input, Text } from "@chakra-ui/react";
 import { format } from "date-fns";
-import { useState } from "react";
+import React, { useState } from "react";
 import { AdminEditLink, DayWithAdmin } from "../pages/p/[id]";
 import { PrimaryRed } from "./constants";
 import { Difficulty } from "./Difficulty";
@@ -18,7 +18,8 @@ export const Today: React.FC<DayWithAdmin> = (props) => {
   const [solutionVideo, setSolutionVideo] = useState<string | undefined>();
   const [solved, setSolved] = useState(props.solved);
 
-  async function handleAnswer() {
+  async function handleAnswer(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
     setAnswer("");
     const res = await (
       await fetch(`/api/answer?guess=${answer.trim()}`)
@@ -43,7 +44,9 @@ export const Today: React.FC<DayWithAdmin> = (props) => {
           <Difficulty difficulty={props.difficulty ?? 1} />
           <Thumbnail image={props.madeBy} />
         </Box>
-        <Heading>{format(new Date(props.date), "d 'dag jul")}</Heading>
+        <Heading textAlign="center">
+          {format(new Date(props.date), "d 'dag jul")}
+        </Heading>
         <Spacer multiply={0.5} />
         {props.video ? <YoutubeVideo link={props.video}></YoutubeVideo> : null}
         {props.file ? (
@@ -54,7 +57,50 @@ export const Today: React.FC<DayWithAdmin> = (props) => {
         ) : null}
         <Spacer multiply={0.5} />
         <Text>{props.description}</Text>
-        <Spacer />
+        <Spacer multiply={0.5} />
+        {props.hint1 ? (
+          <>
+            <Text>Hint 1: {props.hint1}</Text>
+            <Spacer multiply={0.5} />
+          </>
+        ) : (
+          <>
+            <Text>
+              Det første hintet kommer klokken{" "}
+              {format(new Date(props.hint1releaseTime), "hh:mm")}
+            </Text>
+            <Spacer multiply={0.5} />
+          </>
+        )}
+
+        {props.hint2 ? (
+          <>
+            <Text>Hint 2: {props.hint2}</Text>
+            <Spacer multiply={0.5} />
+          </>
+        ) : (
+          <>
+            <Text>
+              Hint nummer 2 kommer klokken{" "}
+              {format(new Date(props.hint2releaseTime), "hh:mm")}
+            </Text>
+            <Spacer multiply={0.5} />
+          </>
+        )}
+        {props.hint3 ? (
+          <>
+            <Text>Hint 3: {props.hint3}</Text>
+            <Spacer multiply={0.5} />
+          </>
+        ) : (
+          <>
+            <Text>
+              Siste hint kommer klokken{" "}
+              {format(new Date(props.hint3releaseTime), "hh:mm")}
+            </Text>
+            <Spacer multiply={0.5} />
+          </>
+        )}
         {solved ? (
           <>
             {answerFeedback ? <Text>answerFeedback</Text> : null}
@@ -71,22 +117,26 @@ export const Today: React.FC<DayWithAdmin> = (props) => {
           <>
             <Heading size="md">Svar</Heading>
             <Spacer />
-            <Box display="flex">
-              <Input
-                placeholder="Legg inn ditt svar her"
-                name="svar"
-                value={answer}
-                onChange={(e) => setAnswer(e.target.value)}
-                mr="10px"
-              ></Input>
-              <Button disabled={answer === ""} onClick={handleAnswer}>
-                Gjett
-              </Button>
-            </Box>
+            <form onSubmit={handleAnswer}>
+              <Box display="flex">
+                <Input
+                  placeholder="Legg inn ditt svar her"
+                  name="svar"
+                  value={answer}
+                  onChange={(e) => setAnswer(e.target.value)}
+                  mr="10px"
+                ></Input>
+                <Button type="submit" disabled={answer === ""}>
+                  Gjett
+                </Button>
+              </Box>
+            </form>
             <Spacer multiply={0.5} />
-            <Text p="3" borderRadius="5" border={`1px solid ${PrimaryRed}`}>
-              {answerFeedback}
-            </Text>
+            {answerFeedback ? (
+              <Text p="3" borderRadius="5" border={`1px solid ${PrimaryRed}`}>
+                {answerFeedback}
+              </Text>
+            ) : null}
           </>
         )}
       </div>

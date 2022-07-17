@@ -3,7 +3,7 @@ import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 
 import Layout from "../../components/Layout";
-import { format, isBefore, isSameDay } from "date-fns";
+import { addHours, format, isBefore, isSameDay } from "date-fns";
 import Countdown from "react-countdown";
 import Router from "next/router";
 import { DayProps } from "../../components/Day";
@@ -15,11 +15,16 @@ import { Spacer } from "../../components/lib/Spacer";
 import { Today } from "../../components/Today";
 import { Admin } from "../../components/Admin";
 import { OldDay } from "../../components/OldDay";
+import { hint1hours, hint2hours, hint3hours } from "../../components/constants";
+
+function isHintExpired(hintTime: Date): boolean {
+  return isBefore(hintTime, new Date());
+}
 
 export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   const session = await getSession();
 
-  const post = await prisma.day.findUnique({
+  const day = await prisma.day.findUnique({
     where: {
       id: Number(params?.id) || -1,
     },
@@ -32,12 +37,16 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
     },
   });
 
-  const isToday = isSameDay(post.date, new Date());
-  const isDayPassed = isBefore(post.date, new Date());
+  const hint1releaseTime = addHours(day.date, hint1hours);
+  const hint2releaseTime = addHours(day.date, hint2hours);
+  const hint3releaseTime = addHours(day.date, hint3hours);
+
+  const isToday = isSameDay(day.date, new Date());
+  const isDayPassed = isBefore(day.date, new Date());
 
   const postWithFixedDates = {
-    ...post,
-    date: post.date.toISOString(),
+    ...day,
+    date: day.date.toISOString(),
     isToday,
     isDayPassed,
   };
@@ -53,10 +62,16 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   } else {
     return {
       props: {
-        madeBy: post.madeBy,
-        date: post.date.toISOString(),
+        madeBy: day.madeBy,
+        date: day.date.toISOString(),
         isToday,
         isDayPassed,
+        hint1: isHintExpired(hint1releaseTime) ? day.hint1 : null,
+        hint2: isHintExpired(hint2releaseTime) ? day.hint2 : null,
+        hint3: isHintExpired(hint3releaseTime) ? day.hint3 : null,
+        hint1releaseTime: hint1releaseTime.toISOString(),
+        hint2releaseTime: hint2releaseTime.toISOString(),
+        hint3releaseTime: hint3releaseTime.toISOString(),
       },
     };
   }
@@ -71,6 +86,9 @@ async function deletePost(id: number): Promise<void> {
 
 export interface DayWithAdmin extends DayProps {
   solved: boolean;
+  hint1releaseTime?: Date;
+  hint2releaseTime?: Date;
+  hint3releaseTime?: Date;
 }
 
 export const AdminEditLink = () => {
