@@ -2,6 +2,7 @@ import { Box, Button, Heading, Input, Text } from "@chakra-ui/react";
 import { format } from "date-fns";
 import React, { useState } from "react";
 import { AdminEditLink, DayWithAdmin } from "../pages/p/[id]";
+import { calculatePoints } from "../utils/pointscalculator";
 import { PrimaryRed } from "./constants";
 import { Difficulty } from "./Difficulty";
 import Layout from "./Layout";
@@ -48,13 +49,25 @@ export const Today: React.FC<DayWithAdmin> = (props) => {
           {format(new Date(props.date), "d 'dag jul")}
         </Heading>
         <Spacer multiply={0.5} />
-        {props.video ? <YoutubeVideo link={props.video}></YoutubeVideo> : null}
-        {props.file ? (
-          <Audio controls src={props.file}>
-            Your browser does not support the
-            <code>audio</code> element.
-          </Audio>
+        {props.video ? (
+          <>
+            <YoutubeVideo link={props.video}></YoutubeVideo>
+            <Spacer />
+          </>
         ) : null}
+        {/* {props.file ? ( */}
+        <Audio controls src={`/api/song/${props.dayId}`}>
+          Your browser does not support the
+          <code>audio</code> element.
+        </Audio>
+        {/* ) : null} */}
+        <Spacer multiply={0.5} />
+        <Text>
+          Verdi:{" "}
+          {props.points ??
+            calculatePoints(new Date(props.now), new Date(props.date))}{" "}
+          poeng!
+        </Text>
         <Spacer multiply={0.5} />
         <Text>{props.description}</Text>
         <Spacer multiply={0.5} />
@@ -103,7 +116,7 @@ export const Today: React.FC<DayWithAdmin> = (props) => {
         )}
         {solved ? (
           <>
-            {answerFeedback ? <Text>answerFeedback</Text> : null}
+            {answerFeedback ? <Text>{answerFeedback}</Text> : null}
             <Spacer />
             <Heading size="lg">Fasit:</Heading>
             <Spacer />

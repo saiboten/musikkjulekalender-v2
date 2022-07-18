@@ -32,7 +32,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
 
   const answer = await prisma.answer.findFirst({
     where: {
-      dayId: Number(params?.id || -1),
+      dayId: Number(params?.id) || -1,
       userId: session?.id ?? -1,
     },
   });
@@ -44,20 +44,21 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   const isToday = isSameDay(day.date, new Date());
   const isDayPassed = isBefore(day.date, new Date());
 
-  const postWithFixedDates = {
+  const dayWithFixedDates = {
     ...day,
     date: day.date.toISOString(),
     isToday,
     isDayPassed,
+    now: new Date().toISOString(),
   };
 
   if (isDayPassed && !isToday) {
     return {
-      props: postWithFixedDates,
+      props: dayWithFixedDates,
     };
   } else if (isToday && answer) {
     return {
-      props: { ...postWithFixedDates, solved: true },
+      props: { ...dayWithFixedDates, solved: true },
     };
   } else {
     return {
@@ -72,6 +73,10 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
         hint1releaseTime: hint1releaseTime.toISOString(),
         hint2releaseTime: hint2releaseTime.toISOString(),
         hint3releaseTime: hint3releaseTime.toISOString(),
+        now: Date.now(),
+        video: day.video,
+        points: day.points,
+        dayId: day.id,
       },
     };
   }
@@ -86,9 +91,11 @@ async function deletePost(id: number): Promise<void> {
 
 export interface DayWithAdmin extends DayProps {
   solved: boolean;
+  now: Date;
   hint1releaseTime?: Date;
   hint2releaseTime?: Date;
   hint3releaseTime?: Date;
+  dayId: number;
 }
 
 export const AdminEditLink = () => {

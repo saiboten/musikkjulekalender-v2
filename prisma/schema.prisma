@@ -22,9 +22,16 @@ model Day {
   hint2         String?
   hint3         String?
   madeBy        String?
-  file          String?
   solution      Solution[]
   answers       Answer[]
+  file          SongFile?
+}
+
+model SongFile {
+  id    Int    @id @default(autoincrement())
+  dayId Int    @unique
+  file  String
+  day   Day    @relation(fields: [dayId], references: [id])
 }
 
 model Solution {
