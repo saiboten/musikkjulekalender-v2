@@ -38,13 +38,15 @@ export const OldDay: React.FC<DayWithAdmin> = (props) => {
         </Box>
         <Heading>{format(new Date(props.date), "d 'dag jul")}</Heading>
         <Spacer multiply={0.5} />
-        {props.video ? <YoutubeVideo link={props.video}></YoutubeVideo> : null}
-        {props.file ? (
-          <Audio controls src={`/api/song/${format(props.date, "d")}`}>
+        {props.video ? (
+          <YoutubeVideo link={props.video}></YoutubeVideo>
+        ) : (
+          <Audio controls src={`/api/song/${props.id}`}>
             Your browser does not support the
             <code>audio</code> element.
           </Audio>
-        ) : null}
+        )}
+
         <Spacer multiply={0.5} />
         <Box textAlign="left" maxWidth="30rem" m="0 auto">
           <Text>{props.description}</Text>

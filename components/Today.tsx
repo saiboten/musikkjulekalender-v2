@@ -50,17 +50,13 @@ export const Today: React.FC<DayWithAdmin> = (props) => {
         </Heading>
         <Spacer multiply={0.5} />
         {props.video ? (
-          <>
-            <YoutubeVideo link={props.video}></YoutubeVideo>
-            <Spacer />
-          </>
-        ) : null}
-        {/* {props.file ? ( */}
-        <Audio controls src={`/api/song/${props.dayId}`}>
-          Your browser does not support the
-          <code>audio</code> element.
-        </Audio>
-        {/* ) : null} */}
+          <YoutubeVideo link={props.video}></YoutubeVideo>
+        ) : (
+          <Audio controls src={`/api/song/${props.id}`}>
+            Your browser does not support the
+            <code>audio</code> element.
+          </Audio>
+        )}
         <Spacer multiply={0.5} />
         <Text>
           Verdi:{" "}

@@ -97,7 +97,7 @@ model User {
   sessions      Session[]
   role          String?
 
-  Answer Answer[]
+  answer Answer[]
   @@map(name: "users")
 }
 
