@@ -8,12 +8,6 @@ export default async function handle(
   res: NextApiResponse
 ) {
   const dayId = req.query.id;
-  const { solutions, file, ...body } = req.body;
-
-  const storeSolutions = solutions.map((solution) => ({
-    dayId: Number(dayId),
-    solution,
-  }));
 
   const session = await getSession({ req });
 
@@ -27,6 +21,13 @@ export default async function handle(
       res.status(401).send({ message: "Unauthorized" });
     }
   } else if (req.method === "PUT") {
+    const { solutions, file, ...body } = req.body;
+
+    const storeSolutions = solutions.map((solution) => ({
+      dayId: Number(dayId),
+      solution,
+    }));
+
     await prisma.day.update({
       where: { id: Number(dayId) },
       data: {

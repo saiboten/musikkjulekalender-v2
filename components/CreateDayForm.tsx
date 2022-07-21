@@ -15,6 +15,7 @@ import {
   RadioGroup,
   Stack,
   Textarea,
+  Box,
 } from "@chakra-ui/react";
 import styled from "styled-components";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
@@ -37,6 +38,7 @@ const StyledSubmit = styled.input`
 interface CreateDayFormProps extends DayProps {
   onSubmit: (data: FormData) => Promise<void>;
   submitButtonText?: string;
+  deleteAction?: () => Promise<void>;
 }
 
 export type FormData = {
@@ -91,7 +93,17 @@ export const CreateDayForm: React.FC<CreateDayFormProps> = (props) => {
       <div>
         <form onSubmit={handleSubmit(props.onSubmit)}>
           <Spacer />
-          <Heading size="lg">Luke</Heading>
+          <Box display="flex" justifyContent="space-between">
+            <Heading size="lg">Luke</Heading>
+            <Box>
+              {props.deleteAction ? (
+                <Button onClick={props.deleteAction}>
+                  <DeleteIcon />
+                </Button>
+              ) : null}
+            </Box>
+          </Box>
+
           <Spacer />
 
           <FormControl>

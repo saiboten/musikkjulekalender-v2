@@ -14,9 +14,26 @@ import { HorisontalDraggable } from "../components/lib/HorisontalDraggable";
 import { TopScores } from "../components/TopScores";
 import { UserStats } from "../components/UserStats";
 import { isBefore } from "date-fns";
+import { BestDaily } from "../components/BestDaily";
+import { Spacer } from "../components/lib/Spacer";
+
+const TopGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  gap: 1rem;
+`;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const session = await getSession(context);
+
+  const now = new Date();
+  now.setUTCHours(-2, 0, 0, 0);
+
+  const todayDay = await prisma.day.findFirst({
+    where: {
+      date: now,
+    },
+  });
 
   const days = await prisma.day.findMany({
     orderBy: {
@@ -29,6 +46,25 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         },
       },
     },
+  });
+
+  const todayAnswers = (
+    await prisma.answer.findMany({
+      include: {
+        user: true,
+      },
+      where: {
+        points: {
+          gt: 0,
+        },
+        dayId: todayDay.id,
+      },
+    })
+  ).map((e) => {
+    return {
+      points: e.points,
+      user: e.user.email,
+    };
   });
 
   const userScores = days
@@ -75,7 +111,13 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     date: el.date.toString(),
   }));
   return {
-    props: { days: daysWithFixedDates, points, scores, userScores },
+    props: {
+      days: daysWithFixedDates,
+      points,
+      scores,
+      userScores,
+      todayAnswers,
+    },
   };
 };
 
@@ -83,9 +125,10 @@ type Props = {
   days: DayProps[];
   points: number;
   scores?: { name: string; score: number }[];
+  todayAnswers: { points: number; user: string }[];
   userScores: {
-    date: string;
-    points: number;
+    day: string;
+    score: number;
   }[];
 };
 
@@ -137,8 +180,12 @@ const Blog: React.FC<Props> = (props) => {
           </HorisontalDraggable>
         </StyledHeader>
         <main>
-          <UserStats userScores={props.userScores ?? []} />
-          <TopScores scores={props.scores ?? []} />
+          <TopGrid>
+            <BestDaily todayAnswers={props.todayAnswers} />
+            <UserStats userScores={props.userScores ?? []} />
+            <TopScores scores={props.scores ?? []} />
+          </TopGrid>
+          <Spacer />
           <Grid>
             {props.days.map((day) => (
               <GridItem key={day.id}>
