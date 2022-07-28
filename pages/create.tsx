@@ -3,6 +3,7 @@ import Router from "next/router";
 import { useSession } from "next-auth/react";
 import { CreateDayForm } from "../components/CreateDayForm";
 import { FormData } from "../components/CreateDayForm";
+import { getToday } from "../utils/dates";
 
 const Draft: React.FC = () => {
   const onSubmit = async (data: FormData) => {
@@ -29,13 +30,12 @@ const Draft: React.FC = () => {
     return null;
   }
 
-  const standardDate = new Date();
-  standardDate.setUTCHours(-2, 0, 0, 0);
+  const standardDate = getToday();
 
   return (
     <CreateDayForm
       artist=""
-      date={standardDate}
+      date={standardDate.toISOString()}
       id={1}
       isDayPassed={false}
       isToday={false}

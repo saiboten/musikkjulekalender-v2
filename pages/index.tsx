@@ -119,7 +119,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   const daysWithFixedDates = days.map((el) => ({
     id: el.id,
-    date: el.date.toString(),
+    date: el.date.toISOString(),
   }));
   return {
     props: {

@@ -1,6 +1,6 @@
 import React from "react";
 import Router from "next/router";
-import { format, isEqual, isSameDay } from "date-fns";
+import { format, isEqual, isSameDay, parseISO } from "date-fns";
 import styled from "styled-components";
 import { PrimaryRed } from "./constants";
 import { getToday } from "../utils/dates";
@@ -11,7 +11,7 @@ export type DayProps = {
   points?: number;
   description?: string;
   video?: string;
-  date: Date;
+  date: string;
   artist: string;
   song: string;
   solution: { solution: string; id: string; dayId: string }[];
@@ -40,7 +40,7 @@ const Button = styled.button<{ today: boolean }>`
 const Post: React.FC<{ day: DayProps; today: Date }> = ({ day, today }) => {
   return (
     <Button
-      today={isEqual(day.date, today)}
+      today={isEqual(parseISO(day.date), today)}
       onClick={() => Router.push("/p/[id]", `/p/${day.id}`)}
     >
       {format(new Date(day.date), "d")}
