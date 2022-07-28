@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import Image from "next/image";
-import { Heading } from "@chakra-ui/react";
+import { Box, Heading } from "@chakra-ui/react";
 import { Spacer } from "./lib/Spacer";
 
 const Wrapper = styled.div`
@@ -21,9 +21,26 @@ const StyledContent = styled.div`
 export function Profile({ name, image, children }) {
   return (
     <Wrapper>
-      <Image src={image} alt={name} />
+      <Box position="relative" display="inline-block">
+        <Heading
+          size="lg"
+          mb="2"
+          position="absolute"
+          right={{ base: "0px", lg: "-15px" }}
+          bottom={{ base: "0px", lg: "-15px" }}
+          zIndex="1"
+          backgroundColor="#8e1515"
+          padding="5px"
+          color="#fff"
+          borderRadius="5px"
+          opacity="0.9"
+        >
+          {name}
+        </Heading>
+
+        <Image src={image} alt={name} style={{ borderRadius: "5px" }} />
+      </Box>
       <Spacer multiply={0.5} />
-      <Heading size="md">{name}</Heading>
       <Spacer multiply={0.5} />
       <StyledContent>{children}</StyledContent>
     </Wrapper>

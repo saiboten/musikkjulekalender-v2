@@ -6,13 +6,15 @@ import tobias from "../img/thumbnail/tobias.png";
 import matt from "../img/thumbnail/matt.png";
 import kim from "../img/thumbnail/kim.png";
 import bjarte from "../img/thumbnail/bjarte.png";
+import skoyerfanden from "../img/thumbnail/skoyerfanden.png";
 
 const thumbnailMap = {
   Stein: stein,
   Tobias: tobias,
   Matt: matt,
   Kim: kim,
-  Bim: bjarte,
+  Bjarte: bjarte,
+  Skoyerfanden: skoyerfanden,
 };
 
 export const Thumbnail = ({ image }: { image: string }) => {

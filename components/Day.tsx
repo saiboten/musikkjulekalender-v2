@@ -20,7 +20,7 @@ export type DayProps = {
   file?: string;
   hint1?: string;
   hint2?: string;
-  hint3: string;
+  hint3?: string;
 };
 
 const Button = styled.button`

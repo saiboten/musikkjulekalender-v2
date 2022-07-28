@@ -41,7 +41,7 @@ const Header: React.FC = () => {
         <NextLink href="/create" passHref>
           <Link mr="2">Opprett dag</Link>
         </NextLink>
-        <Link onClick={() => signOut()}>Logg ut</Link>
+        <Link onClick={() => signOut({ callbackUrl: "/" })}>Logg ut</Link>
       </>
     );
   }
