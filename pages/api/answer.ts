@@ -1,7 +1,6 @@
 import prisma from "../../lib/prisma";
 import { getSession } from "next-auth/react";
 import { calculatePoints } from "../../utils/pointscalculator";
-import { getToday } from "../../utils/dates";
 
 export default async function handler(req, res) {
   const { guess, dayId } = req.query;

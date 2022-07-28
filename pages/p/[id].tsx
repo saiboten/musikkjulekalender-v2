@@ -128,15 +128,13 @@ const Post: React.FC<DayWithAdmin> = (props) => {
     return <div>Authenticating ...</div>;
   }
 
-  return <Today {...props} />;
+  if (props.isToday) {
+    return <Today {...props} />;
+  } else if (props.isDayPassed) {
+    return <OldDay {...props} />;
+  }
 
-  // if (props.isToday) {
-  //   return <Today {...props} />;
-  // } else if (props.isDayPassed) {
-  //   return <OldDay {...props} />;
-  // }
-
-  // return <FutureDay {...props} />;
+  return <FutureDay {...props} />;
 };
 
 export default Post;

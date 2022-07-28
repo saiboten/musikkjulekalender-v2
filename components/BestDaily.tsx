@@ -22,7 +22,7 @@ export const BestDaily = ({ todayAnswers }: Props) => {
           })}
         </List>
       ) : (
-        <Text>Ingen oppgave i dag</Text>
+        <Text>-</Text>
       )}
     </FrontPageBox>
   );
