@@ -94,9 +94,9 @@ const Header: React.FC = () => {
                 </MenuItem>
               </NextLink>
             </Admin>
-            <NextLink href="/nick" passHref>
+            <NextLink href="/settings" passHref>
               <MenuItem color="black" mr="2">
-                Endre kallenavn
+                Innstillinger
               </MenuItem>
             </NextLink>
             <NextLink href="/about" passHref>

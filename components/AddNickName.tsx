@@ -1,11 +1,9 @@
 import React, { useState } from "react";
-import styled from "styled-components";
 import {
   Alert,
   AlertDescription,
   AlertIcon,
   AlertTitle,
-  Box,
   Button,
   Flex,
   FormControl,
@@ -15,40 +13,13 @@ import {
   Text,
   useToast,
 } from "@chakra-ui/react";
-import Layout from "../components/Layout";
 import { Spacer } from "../components/lib/Spacer";
-import { unstable_getServerSession } from "next-auth";
-import { authOptions } from "./api/auth/[...nextauth]";
-import { GetServerSideProps } from "next";
-import prisma from "../lib/prisma";
 
 interface Props {
   nickname?: string;
 }
 
-export const getServerSideProps: GetServerSideProps<Props> = async (
-  context
-) => {
-  const session = await unstable_getServerSession(
-    context.req,
-    context.res,
-    authOptions
-  );
-
-  const user = await prisma.user.findUnique({
-    where: {
-      id: session.id,
-    },
-  });
-
-  return {
-    props: {
-      nickname: user.nickname,
-    },
-  };
-};
-
-function AddNickName({ nickname: existingNick }: Props) {
+export function AddNickName({ nickname: existingNick }: Props) {
   const [nickName, setNickName] = useState(existingNick ?? "");
   const [error, setError] = useState("");
 
@@ -81,8 +52,8 @@ function AddNickName({ nickname: existingNick }: Props) {
   }
 
   return (
-    <Layout whiteBg customSize={30}>
-      <Heading size="lg">Velg brukernavn</Heading>
+    <>
+      <Heading size="md">Velg brukernavn</Heading>
       <Spacer />
       {!existingNick ? <Text>Du ikke valgt kallenavn enda.</Text> : null}
       <Spacer />
@@ -114,8 +85,6 @@ function AddNickName({ nickname: existingNick }: Props) {
           <AlertDescription>{error}</AlertDescription>
         </Alert>
       ) : null}
-    </Layout>
+    </>
   );
 }
-
-export default AddNickName;
