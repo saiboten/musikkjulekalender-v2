@@ -17,6 +17,9 @@ export default async function handle(
     video,
     difficulty,
     file,
+    hint1,
+    hint2,
+    hint3,
   } = req.body;
 
   const session = await getSession({ req });
@@ -29,6 +32,9 @@ export default async function handle(
         madeBy,
         video,
         song,
+        hint1,
+        hint2,
+        hint3,
         difficulty: parseInt(difficulty),
         solution: {
           create: solutions.map((el) => ({ solution: el })),

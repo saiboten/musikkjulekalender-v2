@@ -1,4 +1,4 @@
-import { Heading, List, ListItem } from "@chakra-ui/react";
+import { Heading, List, ListItem, Text } from "@chakra-ui/react";
 import { FrontPageBox } from "./FrontPageBox";
 import { Spacer } from "./lib/Spacer";
 
@@ -11,15 +11,19 @@ export const BestDaily = ({ todayAnswers }: Props) => {
     <FrontPageBox>
       <Heading size="md">Dagens beste</Heading>
       <Spacer />
-      <List>
-        {todayAnswers.map((el) => {
-          return (
-            <ListItem key={el.user}>
-              {el.user}: {el.points}
-            </ListItem>
-          );
-        })}
-      </List>
+      {todayAnswers.length > 0 ? (
+        <List>
+          {todayAnswers.map((el) => {
+            return (
+              <ListItem key={el.user}>
+                {el.user}: {el.points}
+              </ListItem>
+            );
+          })}
+        </List>
+      ) : (
+        <Text>Ingen oppgave i dag</Text>
+      )}
     </FrontPageBox>
   );
 };

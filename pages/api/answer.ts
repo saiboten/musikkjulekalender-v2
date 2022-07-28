@@ -1,14 +1,14 @@
 import prisma from "../../lib/prisma";
 import { getSession } from "next-auth/react";
 import { calculatePoints } from "../../utils/pointscalculator";
+import { getToday } from "../../utils/dates";
 
 export default async function handler(req, res) {
   const { guess } = req.query;
 
   const session = await getSession({ req });
 
-  const now = new Date();
-  now.setUTCHours(-2, 0, 0, 0);
+  const now = getToday();
 
   const day = await prisma.day.findFirst({
     where: {

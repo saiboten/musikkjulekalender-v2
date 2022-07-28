@@ -38,7 +38,7 @@ export const Today: React.FC<DayWithAdmin> = (props) => {
   }
 
   return (
-    <Layout>
+    <Layout whiteBg>
       <AdminEditLink />
       <div>
         <Box display="flex" justifyContent="space-between" alignItems="center">

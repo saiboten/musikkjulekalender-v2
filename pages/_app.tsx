@@ -1,10 +1,13 @@
 import { SessionProvider } from "next-auth/react";
 import { AppProps } from "next/app";
 import styled, { createGlobalStyle } from "styled-components";
-import { ChakraProvider } from "@chakra-ui/react";
+import { Box, ChakraProvider } from "@chakra-ui/react";
 
 import Header from "../components/Header";
 import { extendTheme } from "@chakra-ui/react";
+import Image from "next/image";
+import bg from "./bg.jpg";
+import React from "react";
 
 const theme = extendTheme({
   fonts: {
@@ -39,16 +42,43 @@ const Wrapper = styled.div`
   max-width: 120rem;
 `;
 
+const BgWrap = styled.div`
+  position: fixed;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  z-index: -1;
+`;
+
+const BgImage = ({ children }: { children: React.ReactNode }) => {
+  return (
+    <div>
+      <BgWrap>
+        <Image
+          alt="Mountains"
+          src={bg}
+          layout="fill"
+          objectFit="cover"
+          quality={100}
+        />
+      </BgWrap>
+      {children}
+    </div>
+  );
+};
+
 const App = ({ Component, pageProps }: AppProps) => {
   return (
     <>
       <SessionProvider session={pageProps.session}>
         <ChakraProvider theme={theme}>
-          <Header />
-          <Wrapper>
-            <GlobalStyle />
-            <Component {...pageProps} />
-          </Wrapper>
+          <BgImage>
+            <Header />
+            <Wrapper>
+              <GlobalStyle />
+              <Component {...pageProps} />
+            </Wrapper>
+          </BgImage>
         </ChakraProvider>
       </SessionProvider>
     </>

@@ -29,7 +29,7 @@ export const OldDay: React.FC<DayWithAdmin> = (props) => {
   const [showSolution, setShowSolution] = useState(false);
 
   return (
-    <Layout>
+    <Layout whiteBg>
       <AdminEditLink />
       <Box textAlign="center">
         <Box display="flex" justifyContent="space-between" alignItems="center">

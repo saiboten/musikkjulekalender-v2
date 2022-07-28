@@ -3,7 +3,21 @@ import styled from "styled-components";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
 import { signOut, useSession } from "next-auth/react";
-import { Box, Link, Text } from "@chakra-ui/react";
+import {
+  Box,
+  Link,
+  Text,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+  MenuItemOption,
+  MenuGroup,
+  MenuOptionGroup,
+  MenuDivider,
+  Button,
+} from "@chakra-ui/react";
+import { HamburgerIcon } from "@chakra-ui/icons";
 import { Admin } from "./Admin";
 import { PrimaryRed } from "./constants";
 
@@ -16,6 +30,7 @@ const Nav = styled.nav`
   gap: 1.5rem;
   color: #fff;
   align-items: center;
+  opacity: 0.9;
 
   @media screen and (max-width: 45rem) {
     flex-direction: column;
@@ -41,39 +56,69 @@ const Header: React.FC = () => {
 
   if (!session) {
     right = (
-      <NextLink href="/api/auth/signin" passHref>
-        <Link>Logg inn</Link>
-      </NextLink>
+      <Menu>
+        <MenuButton
+          as={Button}
+          backgroundColor={PrimaryRed}
+          _hover={{ backgroundColor: PrimaryRed }}
+          _active={{ backgroundColor: PrimaryRed }}
+        >
+          <HamburgerIcon />
+        </MenuButton>
+        <MenuList>
+          <MenuItem color="black">
+            <NextLink href="/api/auth/signin" passHref>
+              <Link>Logg inn</Link>
+            </NextLink>
+          </MenuItem>
+        </MenuList>
+      </Menu>
     );
   }
 
   if (session) {
     right = (
       <>
-        <Admin>
-          <NextLink href="/create" passHref>
-            <Link mr="2">Opprett dag</Link>
-          </NextLink>
-        </Admin>
-
-        <Link onClick={() => signOut({ callbackUrl: "/" })}>Logg ut</Link>
+        <Menu>
+          <MenuButton
+            as={Button}
+            backgroundColor={PrimaryRed}
+            _hover={{ backgroundColor: PrimaryRed }}
+            _active={{ backgroundColor: PrimaryRed }}
+          >
+            <HamburgerIcon />
+          </MenuButton>
+          <MenuList>
+            <Admin>
+              <MenuItem color="black">
+                <NextLink href="/create" passHref>
+                  <Link mr="2">Opprett dag</Link>
+                </NextLink>
+              </MenuItem>
+            </Admin>
+            <MenuItem color="black">
+              <Link onClick={() => signOut({ callbackUrl: "/" })}>Logg ut</Link>
+            </MenuItem>
+          </MenuList>
+        </Menu>
       </>
     );
   }
 
   return (
     <Nav>
-      <div>
+      <Box>
         <NextLink href="/" passHref>
           <Link display="inline" mr="5" fontSize="24px">
             Musikkjulekalender!
           </Link>
         </NextLink>
-      </div>
+      </Box>
       <Box
         display="flex"
         flexDirection={{ base: "column", md: "row" }}
         justifyContent="flex-end"
+        alignItems="center"
       >
         {session?.user ? (
           <>
@@ -81,6 +126,7 @@ const Header: React.FC = () => {
             <Text mr="2">({session.user.email})</Text>
           </>
         ) : null}
+
         {right}
       </Box>
     </Nav>

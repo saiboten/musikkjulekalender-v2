@@ -1,7 +1,6 @@
 import React from "react";
 import type { GetServerSideProps } from "next";
 import Image from "next/image";
-import nisse from "../img/julenissetransparent.png";
 import Layout from "../components/Layout";
 import styled from "styled-components";
 import Day, { DayProps } from "../components/Day";
@@ -16,6 +15,9 @@ import { UserStats } from "../components/UserStats";
 import { isBefore } from "date-fns";
 import { BestDaily } from "../components/BestDaily";
 import { Spacer } from "../components/lib/Spacer";
+import { getToday } from "../utils/dates";
+import { LoggedOut } from "../components/LoggedOut";
+import { MainHeading } from "../components/MainHeading";
 
 const TopGrid = styled.div`
   display: grid;
@@ -26,12 +28,11 @@ const TopGrid = styled.div`
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const session = await getSession(context);
 
-  const now = new Date();
-  now.setUTCHours(-2, 0, 0, 0);
+  const today = getToday();
 
   const todayDay = await prisma.day.findFirst({
     where: {
-      date: now,
+      date: today,
     },
   });
 
@@ -57,7 +58,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         points: {
           gt: 0,
         },
-        dayId: todayDay.id,
+        dayId: todayDay?.id ?? -1,
       },
     })
   ).map((e) => {
@@ -117,6 +118,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       scores,
       userScores,
       todayAnswers,
+      today: today.toISOString(),
     },
   };
 };
@@ -130,55 +132,20 @@ type Props = {
     day: string;
     score: number;
   }[];
+  today: string;
 };
-
-const StyledHeader = styled.div`
-  text-align: left;
-  padding-top: 1rem;
-  display: flex;
-  flex-direction: row;
-
-  @media screen and (max-width: 45rem) {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.5rem;
-    flex-direction: column;
-  }
-`;
 
 const Blog: React.FC<Props> = (props) => {
   const session = useSession();
 
   if (!session.data?.user) {
-    return (
-      <Layout>
-        <div>Du må logge inn før du kan gjøre gøye ting</div>
-      </Layout>
-    );
+    return <LoggedOut />;
   }
 
   return (
     <Layout>
       <div>
-        <StyledHeader>
-          <Heading>Musikkjulekalender 2022!</Heading>
-          <HorisontalDraggable>
-            <Box
-              textAlign="center"
-              transition="transform .2s"
-              _hover={{ transform: "scale(1.1)" }}
-            >
-              <Image
-                draggable={false}
-                src={nisse}
-                alt="Rockete julsenisse med gitar"
-                width={300}
-                height={300}
-              />
-            </Box>
-          </HorisontalDraggable>
-        </StyledHeader>
+        <MainHeading />
         <main>
           <TopGrid>
             <BestDaily todayAnswers={props.todayAnswers} />
@@ -189,7 +156,7 @@ const Blog: React.FC<Props> = (props) => {
           <Grid>
             {props.days.map((day) => (
               <GridItem key={day.id}>
-                <Day day={day} />
+                <Day day={day} today={new Date(props.today)} />
               </GridItem>
             ))}
           </Grid>

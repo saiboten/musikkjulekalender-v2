@@ -9,6 +9,7 @@ export const Footer = () => {
       backgroundColor="white"
       marginTop="20px"
       padding="5px 10px"
+      borderRadius=".5rem"
     >
       Av Tobias Rusås Olsen -{" "}
       <NextLink href="/about" passHref>

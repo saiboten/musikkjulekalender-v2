@@ -324,13 +324,12 @@ export const CreateDayForm: React.FC<CreateDayFormProps> = (props) => {
 
           <Spacer />
 
-          <StyledSubmit
+          <Button
             disabled={!isDirty || !isValid} // here
             type="submit"
-            value={
-              props.submitButtonText ? props.submitButtonText : "Opprett rute"
-            }
-          />
+          >
+            {props.submitButtonText ? props.submitButtonText : "Opprett rute"}
+          </Button>
           <StyledBack href="#" onClick={() => Router.push("/")}>
             eller avbryt
           </StyledBack>

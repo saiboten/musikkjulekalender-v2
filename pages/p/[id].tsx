@@ -9,7 +9,7 @@ import Router from "next/router";
 import { DayProps } from "../../components/Day";
 import prisma from "../../lib/prisma";
 import { getSession, useSession } from "next-auth/react";
-import { Heading, Link, Text } from "@chakra-ui/react";
+import { Box, Heading, Link, Text } from "@chakra-ui/react";
 import NextLink from "next/link";
 import { Spacer } from "../../components/lib/Spacer";
 import { Today } from "../../components/Today";
@@ -129,15 +129,15 @@ const Post: React.FC<DayWithAdmin> = (props) => {
   }
 
   return (
-    <Layout>
+    <Layout whiteBg>
       <AdminEditLink />
-      <Text textAlign="center">
+      <Box textAlign="center">
         <Heading>{format(new Date(props.date), "d 'dag jul")}</Heading>
         <Spacer />
         <Text>
           Tid før luken åpner: <Countdown date={new Date(props.date)} />
         </Text>
-      </Text>
+      </Box>
     </Layout>
   );
 };
