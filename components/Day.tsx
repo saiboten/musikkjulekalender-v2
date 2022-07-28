@@ -1,6 +1,6 @@
 import React from "react";
 import Router from "next/router";
-import { format, isSameDay } from "date-fns";
+import { format, isEqual, isSameDay } from "date-fns";
 import styled from "styled-components";
 import { PrimaryRed } from "./constants";
 import { getToday } from "../utils/dates";
@@ -38,10 +38,9 @@ const Button = styled.button<{ today: boolean }>`
 `;
 
 const Post: React.FC<{ day: DayProps; today: Date }> = ({ day, today }) => {
-  console.log("this will give answer", day.date, today);
   return (
     <Button
-      today={day.date == today}
+      today={isEqual(day.date, today)}
       onClick={() => Router.push("/p/[id]", `/p/${day.id}`)}
     >
       {format(new Date(day.date), "d")}
