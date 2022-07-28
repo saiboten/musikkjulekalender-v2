@@ -29,6 +29,22 @@ export const Profiles = ({
 
   let profiles: Profile[] = [
     {
+      key: "Tobias",
+      profile: (
+        <Profile image={tobias} name="Tobias Rusås Olsen">
+          <P>
+            Tobias er skaperen av musikkjulekalender.no. Siden 2011 har han
+            stått bak all koding og design av nettsiden, lagt ut oppgaver,
+            skrevet oppgavetekster og adminstrert facebooksiden.
+          </P>
+          <P>
+            Tobias spiller trommer i bandet{" "}
+            <a href="https://vaerbitt.bandcamp.com/">Værbitt</a>.
+          </P>
+        </Profile>
+      ),
+    },
+    {
       key: "Bjarte",
       profile: (
         <Profile image={bjarte} name="Bjarte K. Helland">
@@ -137,22 +153,6 @@ export const Profiles = ({
           <P>
             Når Matt ikke spiller gitar, brygger han deilig øl, klapper hunden
             sin Luna, eller gjør helt andre ting.
-          </P>
-        </Profile>
-      ),
-    },
-    {
-      key: "Tobias",
-      profile: (
-        <Profile image={tobias} name="Tobias Rusås Olsen">
-          <P>
-            Tobias er selve mesterhjernen bak musikkjulekalender.no. Siden 2011
-            har han stått bak all koding og design av nettsiden, lagt ut
-            oppgaver, skrevet oppgavetekster og adminstrert facebooksiden.
-          </P>
-          <P>
-            Tobias spiller trommer i bandet{" "}
-            <a href="https://vaerbitt.bandcamp.com/">Værbitt</a>.
           </P>
         </Profile>
       ),

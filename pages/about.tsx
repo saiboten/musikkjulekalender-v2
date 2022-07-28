@@ -49,13 +49,41 @@ const About: React.FC = () => {
         Christmas tree snow vector created by vectorpocket - www.freepik.com
       </a>
       <Spacer />
-      <Heading size="md">Personvern</Heading>
+      <Heading size="md" mb="2">
+        Personvern
+      </Heading>
+      <Text>
+        Vi tar personvern på alvor, og samler kun inn følgende data: epost og
+        navn. Dette brukes kun for å opprette bruker, og for å kunne tilby et
+        standard brukernavn.
+      </Text>
+      <Heading size="sm" mb="2">
+        Sletting av data
+      </Heading>
+      <Text>
+        Valget om sletting av ens egne data er tilgjengelig etter pålogging
+        under innstillinger.
+      </Text>
       <Spacer />
-      <Text>Kommer..</Text>
-      <Spacer />
-      <Heading size="md">Terms of Service</Heading>
-      <Spacer />
-      <Text>Kommer..</Text>
+      <Heading size="md" mb="2">
+        Terms of Service
+      </Heading>
+      <Heading size="sm" mb="2">
+        Vilkår for bruk
+      </Heading>
+      <Text>
+        Du kan bruke denne tjenesten som du selv ønsker, men ikke gjør noe
+        ugagn. Vet uvettig bruk kan vi stenge ned kontoer og/eller hele
+        tjenesten.
+      </Text>
+      <Heading size="sm" mb="2">
+        Privacy Policy
+      </Heading>
+      <Text>
+        Vi anbefaler å lese Privacy Policy/Personvern over for detaljer om
+        personvern og hva vi gjør med dine privata data. PS: Svaret er ingenting
+        bortsett fra å få siden til å funke.
+      </Text>
     </Layout>
   );
 };
