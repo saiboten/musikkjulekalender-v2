@@ -51,8 +51,6 @@ const Post: React.FC<DayProps> = (props) => {
     try {
       const body = { ...rest, solutions, date };
 
-      console.log(body);
-
       await fetch(`/api/day/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },

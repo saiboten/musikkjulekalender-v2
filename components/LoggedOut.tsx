@@ -8,7 +8,7 @@ import { MainHeading } from "./MainHeading";
 export const LoggedOut = () => {
   return (
     <Box>
-      <Box margin="0 auto" maxWidth="50rem">
+      <Box margin="0 auto" maxWidth="65rem">
         <MainHeading />
       </Box>
       <Layout whiteBg>

@@ -8,7 +8,7 @@ type Props = {
 };
 
 const Wrapper = styled.div<{ whiteBg: boolean; customSize?: number }>`
-  max-width: ${({ customSize }) => (customSize ? customSize : "50")}rem;
+  max-width: ${({ customSize }) => (customSize ? customSize : "65")}rem;
   margin: 1rem auto;
   padding: 1rem;
   background-color: ${(props) => (props.whiteBg ? "#fff" : "inherit")};

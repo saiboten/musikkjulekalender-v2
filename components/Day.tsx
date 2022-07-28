@@ -38,7 +38,6 @@ const Button = styled.button<{ today: boolean }>`
 `;
 
 const Post: React.FC<{ day: DayProps; today: Date }> = ({ day, today }) => {
-  console.log(parseISO(day.date), today);
   return (
     <Button
       today={isEqual(parseISO(day.date), today)}
