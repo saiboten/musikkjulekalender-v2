@@ -27,6 +27,18 @@ const TopGrid = styled.div`
   gap: 1rem;
 `;
 
+type Props = {
+  days: DayProps[];
+  points: number;
+  scores?: { name: string; score: number }[];
+  todayAnswers: { points: number; user: string }[];
+  userScores: {
+    day: string;
+    score: number;
+  }[];
+  today: string;
+};
+
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const session = await unstable_getServerSession(
     context.req,
@@ -103,7 +115,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         score: points,
       };
     })
-    .sort((el) => el.score);
+    .sort((el1, el2) => (el1.score > el2.score ? -1 : 1));
 
   const answers = await prisma.answer.findMany({
     where: {
@@ -130,18 +142,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       today: today.toISOString(),
     },
   };
-};
-
-type Props = {
-  days: DayProps[];
-  points: number;
-  scores?: { name: string; score: number }[];
-  todayAnswers: { points: number; user: string }[];
-  userScores: {
-    day: string;
-    score: number;
-  }[];
-  today: string;
 };
 
 const Blog: React.FC<Props> = (props) => {
