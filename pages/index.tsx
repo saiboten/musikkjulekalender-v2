@@ -1,6 +1,6 @@
 import React from "react";
 import type { GetServerSideProps } from "next";
-import Image from "next/image";
+import Head from "next/head";
 import Layout from "../components/Layout";
 import styled from "styled-components";
 import Day, { DayProps } from "../components/Day";
@@ -8,9 +8,7 @@ import prisma from "../lib/prisma";
 import { Grid, GridItem } from "../components/Grid";
 import { useSession } from "next-auth/react";
 import { unstable_getServerSession } from "next-auth/next";
-import { Box, Heading } from "@chakra-ui/react";
 import { Footer } from "../components/Footer";
-import { HorisontalDraggable } from "../components/lib/HorisontalDraggable";
 import { TopScores } from "../components/TopScores";
 import { UserStats } from "../components/UserStats";
 import { isBefore } from "date-fns";

@@ -1,7 +1,7 @@
 import { SessionProvider } from "next-auth/react";
 import { AppProps } from "next/app";
 import styled, { createGlobalStyle } from "styled-components";
-import { Box, ChakraProvider } from "@chakra-ui/react";
+import { ChakraProvider } from "@chakra-ui/react";
 
 import Header from "../components/Header";
 import { extendTheme } from "@chakra-ui/react";
@@ -9,6 +9,7 @@ import Image from "next/image";
 import bg from "./bg.jpg";
 import React from "react";
 import { Footer } from "../components/Footer";
+import Head from "next/head";
 
 const theme = extendTheme({
   fonts: {
@@ -72,6 +73,9 @@ const BgImage = ({ children }: { children: React.ReactNode }) => {
 const App = ({ Component, pageProps }: AppProps) => {
   return (
     <>
+      <Head>
+        <title>Musikkjulekalender</title>
+      </Head>
       <SessionProvider session={pageProps.session}>
         <ChakraProvider theme={theme}>
           <BgImage>

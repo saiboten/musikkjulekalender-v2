@@ -4,14 +4,16 @@ import { useSession } from "next-auth/react";
 import { CreateDayForm } from "../components/CreateDayForm";
 import { FormData } from "../components/CreateDayForm";
 import { getToday } from "../utils/dates";
+import { openingHour } from "../components/constants";
 
 const Draft: React.FC = () => {
   const onSubmit = async (data: FormData) => {
     const solutions = data.solutions.map((el) => el.value);
-    const { solutions: do_not_use, ...rest } = data;
+    const { solutions: do_not_use, date, ...rest } = data;
+    date.setHours(openingHour);
 
     try {
-      const body = { ...rest, solutions };
+      const body = { ...rest, solutions, date };
 
       await fetch(`/api/day`, {
         method: "POST",

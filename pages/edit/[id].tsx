@@ -7,6 +7,7 @@ import { useSession } from "next-auth/react";
 import styled from "styled-components";
 import { FormData } from "../../components/CreateDayForm";
 import { CreateDayForm } from "../../components/CreateDayForm";
+import { openingHour } from "../../components/constants";
 
 export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   const post = await prisma.day.findUnique({
@@ -44,10 +45,13 @@ const Post: React.FC<DayProps> = (props) => {
 
   const onSubmit = async (data: FormData) => {
     const solutions = data.solutions.map((el) => el.value);
-    const { solutions: do_not_use, ...rest } = data;
+    const { solutions: do_not_use, date, ...rest } = data;
+    date.setHours(openingHour);
 
     try {
-      const body = { ...rest, solutions };
+      const body = { ...rest, solutions, date };
+
+      console.log(body);
 
       await fetch(`/api/day/${id}`, {
         method: "PUT",
