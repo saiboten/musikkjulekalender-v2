@@ -18,6 +18,9 @@ export type DayProps = {
   isDayPassed: boolean;
   solutionVideo?: string;
   file?: string;
+  hint1?: string;
+  hint2?: string;
+  hint3: string;
 };
 
 const Button = styled.button`

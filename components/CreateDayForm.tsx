@@ -50,10 +50,12 @@ export type FormData = {
   file: string;
   solutionVideo: string;
   difficulty: string;
+  hint1: string;
+  hint2: string;
+  hint3: string;
 };
 
 export const CreateDayForm: React.FC<CreateDayFormProps> = (props) => {
-  console.log(props);
   const [solution, setSolution] = useState("");
 
   const {
@@ -73,6 +75,9 @@ export const CreateDayForm: React.FC<CreateDayFormProps> = (props) => {
       solutions: props.solution?.map((el) => ({ value: el.solution })),
       file: props.file,
       difficulty: `${props.difficulty}`,
+      hint1: props.hint1,
+      hint2: props.hint2,
+      hint3: props.hint3,
     },
   });
 
@@ -122,7 +127,7 @@ export const CreateDayForm: React.FC<CreateDayFormProps> = (props) => {
             control={control}
             render={({ field }) => (
               <RadioGroup {...field}>
-                <Stack direction="row">
+                <Stack direction={{ base: "column", lg: "row" }}>
                   <Radio value="Stein">Stein</Radio>
                   <Radio value="Tobias">Tobias</Radio>
                   <Radio value="Skoyerfanden">Skøyerfanden</Radio>
@@ -201,12 +206,48 @@ export const CreateDayForm: React.FC<CreateDayFormProps> = (props) => {
 
           <Spacer multiply={0.5} />
 
+          <FormControl>
+            <FormLabel htmlFor="hint1">Hint 1</FormLabel>
+            <Input
+              name="hint1"
+              {...register("hint1")}
+              placeholder="Hint1"
+              type="text"
+            />
+          </FormControl>
+
+          <Spacer multiply={0.5} />
+
+          <FormControl>
+            <FormLabel htmlFor="hint2">Hint 2</FormLabel>
+            <Input
+              name="hint2"
+              {...register("hint2")}
+              placeholder="Hint2"
+              type="text"
+            />
+          </FormControl>
+
+          <Spacer multiply={0.5} />
+
+          <FormControl>
+            <FormLabel htmlFor="hint3">Hint 3</FormLabel>
+            <Input
+              name="hint3"
+              {...register("hint3")}
+              placeholder="Hint3"
+              type="text"
+            />
+          </FormControl>
+
+          <Spacer multiply={0.5} />
+
           <Controller
             name="difficulty"
             control={control}
             render={({ field }) => (
               <RadioGroup {...field}>
-                <Stack direction="row">
+                <Stack direction={{ base: "column", lg: "row" }}>
                   <Radio value="1">Enkel</Radio>
                   <Radio value="2">Medium</Radio>
                   <Radio value="3">Vanskelig</Radio>
