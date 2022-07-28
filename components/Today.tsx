@@ -25,7 +25,7 @@ export const Today: React.FC<DayWithAdmin> = (props) => {
     e.preventDefault();
     setAnswer("");
     const res = await (
-      await fetch(`/api/answer?guess=${answer.trim()}`)
+      await fetch(`/api/answer?guess=${answer.trim()}&dayId=${props.id}`)
     ).json();
     setAnswerFeedback(
       res.success ? "Riktig" : "Det var dessverre feil, prøv igjen!"
@@ -54,7 +54,7 @@ export const Today: React.FC<DayWithAdmin> = (props) => {
         {props.video ? (
           <YoutubeVideo link={props.video}></YoutubeVideo>
         ) : (
-          <Audio controls src={`/api/song/${props.id}`}>
+          <Audio controls preload="none" src={`/api/song/${props.id}`}>
             Your browser does not support the
             <code>audio</code> element.
           </Audio>

@@ -4,17 +4,19 @@ import { calculatePoints } from "../../utils/pointscalculator";
 import { getToday } from "../../utils/dates";
 
 export default async function handler(req, res) {
-  const { guess } = req.query;
+  const { guess, dayId } = req.query;
 
   const session = await getSession({ req });
 
-  const now = getToday();
-
-  const day = await prisma.day.findFirst({
+  const day = await prisma.day.findUnique({
     where: {
-      date: now,
+      id: Number(dayId),
     },
   });
+
+  if (day.date > new Date()) {
+    res.status(401).send({ message: "Dag ikke åpnet" });
+  }
 
   const result = await prisma.solution.findMany({
     where: {

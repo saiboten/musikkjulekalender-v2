@@ -4,16 +4,16 @@ import NextLink from "next/link";
 export const Footer = () => {
   return (
     <Text
+      fontSize="0.8rem"
       position="fixed"
       bottom="0"
       left="0"
       textAlign="center"
       width="100%"
       backgroundColor="white"
-      marginTop="20px"
-      padding="5px 10px"
+      padding="1rem 1rem"
     >
-      Av Tobias Rusås Olsen -{" "}
+      Laget av Tobias Rusås Olsen -{" "}
       <NextLink href="/about" passHref>
         <Link>Om musikkjulekalenderen</Link>
       </NextLink>

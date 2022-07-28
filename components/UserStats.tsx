@@ -17,8 +17,8 @@ export function UserStats({ userScores }: Props) {
       <Heading size="md">Dine resultater</Heading>
       <Spacer />
       <List>
-        {userScores.map((el) => (
-          <ListItem key={el.day}>
+        {userScores.map((el, index) => (
+          <ListItem key={index}>
             {format(new Date(el.day), "d ' desember")}: {el.score} poeng
           </ListItem>
         ))}

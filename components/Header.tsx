@@ -38,7 +38,7 @@ const Header: React.FC = () => {
   let right = null;
 
   if (status === "loading") {
-    right = <p>Validating session ...</p>;
+    right = <p>Laster ...</p>;
   }
 
   if (!session) {
@@ -59,6 +59,11 @@ const Header: React.FC = () => {
         <MenuList>
           <NextLink href="/api/auth/signin" passHref>
             <MenuItem color="black">Logg inn</MenuItem>
+          </NextLink>
+          <NextLink href="/about" passHref>
+            <MenuItem color="black" mr="2">
+              Om kalenderen
+            </MenuItem>
           </NextLink>
         </MenuList>
       </Menu>
@@ -89,6 +94,16 @@ const Header: React.FC = () => {
                 </MenuItem>
               </NextLink>
             </Admin>
+            <NextLink href="/nick" passHref>
+              <MenuItem color="black" mr="2">
+                Endre kallenavn
+              </MenuItem>
+            </NextLink>
+            <NextLink href="/about" passHref>
+              <MenuItem color="black" mr="2">
+                Om kalenderen
+              </MenuItem>
+            </NextLink>
             <MenuItem
               color="black"
               onClick={() => signOut({ callbackUrl: "/" })}
@@ -114,6 +129,7 @@ const Header: React.FC = () => {
             Musikkjulekalender!
           </Link>
         </NextLink>
+
         {/* {session?.user ? (
           <Box>
             <Text>

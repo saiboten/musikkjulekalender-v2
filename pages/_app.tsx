@@ -8,6 +8,7 @@ import { extendTheme } from "@chakra-ui/react";
 import Image from "next/image";
 import bg from "./bg.jpg";
 import React from "react";
+import { Footer } from "../components/Footer";
 
 const theme = extendTheme({
   fonts: {
@@ -40,6 +41,7 @@ const Wrapper = styled.div`
   border-radius: 5px;
   margin: 0px auto;
   max-width: 120rem;
+  margin-bottom: 6rem;
 `;
 
 const BgWrap = styled.div`
@@ -79,6 +81,7 @@ const App = ({ Component, pageProps }: AppProps) => {
               <Component {...pageProps} />
             </Wrapper>
           </BgImage>
+          <Footer />
         </ChakraProvider>
       </SessionProvider>
     </>

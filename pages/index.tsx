@@ -36,8 +36,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   const today = getToday();
 
-  console.log(today);
-
   const todayDay = await prisma.day.findFirst({
     where: {
       date: today,
@@ -72,7 +70,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   ).map((e) => {
     return {
       points: e.points,
-      user: e.user.email,
+      user: e.user.nickname ?? e.user.email?.split("@")[0] ?? "ukjent",
     };
   });
 
@@ -101,7 +99,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       }, 0);
 
       return {
-        name: user.email?.split("@")[0] ?? "ukjent",
+        name: user.nickname ?? user.email?.split("@")[0] ?? "ukjent",
         score: points,
       };
     })
@@ -121,6 +119,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     id: el.id,
     date: el.date.toISOString(),
   }));
+
   return {
     props: {
       days: daysWithFixedDates,

@@ -205,7 +205,7 @@ export const CreateDayForm: React.FC<CreateDayFormProps> = (props) => {
 
           <Spacer multiply={0.5} />
 
-          <audio controls src={watch("file")}>
+          <audio controls preload="none" src={watch("file")}>
             Your browser does not support the
             <code>audio</code> element.
           </audio>

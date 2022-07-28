@@ -41,7 +41,7 @@ export const OldDay: React.FC<DayWithAdmin> = (props) => {
         {props.video ? (
           <YoutubeVideo link={props.video}></YoutubeVideo>
         ) : (
-          <Audio controls src={`/api/song/${props.id}`}>
+          <Audio controls preload="none" src={`/api/song/${props.id}`}>
             Your browser does not support the
             <code>audio</code> element.
           </Audio>

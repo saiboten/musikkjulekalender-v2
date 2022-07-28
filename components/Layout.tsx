@@ -4,10 +4,11 @@ import styled from "styled-components";
 type Props = {
   children: ReactNode;
   whiteBg?: boolean;
+  customSize?: number;
 };
 
-const Wrapper = styled.div<{ whiteBg: boolean }>`
-  max-width: 50rem;
+const Wrapper = styled.div<{ whiteBg: boolean; customSize?: number }>`
+  max-width: ${({ customSize }) => (customSize ? customSize : "50")}rem;
   margin: 1rem auto;
   padding: 1rem;
   background-color: ${(props) => (props.whiteBg ? "#fff" : "inherit")};
@@ -20,7 +21,7 @@ const InnerWrapper = styled.div`
 `;
 
 const Layout: React.FC<Props> = (props) => (
-  <Wrapper whiteBg={props.whiteBg}>
+  <Wrapper whiteBg={props.whiteBg} customSize={props.customSize}>
     <InnerWrapper>{props.children}</InnerWrapper>
   </Wrapper>
 );

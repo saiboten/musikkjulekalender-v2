@@ -18,10 +18,10 @@ export const FutureDay = (props: Props) => {
       <Box textAlign="center">
         <Heading>{format(parseISO(props.date), "d 'dag jul")}</Heading>
         <Spacer />
-        <Text>
+        <Box>
           Tid før luken åpner: <Spacer />
           <Countdown renderer={countdownRenderer} date={parseISO(props.date)} />
-        </Text>
+        </Box>
       </Box>
     </Layout>
   );

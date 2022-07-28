@@ -88,6 +88,7 @@ model Session {
 model User {
   id            Int       @id @default(autoincrement())
   name          String?
+  nickname      String?
   email         String?   @unique
   emailVerified DateTime? @map("email_verified")
   image         String?
