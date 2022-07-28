@@ -25,7 +25,7 @@ export default function SignIn({
         <Spacer />
         {Object.values(providers).map((provider) => (
           <Box key={provider.name}>
-            <Button onClick={() => signIn(provider.id)}>
+            <Button onClick={() => signIn(provider.id, { callbackUrl: "/" })}>
               Logg inn med {provider.name}
             </Button>
           </Box>

@@ -4,6 +4,8 @@ import NextLink from "next/link";
 export const Footer = () => {
   return (
     <Text
+      position="fixed"
+      bottom="0"
       textAlign="center"
       width="100%"
       backgroundColor="white"
