@@ -3,6 +3,7 @@ import styled from "styled-components";
 import Image from "next/image";
 import { Box, Heading } from "@chakra-ui/react";
 import { Spacer } from "./lib/Spacer";
+import { PrimaryRed } from "./constants";
 
 const Wrapper = styled.div`
   background-color: linear-gradient(#e66465, #9198e5);
@@ -29,7 +30,7 @@ export function Profile({ name, image, children }) {
           right={{ base: "0px", lg: "-15px" }}
           bottom={{ base: "0px", lg: "-15px" }}
           zIndex="1"
-          backgroundColor="#8e1515"
+          backgroundColor={PrimaryRed}
           padding="5px"
           color="#fff"
           borderRadius="5px"
