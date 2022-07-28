@@ -37,15 +37,12 @@ const StyledTextArea = styled.textarea`
 type FormData = {
   description: string;
   date: Date;
-  solutionArtist: string;
-  solutionSong: string;
+  song: string;
+  artist: string;
   solutions: { id: string; value: string }[];
+  madeBy: string;
+  video: string;
 };
-
-// difficulty?: number;
-//   points?: number;
-//   image?: string;
-//   solutionVideo?: string;
 
 const Draft: React.FC = () => {
   const [solution, setSolution] = useState("");
@@ -54,11 +51,16 @@ const Draft: React.FC = () => {
     control,
     register,
     handleSubmit,
-    getValues,
+    watch,
     formState: { isDirty, isValid },
   } = useForm<FormData>({
     defaultValues: {
       description: "TODO",
+      artist: "",
+      date: new Date(),
+      madeBy: "",
+      song: "",
+      video: "",
     },
   });
 
@@ -69,10 +71,10 @@ const Draft: React.FC = () => {
 
   const onSubmit = async (data: FormData) => {
     const solutions = data.solutions.map((el) => el.value);
-    const { description, date } = data;
+    const { solutions: do_not_use, ...rest } = data;
 
     try {
-      const body = { description, solutions, date };
+      const body = { ...rest, solutions };
 
       await fetch(`/api/day`, {
         method: "POST",
@@ -96,7 +98,7 @@ const Draft: React.FC = () => {
       <div>
         <form onSubmit={handleSubmit(onSubmit)}>
           <Spacer />
-          <Heading size="lg">New Day</Heading>
+          <Heading size="lg">Opprett luke</Heading>
           <Spacer />
           <FormControl>
             <FormLabel htmlFor="description">Beskrivelse</FormLabel>
@@ -112,29 +114,61 @@ const Draft: React.FC = () => {
           <Spacer multiply={0.5} />
 
           <FormControl>
-            <FormLabel htmlFor="solutionArtist">Artist</FormLabel>
+            <FormLabel htmlFor="artist">Artist</FormLabel>
             <Input
-              name="solutionArtist"
+              name="artist"
               autoFocus
-              {...register("solutionArtist", { required: true })}
+              {...register("artist", { required: true })}
               placeholder="Artist"
               type="text"
             />
           </FormControl>
 
           <Spacer multiply={0.5} />
+
           <FormControl>
-            <FormLabel htmlFor="solutionSong">Sang</FormLabel>
+            <FormLabel htmlFor="song">Sang</FormLabel>
             <Input
-              name="solutionSong"
+              name="song"
               autoFocus
-              {...register("solutionSong", { required: true })}
+              {...register("song", { required: true })}
               placeholder="Sang"
               type="text"
             />
           </FormControl>
 
           <Spacer multiply={0.5} />
+
+          <FormControl>
+            <FormLabel htmlFor="video">Video</FormLabel>
+            <Input
+              name="video"
+              autoFocus
+              {...register("video")}
+              placeholder="Video"
+              type="text"
+            />
+          </FormControl>
+
+          <Spacer multiply={0.5} />
+
+          <div dangerouslySetInnerHTML={{ __html: watch("video") }}></div>
+
+          <Spacer multiply={0.5} />
+
+          <FormControl>
+            <FormLabel htmlFor="madeBy">Laget av</FormLabel>
+            <Input
+              name="madeBy"
+              autoFocus
+              {...register("madeBy")}
+              placeholder="Laget av"
+              type="text"
+            />
+          </FormControl>
+
+          <Spacer multiply={0.5} />
+
           <FormControl>
             <FormLabel>Dato</FormLabel>
             <Controller
@@ -194,10 +228,10 @@ const Draft: React.FC = () => {
           <StyledSubmit
             disabled={!isDirty || !isValid} // here
             type="submit"
-            value="Create"
+            value="Opprett rute"
           />
           <StyledBack href="#" onClick={() => Router.push("/")}>
-            or Cancel
+            eller avbryt
           </StyledBack>
         </form>
       </div>

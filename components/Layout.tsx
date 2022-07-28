@@ -1,5 +1,4 @@
 import React, { ReactNode } from "react";
-import Header from "./Header";
 import styled from "styled-components";
 
 type Props = {
@@ -18,7 +17,6 @@ const InnerWrapper = styled.div`
 
 const Layout: React.FC<Props> = (props) => (
   <Wrapper>
-    <Header />
     <InnerWrapper>{props.children}</InnerWrapper>
   </Wrapper>
 );

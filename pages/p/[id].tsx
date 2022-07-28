@@ -1,12 +1,13 @@
 import React from "react";
 import { GetServerSideProps } from "next";
-import ReactMarkdown from "react-markdown";
 import Layout from "../../components/Layout";
+import { format, isBefore, isSameDay } from "date-fns";
 import Router from "next/router";
 import { DayProps } from "../../components/Day";
 import prisma from "../../lib/prisma";
 import { useSession } from "next-auth/react";
 import { Heading, Text } from "@chakra-ui/react";
+import { Difficulty } from "../../components/Difficulty";
 
 export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   const post = await prisma.day.findUnique({
@@ -15,10 +16,12 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
     },
   });
 
+  const isToday = isSameDay(post.date, new Date());
+
   const postWithFixedDates = {
     ...post,
-    solutionDate: post.solutionDate.toString(),
-    revealDate: post.revealDate.toString(),
+    date: post.date.toISOString(),
+    isToday,
   };
 
   return {
@@ -38,19 +41,17 @@ const Post: React.FC<DayProps> = (props) => {
   if (status === "loading") {
     return <div>Authenticating ...</div>;
   }
-  const userHasValidSession = Boolean(session);
-  // const postBelongsToUser = session?.user?.email === props.author?.email;
 
   return (
     <Layout>
       <div>
-        <Heading>Dag 1</Heading>
-        <Text>{props?.description}</Text>
-        {/* <ReactMarkdown>{props.content}</ReactMarkdown> */}
-
-        {/* {userHasValidSession && postBelongsToUser && (
-          <button onClick={() => deletePost(props.id)}>Delete</button>
-        )} */}
+        <Heading>{format(new Date(props.date), "d 'dag jul")}</Heading>
+        <Text>{props.description}</Text>
+        <Difficulty difficulty={props.difficulty ?? 1} />
+        <Text>Video: {props.video}</Text>
+        <Text>Artist: {props.artist}</Text>
+        <Text>Sang: {props.song}</Text>
+        {props.isToday ? "Hurra det er i dag!" : "Nei, ikke i dag"}
       </div>
     </Layout>
   );

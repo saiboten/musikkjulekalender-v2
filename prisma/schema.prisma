@@ -8,21 +8,24 @@ datasource db {
 }
 
 model Day {
-  id             Int        @id @default(autoincrement())
-  difficulty     Int?
-  points         Int?
-  image          String?
-  description    String?
-  solutionVideo  String?
-  date           DateTime
-  solutionArtist String
-  solutionSong   String
-  Solution       Solution[]
+  id          Int        @id @default(autoincrement())
+  difficulty  Int?
+  points      Int?
+  image       String?
+  description String?
+  video       String?
+  date        DateTime
+  artist      String
+  song        String
+  madeBy      String?
+  solution    Solution[]
 }
 
 model Solution {
-  id  Int @id @default(autoincrement())
-  day Day @relation(fields: [id], references: [id])
+  id       Int    @id @default(autoincrement())
+  solution String
+  dayId    Int
+  day      Day    @relation(fields: [dayId], references: [id])
 }
 
 model Account {
