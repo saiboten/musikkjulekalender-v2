@@ -11,6 +11,11 @@ export default async function handle(
 
   const session = await getSession({ req });
 
+  if (session.user?.role !== "admin") {
+    res.status(401).send({ message: "Unauthorized" });
+    return;
+  }
+
   if (req.method === "DELETE") {
     if (session) {
       const post = await prisma.day.delete({

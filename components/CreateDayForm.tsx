@@ -16,6 +16,13 @@ import {
   Stack,
   Textarea,
   Box,
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogContent,
+  AlertDialogOverlay,
+  useDisclosure,
 } from "@chakra-ui/react";
 import styled from "styled-components";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
@@ -59,6 +66,8 @@ export type FormData = {
 
 export const CreateDayForm: React.FC<CreateDayFormProps> = (props) => {
   const [solution, setSolution] = useState("");
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const cancelRef = React.useRef();
 
   const {
     control,
@@ -97,12 +106,37 @@ export const CreateDayForm: React.FC<CreateDayFormProps> = (props) => {
             <Heading size="lg">Luke</Heading>
             <Box>
               {props.deleteAction ? (
-                <Button onClick={props.deleteAction}>
+                <Button onClick={onOpen}>
                   <DeleteIcon />
                 </Button>
               ) : null}
             </Box>
           </Box>
+
+          <AlertDialog
+            isOpen={isOpen}
+            leastDestructiveRef={cancelRef}
+            onClose={onClose}
+          >
+            <AlertDialogOverlay>
+              <AlertDialogContent>
+                <AlertDialogHeader fontSize="lg" fontWeight="bold">
+                  Slett dag
+                </AlertDialogHeader>
+
+                <AlertDialogBody>Er du sikker?</AlertDialogBody>
+
+                <AlertDialogFooter>
+                  <Button ref={cancelRef} onClick={onClose}>
+                    Avbryt
+                  </Button>
+                  <Button colorScheme="red" onClick={props.deleteAction} ml={3}>
+                    Slett
+                  </Button>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialogOverlay>
+          </AlertDialog>
 
           <Spacer />
 

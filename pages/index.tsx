@@ -36,6 +36,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   const today = getToday();
 
+  console.log(today);
+
   const todayDay = await prisma.day.findFirst({
     where: {
       date: today,

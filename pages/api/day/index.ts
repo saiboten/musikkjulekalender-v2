@@ -23,33 +23,34 @@ export default async function handle(
   } = req.body;
 
   const session = await getSession({ req });
-  if (session) {
-    const result = await prisma.day.create({
-      data: {
-        description,
-        date,
-        artist,
-        madeBy,
-        video,
-        song,
-        hint1,
-        hint2,
-        hint3,
-        difficulty: parseInt(difficulty),
-        solution: {
-          create: solutions.map((el) => ({ solution: el })),
-        },
-        file: {
-          create: {
-            file: file ?? "",
-          },
+  if (session.user?.role !== "admin") {
+    res.status(401).send({ message: "Unauthorized" });
+    return;
+  }
+
+  const result = await prisma.day.create({
+    data: {
+      description,
+      date,
+      artist,
+      madeBy,
+      video,
+      song,
+      hint1,
+      hint2,
+      hint3,
+      difficulty: parseInt(difficulty),
+      solution: {
+        create: solutions.map((el) => ({ solution: el })),
+      },
+      file: {
+        create: {
+          file: file ?? "",
         },
       },
-    });
-    res.json(result);
-  } else {
-    res.status(401).send({ message: "Unauthorized" });
-  }
+    },
+  });
+  res.json(result);
 }
 
 export const config = {
