@@ -26,6 +26,12 @@ const Header: React.FC = () => {
 
   const { data: session, status } = useSession();
 
+  const isAdmin = session?.user?.role === "admin";
+
+  <NextLink href="/create" passHref>
+    <Link mr="2">Opprett dag</Link>
+  </NextLink>;
+
   let right = null;
 
   if (status === "loading") {
@@ -43,9 +49,12 @@ const Header: React.FC = () => {
   if (session) {
     right = (
       <>
-        <NextLink href="/create" passHref>
-          <Link mr="2">Opprett dag</Link>
-        </NextLink>
+        {isAdmin ? (
+          <NextLink href="/create" passHref>
+            <Link mr="2">Opprett dag</Link>
+          </NextLink>
+        ) : null}
+
         <Link onClick={() => signOut({ callbackUrl: "/" })}>Logg ut</Link>
       </>
     );

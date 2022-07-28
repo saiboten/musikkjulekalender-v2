@@ -24,14 +24,16 @@ export const Thumbnail = ({ image }: { image: string }) => {
   return (
     <>
       {imageSrc ? (
-        <Link href={`/profile/${image}`}>
-          <Image
-            src={imageSrc}
-            alt="Profile picture"
-            width="132px"
-            height="132px"
-            style={{ borderRadius: "50%", cursor: "pointer" }}
-          />
+        <Link href={`/profile/${image}`} passHref>
+          <a>
+            <Image
+              src={imageSrc}
+              alt="Profile picture"
+              width="132px"
+              height="132px"
+              style={{ borderRadius: "50%", cursor: "pointer" }}
+            />
+          </a>
         </Link>
       ) : null}
     </>

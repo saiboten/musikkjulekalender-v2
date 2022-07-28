@@ -40,6 +40,10 @@ model Answer {
   timeOfEntry DateTime
   dayId       Int
   day         Day      @relation(fields: [dayId], references: [id])
+  userId      Int
+  user        User     @relation(fields: [userId], references: [id])
+
+  @@unique([dayId, userId])
 }
 
 model Account {
@@ -86,6 +90,7 @@ model User {
   sessions      Session[]
   role          String?
 
+  Answer Answer[]
   @@map(name: "users")
 }
 

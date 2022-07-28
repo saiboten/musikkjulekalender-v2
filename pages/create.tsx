@@ -29,10 +29,13 @@ const Draft: React.FC = () => {
     return null;
   }
 
+  const standardDate = new Date();
+  standardDate.setUTCHours(-2, 0, 0, 0);
+
   return (
     <CreateDayForm
       artist=""
-      date={new Date()}
+      date={standardDate}
       id={1}
       isDayPassed={false}
       isToday={false}
