@@ -6,7 +6,8 @@ import { Spacer } from "./lib/Spacer";
 import { PrimaryRed } from "./constants";
 
 const Wrapper = styled.div`
-  background-color: linear-gradient(#e66465, #9198e5);
+  background-color: #fff;
+  border-radius: 5px;
   text-align: center;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
   margin-bottom: 1rem;
