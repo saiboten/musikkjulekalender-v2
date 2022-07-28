@@ -6,7 +6,7 @@ import { MainHeading } from "./MainHeading";
 
 export const LoggedOut = () => {
   return (
-    <Layout>
+    <Layout whiteBg>
       <MainHeading />
       <Spacer />
       <Heading>Hva er dette?</Heading>

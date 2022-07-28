@@ -30,11 +30,6 @@ const Nav = styled.nav`
   gap: 1.5rem;
   color: #fff;
   align-items: center;
-  opacity: 0.9;
-
-  @media screen and (max-width: 45rem) {
-    flex-direction: column;
-  }
 `;
 
 const Header: React.FC = () => {
@@ -60,17 +55,19 @@ const Header: React.FC = () => {
         <MenuButton
           as={Button}
           backgroundColor={PrimaryRed}
-          _hover={{ backgroundColor: PrimaryRed }}
+          _hover={{
+            backgroundColor: PrimaryRed,
+            outline: "1px solid",
+            outlineColor: "#000",
+          }}
           _active={{ backgroundColor: PrimaryRed }}
         >
           <HamburgerIcon />
         </MenuButton>
         <MenuList>
-          <MenuItem color="black">
-            <NextLink href="/api/auth/signin" passHref>
-              <Link>Logg inn</Link>
-            </NextLink>
-          </MenuItem>
+          <NextLink href="/api/auth/signin" passHref>
+            <MenuItem color="black">Logg inn</MenuItem>
+          </NextLink>
         </MenuList>
       </Menu>
     );
@@ -83,7 +80,11 @@ const Header: React.FC = () => {
           <MenuButton
             as={Button}
             backgroundColor={PrimaryRed}
-            _hover={{ backgroundColor: PrimaryRed }}
+            _hover={{
+              backgroundColor: PrimaryRed,
+              outline: "1px solid",
+              outlineColor: "#000",
+            }}
             _active={{ backgroundColor: PrimaryRed }}
           >
             <HamburgerIcon />
@@ -96,8 +97,11 @@ const Header: React.FC = () => {
                 </NextLink>
               </MenuItem>
             </Admin>
-            <MenuItem color="black">
-              <Link onClick={() => signOut({ callbackUrl: "/" })}>Logg ut</Link>
+            <MenuItem
+              color="black"
+              onClick={() => signOut({ callbackUrl: "/" })}
+            >
+              Logg ut
             </MenuItem>
           </MenuList>
         </Menu>
