@@ -17,6 +17,7 @@ import { Admin } from "../../components/Admin";
 import { EditIcon } from "@chakra-ui/icons";
 import { OldDay } from "../../components/OldDay";
 import { hint1hours, hint2hours, hint3hours } from "../../components/constants";
+import { FutureDay } from "../../components/FutureDay";
 
 function isHintExpired(hintTime: Date): boolean {
   return isBefore(hintTime, new Date());
@@ -129,18 +130,7 @@ const Post: React.FC<DayWithAdmin> = (props) => {
     return <OldDay {...props} />;
   }
 
-  return (
-    <Layout whiteBg>
-      <AdminEditLink />
-      <Box textAlign="center">
-        <Heading>{format(new Date(props.date), "d 'dag jul")}</Heading>
-        <Spacer />
-        <Text>
-          Tid før luken åpner: <Countdown date={new Date(props.date)} />
-        </Text>
-      </Box>
-    </Layout>
-  );
+  return <FutureDay {...props} />;
 };
 
 export default Post;
