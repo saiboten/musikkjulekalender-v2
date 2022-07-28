@@ -27,7 +27,7 @@ export const countdownRenderer = ({
     // Render a countdown
     return (
       <Box display="flex" gap=".5rem" justifyContent="center">
-        {days > 0 ? (
+        {days !== 0 ? (
           <StyledCard>
             <Box fontSize={"2.2rem"}>{days}</Box>
             <Box>dager</Box>

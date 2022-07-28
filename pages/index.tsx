@@ -92,16 +92,18 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     },
   });
 
-  const scores = users.map((user) => {
-    const points = user.answer.reduce((sum, next) => {
-      return sum + next.points;
-    }, 0);
+  const scores = users
+    .map((user) => {
+      const points = user.answer.reduce((sum, next) => {
+        return sum + next.points;
+      }, 0);
 
-    return {
-      name: user.email?.split("@")[0] ?? "ukjent",
-      score: points,
-    };
-  });
+      return {
+        name: user.email?.split("@")[0] ?? "ukjent",
+        score: points,
+      };
+    })
+    .sort((el) => el.score);
 
   const answers = await prisma.answer.findMany({
     where: {
