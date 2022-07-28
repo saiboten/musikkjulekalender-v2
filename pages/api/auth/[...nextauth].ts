@@ -21,18 +21,10 @@ export const authOptions = {
       clientId: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     }),
-    EmailProvider({
-      server: {
-        host: process.env.SMTP_HOST,
-        port: Number(process.env.SMTP_PORT),
-        auth: {
-          user: process.env.SMTP_USER,
-          pass: process.env.SMTP_PASSWORD,
-        },
-      },
-      from: process.env.SMTP_FROM,
-    }),
   ],
+  pages: {
+    signIn: "/auth/signin",
+  },
   adapter: PrismaAdapter(prisma),
   secret: process.env.SECRET,
   callbacks: {

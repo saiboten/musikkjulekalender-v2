@@ -1,4 +1,5 @@
-import { Heading, Text } from "@chakra-ui/react";
+import { Button, Heading, Text } from "@chakra-ui/react";
+import Link from "next/link";
 import { Footer } from "./Footer";
 import Layout from "./Layout";
 import { Spacer } from "./lib/Spacer";
@@ -25,7 +26,12 @@ export const LoggedOut = () => {
         eller i kjøkkenskapet.
       </Text>
       <Spacer />
-      <Text>Start ved å logge inn for å høre din første oppgaven.</Text>
+      <Text>
+        <Link href="/auth/signin" passHref>
+          <Button>Logg inn</Button>
+        </Link>{" "}
+        for å starte morroa!
+      </Text>
       <Footer />
     </Layout>
   );

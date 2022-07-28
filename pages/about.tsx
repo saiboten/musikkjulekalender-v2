@@ -1,7 +1,7 @@
 import React from "react";
 import Layout from "../components/Layout";
 import styled from "styled-components";
-import { Heading } from "@chakra-ui/react";
+import { Heading, Text } from "@chakra-ui/react";
 import { Profiles } from "../components/Profiles";
 import { Spacer } from "../components/lib/Spacer";
 
@@ -29,10 +29,10 @@ const About: React.FC = () => {
       <StyledParagraph>
         Den beste brukeren blir premiert med et krus for to, og et diplom!
       </StyledParagraph>
-
-      <Heading>Bidragsytere</Heading>
+      <Heading size="md">Bidragsytere</Heading>
       <Profiles />
-      <Heading>Kontakt</Heading>
+      <Heading size="md">Kontakt</Heading>
+      <Spacer />
       <StyledParagraph>
         Den enkleste måten å ta kontakt med folket bak kalenderen er å bruke vår{" "}
         <a href="https://www.facebook.com/musikkjulekalender">facebook-side</a>
@@ -41,6 +41,21 @@ const About: React.FC = () => {
         Det er også mulig å ta kontakt med mannen bak kalenderen - Tobias - på{" "}
         <a href="http://www.twitter.com/saiboten">twitter</a>
       </StyledParagraph>
+      <Spacer />
+      <Heading size="md">Kredittering</Heading>
+      <Spacer />
+      Bakgrunnsbilde:{" "}
+      <a href="https://www.freepik.com/vectors/christmas-tree-snow">
+        Christmas tree snow vector created by vectorpocket - www.freepik.com
+      </a>
+      <Spacer />
+      <Heading size="md">Personvern</Heading>
+      <Spacer />
+      <Text>Kommer..</Text>
+      <Spacer />
+      <Heading size="md">Terms of Service</Heading>
+      <Spacer />
+      <Text>Kommer..</Text>
     </Layout>
   );
 };

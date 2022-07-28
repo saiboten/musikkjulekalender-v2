@@ -1,9 +1,11 @@
 import { Box, Button, Heading, Input, Text } from "@chakra-ui/react";
 import { format } from "date-fns";
 import React, { useState } from "react";
+import Countdown from "react-countdown";
 import { AdminEditLink, DayWithAdmin } from "../pages/p/[id]";
 import { calculatePoints } from "../utils/pointscalculator";
 import { PrimaryRed } from "./constants";
+import { countdownRenderer } from "./Countdown";
 import { Difficulty } from "./Difficulty";
 import Layout from "./Layout";
 import { Audio } from "./lib/Audio";
@@ -67,6 +69,8 @@ export const Today: React.FC<DayWithAdmin> = (props) => {
         <Spacer multiply={0.5} />
         <Text>{props.description}</Text>
         <Spacer multiply={0.5} />
+        <Heading size="md">Hint</Heading>
+        <Spacer />
         {props.hint1 ? (
           <>
             <Text>Hint 1: {props.hint1}</Text>
@@ -74,9 +78,12 @@ export const Today: React.FC<DayWithAdmin> = (props) => {
           </>
         ) : (
           <>
-            <Text>
-              Det første hintet kommer klokken{" "}
-              {format(new Date(props.hint1releaseTime), "hh:mm")}
+            <Text fontSize={"0.8rem"}>
+              Tid til første hint:
+              <Countdown
+                renderer={countdownRenderer}
+                date={new Date(props.hint1releaseTime)}
+              />
             </Text>
             <Spacer multiply={0.5} />
           </>
@@ -89,9 +96,12 @@ export const Today: React.FC<DayWithAdmin> = (props) => {
           </>
         ) : (
           <>
-            <Text>
-              Hint nummer 2 kommer klokken{" "}
-              {format(new Date(props.hint2releaseTime), "hh:mm")}
+            <Text fontSize={"0.8rem"}>
+              Tid til andre hint:
+              <Countdown
+                renderer={countdownRenderer}
+                date={new Date(props.hint2releaseTime)}
+              />
             </Text>
             <Spacer multiply={0.5} />
           </>
@@ -103,9 +113,12 @@ export const Today: React.FC<DayWithAdmin> = (props) => {
           </>
         ) : (
           <>
-            <Text>
-              Siste hint kommer klokken{" "}
-              {format(new Date(props.hint3releaseTime), "hh:mm")}
+            <Text fontSize={"0.8rem"}>
+              Tid til siste hint:
+              <Countdown
+                renderer={countdownRenderer}
+                date={new Date(props.hint3releaseTime)}
+              />
             </Text>
             <Spacer multiply={0.5} />
           </>
