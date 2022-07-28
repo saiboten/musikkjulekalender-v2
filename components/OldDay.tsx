@@ -9,6 +9,22 @@ import { Spacer } from "./lib/Spacer";
 import { YoutubeVideo } from "./lib/YoutubeVideo";
 import { Thumbnail } from "./Thumbnail";
 
+function Hint({ hint, hintNumber }: { hint: string; hintNumber: 1 | 2 | 3 }) {
+  const [show, setShow] = useState(false);
+
+  if (show) {
+    return <Text>{hint}</Text>;
+  }
+
+  return (
+    <div>
+      <Button onClick={() => setShow(true)}>
+        Vis hint nummer {hintNumber}
+      </Button>{" "}
+    </div>
+  );
+}
+
 export const OldDay: React.FC<DayWithAdmin> = (props) => {
   const [showSolution, setShowSolution] = useState(false);
 
@@ -32,6 +48,16 @@ export const OldDay: React.FC<DayWithAdmin> = (props) => {
         <Spacer multiply={0.5} />
         <Box textAlign="left" maxWidth="30rem" m="0 auto">
           <Text>{props.description}</Text>
+
+          <Spacer multiply={0.5} />
+          <Hint hint={props.hint1} hintNumber={1} />
+
+          <Spacer multiply={0.5} />
+          <Hint hint={props.hint2} hintNumber={2} />
+
+          <Spacer multiply={0.5} />
+          <Hint hint={props.hint3} hintNumber={3} />
+
           <Spacer multiply={0.5} />
           {showSolution ? null : (
             <Button onClick={() => setShowSolution(true)}>Vis fasit</Button>
