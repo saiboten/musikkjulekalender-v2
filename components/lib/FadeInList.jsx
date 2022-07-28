@@ -14,6 +14,6 @@ export function FadeInList({ list }) {
   });
 
   return trail.map(({ opacity }, index) => (
-    <animated.div style={{ opacity }}>{list[index]}</animated.div>
+    <animated.div key={index} style={{ opacity }}>{list[index]}</animated.div>
   ));
 }
