@@ -9,16 +9,17 @@ export default async function handle(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const { title, content } = req.body;
+  const { description } = req.body;
 
   const session = await getSession({ req });
   if (session) {
     const result = await prisma.day.create({
       data: {
+        description,
         revealDate: new Date().toISOString(),
-        solutionArtist: "Jens",
+        solutionArtist: "TODO",
         solutionDate: new Date().toISOString(),
-        solutionSong: "Aha",
+        solutionSong: "TODO",
       },
     });
     res.json(result);
