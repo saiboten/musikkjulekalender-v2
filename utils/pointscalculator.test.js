@@ -1,9 +1,9 @@
-import { addHours, parse } from "date-fns";
+import { addHours, parseISO } from "date-fns";
 import { format } from "path";
 import { hint1hours, hint2hours, hint3hours } from "../../components/constants";
 import { calculatePoints } from "./answer";
 
-const startOfDay = parse('02/11/2014', 'MM/dd/yyyy', new Date())
+const startOfDay = parseISO('02/11/2014', 'MM/dd/yyyy', new Date())
 
 test("Answer right away gives max score", () => {
   const res = calculatePoints(startOfDay, startOfDay);

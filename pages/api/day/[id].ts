@@ -8,7 +8,7 @@ export default async function handle(
   res: NextApiResponse
 ) {
   const dayId = req.query.id;
-  const { solutions, ...body } = req.body;
+  const { solutions, file, ...body } = req.body;
 
   const storeSolutions = solutions.map((solution) => ({
     dayId: Number(dayId),
@@ -32,6 +32,17 @@ export default async function handle(
       data: {
         ...body,
         difficulty: parseInt(body.difficulty),
+      },
+    });
+
+    await prisma.songFile.upsert({
+      where: { dayId: Number(dayId) },
+      create: {
+        file,
+        dayId: Number(dayId),
+      },
+      update: {
+        file,
       },
     });
 
