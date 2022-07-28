@@ -1,14 +1,12 @@
 import React, { useState } from "react";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
-
-import Layout from "../../components/Layout";
-import { addHours, format, isBefore, isSameDay } from "date-fns";
-import Countdown from "react-countdown";
+import { addHours, isBefore, isSameDay } from "date-fns";
 import Router from "next/router";
 import { DayProps } from "../../components/Day";
 import prisma from "../../lib/prisma";
-import { getSession, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
+import { unstable_getServerSession } from "next-auth/next";
 import { Box, Heading, Link, Text } from "@chakra-ui/react";
 import NextLink from "next/link";
 import { Spacer } from "../../components/lib/Spacer";
@@ -18,13 +16,19 @@ import { EditIcon } from "@chakra-ui/icons";
 import { OldDay } from "../../components/OldDay";
 import { hint1hours, hint2hours, hint3hours } from "../../components/constants";
 import { FutureDay } from "../../components/FutureDay";
+import { authOptions } from "../api/auth/[...nextauth]";
 
 function isHintExpired(hintTime: Date): boolean {
   return isBefore(hintTime, new Date());
 }
 
-export const getServerSideProps: GetServerSideProps = async ({ params }) => {
-  const session = await getSession();
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const { params } = context;
+  const session = await unstable_getServerSession(
+    context.req,
+    context.res,
+    authOptions
+  );
 
   const day = await prisma.day.findUnique({
     where: {
@@ -34,7 +38,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
 
   const answer = await prisma.answer.findFirst({
     where: {
-      dayId: Number(params?.id) || -1,
+      dayId: day.id || -1,
       userId: session?.id ?? -1,
     },
   });

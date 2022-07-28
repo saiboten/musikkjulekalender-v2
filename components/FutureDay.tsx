@@ -22,7 +22,7 @@ const StyledCard = styled.div`
   flex-direction: column;
 `;
 
-const renderer = ({ hours, minutes, seconds, completed }) => {
+const renderer = ({ days, hours, minutes, seconds, completed }) => {
   if (completed) {
     // Render a completed state
     return null;
@@ -30,6 +30,10 @@ const renderer = ({ hours, minutes, seconds, completed }) => {
     // Render a countdown
     return (
       <Box display="flex" gap=".5rem" justifyContent="center">
+        <StyledCard>
+          <Box fontSize={"2.2rem"}>{days}</Box>
+          <Box>dager</Box>
+        </StyledCard>
         <StyledCard>
           <Box fontSize={"2.2rem"}>{hours}</Box>
           <Box>timer</Box>

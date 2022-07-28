@@ -7,10 +7,11 @@ import GoogleProvider from "next-auth/providers/google";
 import EmailProvider from "next-auth/providers/email";
 import prisma from "../../../lib/prisma";
 
-const authHandler: NextApiHandler = (req, res) => NextAuth(req, res, options);
+const authHandler: NextApiHandler = (req, res) =>
+  NextAuth(req, res, authOptions);
 export default authHandler;
 
-const options = {
+export const authOptions = {
   providers: [
     GitHubProvider({
       clientId: process.env.GITHUB_ID,
