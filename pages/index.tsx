@@ -8,7 +8,7 @@ import Day, { DayProps } from "../components/Day";
 import prisma from "../lib/prisma";
 import { Grid, GridItem } from "../components/Grid";
 import { useSession } from "next-auth/react";
-import { Heading } from "@chakra-ui/react";
+import { Box, Heading } from "@chakra-ui/react";
 import { Footer } from "../components/Footer";
 import { HorisontalDraggable } from "../components/lib/HorisontalDraggable";
 
@@ -32,21 +32,18 @@ type Props = {
   feed: DayProps[];
 };
 
-const ImageContainer = styled.div`
-  height: 20rem;
-  text-align: center;
-`;
-
 const StyledHeader = styled.div`
   text-align: left;
   padding-top: 1rem;
   display: flex;
+  flex-direction: row;
 
   @media screen and (max-width: 45rem) {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 0.5rem;
+    flex-direction: column;
   }
 `;
 
@@ -65,9 +62,9 @@ const Blog: React.FC<Props> = (props) => {
     <Layout>
       <div>
         <StyledHeader>
-          <Heading>Musikkjulekalender!</Heading>
+          <Heading>Musikkjulekalender 2022!</Heading>
           <HorisontalDraggable>
-            <ImageContainer>
+            <Box textAlign="center">
               <Image
                 draggable={false}
                 src={nisse}
@@ -75,7 +72,7 @@ const Blog: React.FC<Props> = (props) => {
                 width={300}
                 height={300}
               />
-            </ImageContainer>
+            </Box>
           </HorisontalDraggable>
         </StyledHeader>
         <main>

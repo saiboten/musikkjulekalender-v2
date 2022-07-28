@@ -10,8 +10,13 @@ const Nav = styled.nav`
   justify-content: space-between;
   width: 100%;
   background-color: #8e1515;
-  padding: 1.5rem 1rem;
+  padding: 1rem;
+  gap: 1.5rem;
   color: #fff;
+
+  @media screen and (max-width: 45rem) {
+    flex-direction: column;
+  }
 `;
 
 const Header: React.FC = () => {
@@ -50,7 +55,7 @@ const Header: React.FC = () => {
     <Nav>
       <div>
         <NextLink href="/" passHref>
-          <Link display="inline" mr="5" pl="2">
+          <Link display="inline" mr="5" fontSize="24px">
             Musikkjulekalender!
           </Link>
         </NextLink>

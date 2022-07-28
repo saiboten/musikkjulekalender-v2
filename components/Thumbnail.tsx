@@ -1,11 +1,11 @@
 import Link from "next/link";
 import Image from "next/image";
-import styled from "styled-components";
 import stein from "../img/thumbnail/stein.png";
 import tobias from "../img/thumbnail/tobias.png";
 import matt from "../img/thumbnail/matt.png";
 import kim from "../img/thumbnail/kim.png";
 import bjarte from "../img/thumbnail/bjarte.png";
+import tomas from "../img/thumbnail/tomas.png";
 import skoyerfanden from "../img/thumbnail/skoyerfanden.png";
 
 const thumbnailMap = {
@@ -15,6 +15,7 @@ const thumbnailMap = {
   Kim: kim,
   Bjarte: bjarte,
   Skoyerfanden: skoyerfanden,
+  Tomas: tomas,
 };
 
 export const Thumbnail = ({ image }: { image: string }) => {
