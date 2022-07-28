@@ -1,5 +1,5 @@
 describe("Login", () => {
-  it("Login through Google", () => {
+  it.skip("Login through Google", () => {
     cy.visit("http://localhost:3000/api/auth/signin");
 
     const username = Cypress.env("GOOGLE_USER");
