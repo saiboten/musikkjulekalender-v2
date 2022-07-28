@@ -76,7 +76,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
         now: Date.now(),
         video: day.video,
         points: day.points,
-        dayId: day.id,
+        id: day.id,
       },
     };
   }
@@ -95,7 +95,7 @@ export interface DayWithAdmin extends DayProps {
   hint1releaseTime?: Date;
   hint2releaseTime?: Date;
   hint3releaseTime?: Date;
-  dayId: number;
+  id: number;
 }
 
 export const AdminEditLink = () => {

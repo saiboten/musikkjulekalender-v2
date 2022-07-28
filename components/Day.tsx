@@ -17,7 +17,11 @@ export type DayProps = {
   isToday: boolean;
   isDayPassed: boolean;
   solutionVideo?: string;
-  file?: string;
+  file?: {
+    id: number;
+    dayId: number;
+    file: string;
+  };
   hint1?: string;
   hint2?: string;
   hint3?: string;

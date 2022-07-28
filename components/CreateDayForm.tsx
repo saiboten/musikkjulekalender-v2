@@ -73,7 +73,7 @@ export const CreateDayForm: React.FC<CreateDayFormProps> = (props) => {
       song: props.song,
       video: props.video,
       solutions: props.solution?.map((el) => ({ value: el.solution })),
-      file: props.file,
+      file: props.file?.file,
       difficulty: `${props.difficulty}`,
       hint1: props.hint1,
       hint2: props.hint2,

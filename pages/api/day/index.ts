@@ -35,7 +35,7 @@ export default async function handle(
         },
         file: {
           create: {
-            file,
+            file: file ?? "",
           },
         },
       },
