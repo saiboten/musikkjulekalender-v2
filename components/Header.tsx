@@ -9,7 +9,7 @@ const Nav = styled.nav`
   display: flex;
   justify-content: space-between;
   width: 100%;
-  background-color: red;
+  background-color: #8e1515;
   padding: 1.5rem 1rem;
   color: #fff;
 `;
@@ -41,9 +41,7 @@ const Header: React.FC = () => {
         <NextLink href="/create" passHref>
           <Link mr="2">Opprett dag</Link>
         </NextLink>
-        <Link onClick={() => signOut()}>
-          <a>Logg ut</a>
-        </Link>
+        <Link onClick={() => signOut()}>Logg ut</Link>
       </>
     );
   }
