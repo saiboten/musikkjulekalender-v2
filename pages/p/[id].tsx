@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import { addHours, isBefore, isSameDay } from "date-fns";
@@ -7,16 +7,15 @@ import { DayProps } from "../../components/Day";
 import prisma from "../../lib/prisma";
 import { useSession } from "next-auth/react";
 import { unstable_getServerSession } from "next-auth/next";
-import { Box, Heading, Link, Text } from "@chakra-ui/react";
+import { Box, Heading, Link } from "@chakra-ui/react";
 import NextLink from "next/link";
-import { Spacer } from "../../components/lib/Spacer";
 import { Today } from "../../components/Today";
 import { Admin } from "../../components/Admin";
 import { EditIcon } from "@chakra-ui/icons";
 import { OldDay } from "../../components/OldDay";
 import { hint1hours, hint2hours, hint3hours } from "../../components/constants";
-import { FutureDay } from "../../components/FutureDay";
 import { authOptions } from "../api/auth/[...nextauth]";
+import { FutureDay } from "../../components/FutureDay";
 
 function isHintExpired(hintTime: Date): boolean {
   return isBefore(hintTime, new Date());

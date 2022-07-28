@@ -29,7 +29,7 @@ type Props = {
   days: DayProps[];
   points: number;
   scores?: { name: string; score: number }[];
-  todayAnswers: { points: number; user: string }[];
+  todayAnswers: { points: number; user: string; time: string }[];
   userScores: {
     day: string;
     score: number;
@@ -81,6 +81,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     return {
       points: e.points,
       user: e.user.nickname ?? e.user.email?.split("@")[0] ?? "ukjent",
+      time: e.timeOfEntry.toISOString(),
     };
   });
 

@@ -1,9 +1,10 @@
 import { Heading, List, ListItem, Text } from "@chakra-ui/react";
+import { format } from "date-fns";
 import { FrontPageBox } from "./FrontPageBox";
 import { Spacer } from "./lib/Spacer";
 
 interface Props {
-  todayAnswers: { points: number; user: string }[];
+  todayAnswers: { points: number; user: string; time: string }[];
 }
 
 export const BestDaily = ({ todayAnswers }: Props) => {
@@ -16,7 +17,8 @@ export const BestDaily = ({ todayAnswers }: Props) => {
           {todayAnswers.map((el) => {
             return (
               <ListItem key={el.user}>
-                {el.user}: {el.points}
+                {el.user} @ {format(new Date(el.time), "hh:MM:ss")} -{" "}
+                {el.points} poeng
               </ListItem>
             );
           })}
