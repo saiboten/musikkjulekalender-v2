@@ -78,6 +78,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
         video: day.video,
         points: day.points,
         id: day.id,
+        description: day.description,
       },
     };
   }
