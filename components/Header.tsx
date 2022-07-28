@@ -91,11 +91,11 @@ const Header: React.FC = () => {
           </MenuButton>
           <MenuList>
             <Admin>
-              <MenuItem color="black">
-                <NextLink href="/create" passHref>
-                  <Link mr="2">Opprett dag</Link>
-                </NextLink>
-              </MenuItem>
+              <NextLink href="/create" passHref>
+                <MenuItem color="black" mr="2">
+                  Opprett dag
+                </MenuItem>
+              </NextLink>
             </Admin>
             <MenuItem
               color="black"

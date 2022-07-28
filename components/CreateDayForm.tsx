@@ -89,7 +89,7 @@ export const CreateDayForm: React.FC<CreateDayFormProps> = (props) => {
   });
 
   return (
-    <Layout>
+    <Layout whiteBg>
       <div>
         <form onSubmit={handleSubmit(props.onSubmit)}>
           <Spacer />
