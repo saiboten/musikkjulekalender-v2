@@ -31,14 +31,14 @@ model SongFile {
   id    Int    @id @default(autoincrement())
   dayId Int    @unique
   file  String
-  day   Day    @relation(fields: [dayId], references: [id])
+  day   Day    @relation(fields: [dayId], references: [id], onDelete: Cascade)
 }
 
 model Solution {
   id       Int    @id @default(autoincrement())
   solution String
   dayId    Int
-  day      Day    @relation(fields: [dayId], references: [id])
+  day      Day    @relation(fields: [dayId], references: [id], onDelete: Cascade)
 }
 
 model Answer {
@@ -46,7 +46,7 @@ model Answer {
   points      Int
   timeOfEntry DateTime
   dayId       Int
-  day         Day      @relation(fields: [dayId], references: [id])
+  day         Day      @relation(fields: [dayId], references: [id], onDelete: Cascade)
   userId      Int
   user        User     @relation(fields: [userId], references: [id])
 
@@ -98,6 +98,7 @@ model User {
   role          String?
 
   answer Answer[]
+
   @@map(name: "users")
 }
 

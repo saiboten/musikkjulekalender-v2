@@ -14,6 +14,7 @@ import NextLink from "next/link";
 import { Spacer } from "../../components/lib/Spacer";
 import { Today } from "../../components/Today";
 import { Admin } from "../../components/Admin";
+import { EditIcon } from "@chakra-ui/icons";
 import { OldDay } from "../../components/OldDay";
 import { hint1hours, hint2hours, hint3hours } from "../../components/constants";
 
@@ -105,7 +106,10 @@ export const AdminEditLink = () => {
   return (
     <Admin>
       <NextLink href={`/edit/${id}`} passHref>
-        <Link>Edit</Link>
+        <Link display="flex" alignItems="center">
+          <EditIcon mr="2" />
+          <span> Endre dag</span>
+        </Link>
       </NextLink>
     </Admin>
   );

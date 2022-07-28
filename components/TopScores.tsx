@@ -1,8 +1,9 @@
-import { Box, Heading, Text } from "@chakra-ui/react";
+import { Heading, Text } from "@chakra-ui/react";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
 import { Spacer } from "./lib/Spacer";
 import { NumberAnimation } from "./lib/NumberAnimation";
+import { FrontPageBox } from "./FrontPageBox";
 
 export const TopScores = ({
   scores,
@@ -34,14 +35,8 @@ export const TopScores = ({
     });
 
   return (
-    <Box
-      backgroundColor="#fff"
-      padding="2"
-      margin="10px 0px"
-      borderRadius="5px"
-      boxShadow="rgb(0 0 0 / 50%) 1px 2px 4px 0px"
-    >
-      <Heading size="lg">Toppscorelisten</Heading>
+    <FrontPageBox>
+      <Heading size="md">Toppscorelisten</Heading>
       <Spacer />
       {fixedScores.map((el, index) => {
         return (
@@ -63,6 +58,6 @@ export const TopScores = ({
         );
       })}
       <Spacer />
-    </Box>
+    </FrontPageBox>
   );
 };

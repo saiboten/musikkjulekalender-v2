@@ -60,6 +60,13 @@ const Post: React.FC<DayProps> = (props) => {
     }
   };
 
+  const deleteAction = async () => {
+    await fetch(`/api/day/${id}`, {
+      method: "DELETE",
+    });
+    await Router.push("/");
+  };
+
   if (status === "loading") {
     return <div>Authenticating ...</div>;
   }
@@ -69,7 +76,12 @@ const Post: React.FC<DayProps> = (props) => {
   }
 
   return (
-    <CreateDayForm {...props} onSubmit={onSubmit} submitButtonText="Lagre" />
+    <CreateDayForm
+      {...props}
+      onSubmit={onSubmit}
+      deleteAction={deleteAction}
+      submitButtonText="Lagre"
+    />
   );
 };
 
