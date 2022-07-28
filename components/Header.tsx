@@ -1,7 +1,6 @@
 import React from "react";
 import styled from "styled-components";
 import NextLink from "next/link";
-import { useRouter } from "next/router";
 import { signOut, useSession } from "next-auth/react";
 import {
   Box,
@@ -11,10 +10,6 @@ import {
   MenuButton,
   MenuList,
   MenuItem,
-  MenuItemOption,
-  MenuGroup,
-  MenuOptionGroup,
-  MenuDivider,
   Button,
 } from "@chakra-ui/react";
 import { HamburgerIcon } from "@chakra-ui/icons";
@@ -24,19 +19,16 @@ import { PrimaryRed } from "./constants";
 const Nav = styled.nav`
   display: flex;
   justify-content: space-between;
+  flex-direction: column;
   width: 100%;
   background-color: ${PrimaryRed};
   padding: 1rem;
   gap: 1.5rem;
   color: #fff;
-  align-items: center;
+  align-items: flex-start;
 `;
 
 const Header: React.FC = () => {
-  const router = useRouter();
-  const isActive: (pathname: string) => boolean = (pathname) =>
-    router.pathname === pathname;
-
   const { data: session, status } = useSession();
 
   <NextLink href="/create" passHref>
@@ -111,26 +103,24 @@ const Header: React.FC = () => {
 
   return (
     <Nav>
-      <Box>
+      <Box
+        display="flex"
+        width="100%"
+        justifyContent="space-between"
+        alignItems="center"
+      >
         <NextLink href="/" passHref>
           <Link display="inline" mr="5" fontSize="24px">
             Musikkjulekalender!
           </Link>
         </NextLink>
-      </Box>
-      <Box
-        display="flex"
-        flexDirection={{ base: "column", md: "row" }}
-        justifyContent="flex-end"
-        alignItems="center"
-      >
-        {session?.user ? (
-          <>
-            <Text mr="2">{session.user.name}</Text>
-            <Text mr="2">({session.user.email})</Text>
-          </>
-        ) : null}
-
+        {/* {session?.user ? (
+          <Box>
+            <Text>
+              {session.user.name} ({session.user.email})
+            </Text>
+          </Box>
+        ) : null} */}
         {right}
       </Box>
     </Nav>
