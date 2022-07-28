@@ -38,6 +38,7 @@ const Button = styled.button<{ today: boolean }>`
 `;
 
 const Post: React.FC<{ day: DayProps; today: Date }> = ({ day, today }) => {
+  console.log("this will give answer", day.date, today);
   return (
     <Button
       today={day.date == today}
