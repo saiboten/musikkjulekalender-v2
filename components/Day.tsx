@@ -37,8 +37,8 @@ const Button = styled.button<{ today: boolean; shouldBeOpen: boolean }>`
   border: ${(props) => (props.today ? `5px solid ${PrimaryRed}` : "0")};
   position: relative;
   transform-style: preserve-3d;
-  transform: perspective(2500px)
-    ${(props) => (props.shouldBeOpen ? "rotateY(-25deg)" : "")};
+  transform: perspective(1200px)
+    ${(props) => (props.shouldBeOpen ? "rotateY(-40deg)" : "")};
   transform-origin: left;
   background-color: white;
 

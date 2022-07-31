@@ -3,8 +3,9 @@ import { PrimaryRed } from "./constants";
 
 export const Grid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
-  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+  gap: 2.5rem;
+  margin: 2rem;
 `;
 
 export const GridItem = styled.div`
