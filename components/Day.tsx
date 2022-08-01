@@ -30,6 +30,7 @@ export type DayProps = {
 };
 
 const Button = styled.button<{ today: boolean; shouldBeOpen: boolean }>`
+  transition: transform 0.5s;
   font-size: 4rem;
   background-color: inherit;
   width: 100%;
@@ -41,6 +42,11 @@ const Button = styled.button<{ today: boolean; shouldBeOpen: boolean }>`
     ${(props) => (props.shouldBeOpen ? "rotateY(-40deg)" : "")};
   transform-origin: left;
   background-color: white;
+
+  &:hover {
+    transform: perspective(1200px)
+      ${(props) => (props.shouldBeOpen ? "rotateY(-50deg)" : "")};
+  }
 
   &:after {
     content: "";

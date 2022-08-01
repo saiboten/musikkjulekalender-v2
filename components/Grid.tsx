@@ -3,9 +3,9 @@ import { PrimaryRed } from "./constants";
 
 export const Grid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
-  gap: 2.5rem;
-  margin: 2rem;
+  grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+  gap: 3.5rem;
+  margin: 3rem;
 `;
 
 export const GridItem = styled.div`
@@ -18,9 +18,8 @@ export const GridItem = styled.div`
   background-color: white;
   color: black;
   aspect-ratio: 1 / 1; /* ↔️ is double the ↕️ */
-  transition: transform 0.2s;
 
-  &:hover {
+  /* &:hover {
     transform: scale(1.05);
-  }
+  } */
 `;
