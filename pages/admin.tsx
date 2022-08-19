@@ -8,8 +8,9 @@ import { LoggedOut } from "../components/LoggedOut";
 import { authOptions } from "./api/auth/[...nextauth]";
 import { Admin } from "../components/Admin";
 import { User } from "@prisma/client";
-import { List, ListItem } from "@chakra-ui/react";
+import { Heading, Link, List, ListItem } from "@chakra-ui/react";
 import NextLink from "next/link";
+import { Spacer } from "../components/lib/Spacer";
 
 type Props = {
   users: User[];
@@ -59,11 +60,17 @@ const AdminPage: React.FC<Props> = ({ users }) => {
   return (
     <Layout whiteBg>
       <Admin>
+        <Heading size="lg">Admin</Heading>
+        <Spacer />
         <List>
           {users.map((el) => {
             return (
               <NextLink key={el.id} href={`/admin/user/${el.id}`} passHref>
-                <ListItem>{el.name}</ListItem>
+                <Link>
+                  <ListItem>
+                    {el.nickname ?? el.name} - {el.email}
+                  </ListItem>
+                </Link>
               </NextLink>
             );
           })}

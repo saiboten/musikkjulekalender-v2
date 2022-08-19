@@ -77,7 +77,10 @@ function Settings({ nickname: existingNick, email, name }: Props) {
         </strong>
       </Text>
       <Spacer />
-      <Heading size="lg">Slett bruker</Heading>
+
+      <AddNickName nickname={existingNick} />
+
+      <Heading size="md">Slett bruker</Heading>
       <Flex alignItems="center">
         <Text mr="3">Vil du slette brukeren din?</Text>
         <Button onClick={onOpen}>Ja, slett brukeren min</Button>
@@ -130,9 +133,6 @@ function Settings({ nickname: existingNick, email, name }: Props) {
           </Alert>
         </>
       ) : null}
-
-      <Spacer />
-      <AddNickName nickname={existingNick} />
     </Layout>
   );
 }

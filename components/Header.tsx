@@ -93,6 +93,11 @@ const Header: React.FC = () => {
                   Opprett dag
                 </MenuItem>
               </NextLink>
+              <NextLink href="/admin" passHref>
+                <MenuItem color="black" mr="2">
+                  Admin
+                </MenuItem>
+              </NextLink>
             </Admin>
             <NextLink href="/settings" passHref>
               <MenuItem color="black" mr="2">

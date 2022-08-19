@@ -5,10 +5,11 @@ import Layout from "../../../components/Layout";
 import { authOptions } from "../../api/auth/[...nextauth]";
 import { unstable_getServerSession } from "next-auth";
 import prisma from "../../../lib/prisma";
-import { Answer } from "@prisma/client";
-import { Heading, Text } from "@chakra-ui/react";
+import { Answer, Day } from "@prisma/client";
+import { Heading, List, ListItem, Text } from "@chakra-ui/react";
 import { EOL } from "os";
 import { ExternalLinkIcon } from "@chakra-ui/icons";
+import { Spacer } from "../../../components/lib/Spacer";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { params } = context;
@@ -32,6 +33,10 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     };
   }
 
+  const days = await (
+    await prisma.day.findMany()
+  ).map((el) => ({ ...el, date: el.date.toISOString() }));
+
   const rawUser = await prisma.user.findUnique({
     where: {
       id: Number(params?.id ?? -1),
@@ -54,6 +59,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   return {
     props: {
       user,
+      days,
     },
   };
 };
@@ -71,9 +77,10 @@ interface Props {
     role: string;
     answer: Answer[];
   };
+  days: Day[];
 }
 
-const Post: React.FC<Props> = ({ user }) => {
+const Post: React.FC<Props> = ({ user, days }) => {
   const { status } = useSession();
 
   if (status === "loading") {
@@ -82,22 +89,22 @@ const Post: React.FC<Props> = ({ user }) => {
 
   return (
     <Layout whiteBg>
-      <Text>Id: {user.id}</Text>
+      <Heading size="lg">Brukerdetaljer</Heading>
+      <Spacer />
+      <Text>
+        {user.id}: {user.name} ({user.email})
+      </Text>
       <Text>CreatedAt: {user.createdAt}</Text>
-      <Text>Name: {user.name}</Text>
-      <Text>Mail: {user.email}</Text>
       <Text>Nick: {user.nickname}</Text>
       <Text>Rolle: {user.role}</Text>
-      <Heading>Svar</Heading>
-      <ul>
+      <Heading size="md">Svar</Heading>
+      <List>
         {user.answer.map((el) => {
-          return (
-            <li key={el.dayId}>
-              DagId: {el.dayId}: {el.points} poeng
-            </li>
-          );
+          const dayDetails = days.filter((day) => day.id === el.dayId)[0];
+          const output = `DagId: ${el.dayId} (${dayDetails.artist} - ${dayDetails.song}) ${el.points} poeng. Solution time: ${el.timeOfEntry}`;
+          return <ListItem key={el.dayId}>{output}</ListItem>;
         })}
-      </ul>
+      </List>
     </Layout>
   );
 };

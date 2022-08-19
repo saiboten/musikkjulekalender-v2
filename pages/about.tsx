@@ -57,6 +57,7 @@ const About: React.FC = () => {
         navn. Dette brukes kun for å opprette bruker, og for å kunne tilby et
         standard brukernavn.
       </Text>
+      <Spacer />
       <Heading size="sm" mb="2">
         Sletting av data
       </Heading>
@@ -76,6 +77,7 @@ const About: React.FC = () => {
         ugagn. Vet uvettig bruk kan vi stenge ned kontoer og/eller hele
         tjenesten.
       </Text>
+      <Spacer />
       <Heading size="sm" mb="2">
         Privacy Policy
       </Heading>
