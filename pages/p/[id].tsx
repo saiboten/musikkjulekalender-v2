@@ -1,7 +1,7 @@
 import React from "react";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
-import { addHours, isBefore, isSameDay } from "date-fns";
+import { addHours, daysToWeeks, isBefore, isSameDay } from "date-fns";
 import Router from "next/router";
 import { DayProps } from "../../components/Day";
 import prisma from "../../lib/prisma";
@@ -13,13 +13,8 @@ import { Today } from "../../components/Today";
 import { Admin } from "../../components/Admin";
 import { EditIcon } from "@chakra-ui/icons";
 import { OldDay } from "../../components/OldDay";
-import { hint1hours, hint2hours, hint3hours } from "../../components/constants";
 import { authOptions } from "../api/auth/[...nextauth]";
 import { FutureDay } from "../../components/FutureDay";
-
-function isHintExpired(hintTime: Date): boolean {
-  return isBefore(hintTime, new Date());
-}
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { params } = context;
@@ -29,22 +24,52 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     authOptions
   );
 
+  if (!params.id) {
+    throw Error("No id given");
+  }
+
   const day = await prisma.day.findUnique({
     where: {
-      id: Number(params?.id) || -1,
+      id: Number(params.id),
     },
   });
+
+  if (!day) {
+    throw Error("Could not find day");
+  }
 
   const answer = await prisma.answer.findFirst({
     where: {
-      dayId: day.id || -1,
-      userId: session?.id ?? -1,
+      dayId: day.id,
+      userId: session.id,
     },
   });
 
-  const hint1releaseTime = addHours(day.date, hint1hours);
-  const hint2releaseTime = addHours(day.date, hint2hours);
-  const hint3releaseTime = addHours(day.date, hint3hours);
+  let hints = await prisma.hint.findFirst({
+    where: {
+      dayId: day.id,
+      userId: session.id,
+    },
+  });
+
+  if (hints === null) {
+    await prisma.hint.create({
+      data: {
+        hint1: false,
+        hint2: false,
+        hint3: false,
+        dayId: day.id,
+        userId: session.id,
+      },
+    });
+
+    hints = await prisma.hint.findFirst({
+      where: {
+        dayId: day.id,
+        userId: session.id,
+      },
+    });
+  }
 
   const isToday = isSameDay(day.date, new Date());
   const isDayPassed = isBefore(day.date, new Date());
@@ -72,12 +97,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         date: day.date.toISOString(),
         isToday,
         isDayPassed,
-        hint1: isHintExpired(hint1releaseTime) ? day.hint1 : null,
-        hint2: isHintExpired(hint2releaseTime) ? day.hint2 : null,
-        hint3: isHintExpired(hint3releaseTime) ? day.hint3 : null,
-        hint1releaseTime: hint1releaseTime.toISOString(),
-        hint2releaseTime: hint2releaseTime.toISOString(),
-        hint3releaseTime: hint3releaseTime.toISOString(),
+        hint1: hints.hint1 ? day.hint1 : null,
+        hint2: hints.hint2 ? day.hint2 : null,
+        hint3: hints.hint3 ? day.hint3 : null,
         now: Date.now(),
         video: day.video,
         points: day.points,
@@ -98,9 +120,6 @@ async function deletePost(id: number): Promise<void> {
 export interface DayWithAdmin extends DayProps {
   solved: boolean;
   now: Date;
-  hint1releaseTime?: Date;
-  hint2releaseTime?: Date;
-  hint3releaseTime?: Date;
   id: number;
 }
 

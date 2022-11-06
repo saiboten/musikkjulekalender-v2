@@ -1,5 +1,6 @@
 import { Heading, List, ListItem } from "@chakra-ui/react";
 import { format } from "date-fns";
+import { nb } from "date-fns/locale";
 import React from "react";
 import { FrontPageBox } from "./FrontPageBox";
 import { Spacer } from "./lib/Spacer";
@@ -19,7 +20,8 @@ export function UserStats({ userScores }: Props) {
       <List>
         {userScores.map((el, index) => (
           <ListItem key={index}>
-            {format(new Date(el.day), "d ' desember")}: {el.score} poeng
+            {format(new Date(el.day), "d. MMMM", { locale: nb })}: {el.score}{" "}
+            poeng
           </ListItem>
         ))}
       </List>

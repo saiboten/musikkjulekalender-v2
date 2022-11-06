@@ -1,4 +1,16 @@
-import { Box, Button, Heading, Input, Text } from "@chakra-ui/react";
+import {
+  Alert,
+  AlertDescription,
+  AlertIcon,
+  AlertTitle,
+  Box,
+  Button,
+  Heading,
+  Input,
+  Spinner,
+  Text,
+} from "@chakra-ui/react";
+import { useMutation } from "@tanstack/react-query";
 import { format } from "date-fns";
 import React, { useState } from "react";
 import Countdown from "react-countdown";
@@ -15,12 +27,29 @@ import { Thumbnail } from "./Thumbnail";
 
 export const Today: React.FC<DayWithAdmin> = (props) => {
   const [answer, setAnswer] = useState("");
+
+  const [hints, setHints] = useState<string[]>(
+    [props.hint1, props.hint2, props.hint3].filter((el) => el !== null)
+  );
+
   const [answerFeedback, setAnswerFeedback] = useState<undefined | string>();
   const [artist, setArtist] = useState<string | undefined>(undefined);
   const [song, setSong] = useState<string | undefined>(undefined);
   const [solutionVideo, setSolutionVideo] = useState<string | undefined>();
   const [solved, setSolved] = useState(props.solved);
 
+  const { isLoading, isError, mutate } = useMutation({
+    mutationFn: async () => {
+      return await (await fetch(`/api/gethint?dayId=${props.id}`)).json();
+    },
+    onSuccess: (data) => {
+      if (data.hint) {
+        setHints([...hints, data.hint]);
+      } else {
+        console.log("no hinty?!");
+      }
+    },
+  });
   async function handleAnswer(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setAnswer("");
@@ -37,6 +66,22 @@ export const Today: React.FC<DayWithAdmin> = (props) => {
       setSolutionVideo(res.solutionVideo);
       setSolved(true);
     }
+  }
+
+  function hintPlease() {
+    mutate();
+  }
+
+  if (isError) {
+    return (
+      <Alert status="error">
+        <AlertIcon />
+        <AlertTitle>Noe gikk galt under henting av hint</AlertTitle>
+        <AlertDescription>
+          Your Chakra experience may be degraded.
+        </AlertDescription>
+      </Alert>
+    );
   }
 
   return (
@@ -71,58 +116,27 @@ export const Today: React.FC<DayWithAdmin> = (props) => {
         <Spacer multiply={0.5} />
         <Heading size="md">Hint</Heading>
         <Spacer />
-        {props.hint1 ? (
+        {hints.map((el, index) => {
+          return (
+            <>
+              <Text>
+                Hint {index + 1}: {el}
+              </Text>
+              <Spacer multiply={0.5} />
+            </>
+          );
+        })}
+        {isLoading ? <Spinner /> : null}
+        {hints.length < 3 ? (
           <>
-            <Text>Hint 1: {props.hint1}</Text>
+            <Button onClick={hintPlease} disabled={isLoading}>
+              Klikk her for å få et nytt hint
+            </Button>
+            <Text>Noe med hvor mange poeng man mister?</Text>
             <Spacer multiply={0.5} />
           </>
-        ) : (
-          <>
-            <Text fontSize={"0.8rem"}>
-              Tid til første hint:
-              <Countdown
-                renderer={countdownRenderer}
-                date={new Date(props.hint1releaseTime)}
-              />
-            </Text>
-            <Spacer multiply={0.5} />
-          </>
-        )}
+        ) : null}
 
-        {props.hint2 ? (
-          <>
-            <Text>Hint 2: {props.hint2}</Text>
-            <Spacer multiply={0.5} />
-          </>
-        ) : (
-          <>
-            <Text fontSize={"0.8rem"}>
-              Tid til andre hint:
-              <Countdown
-                renderer={countdownRenderer}
-                date={new Date(props.hint2releaseTime)}
-              />
-            </Text>
-            <Spacer multiply={0.5} />
-          </>
-        )}
-        {props.hint3 ? (
-          <>
-            <Text>Hint 3: {props.hint3}</Text>
-            <Spacer multiply={0.5} />
-          </>
-        ) : (
-          <>
-            <Text fontSize={"0.8rem"}>
-              Tid til siste hint:
-              <Countdown
-                renderer={countdownRenderer}
-                date={new Date(props.hint3releaseTime)}
-              />
-            </Text>
-            <Spacer multiply={0.5} />
-          </>
-        )}
         {solved ? (
           <>
             {answerFeedback ? <Text>{answerFeedback}</Text> : null}

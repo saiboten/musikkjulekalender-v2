@@ -1,4 +1,9 @@
 import { SessionProvider } from "next-auth/react";
+import {
+  QueryClient,
+  QueryClientProvider,
+  useQuery,
+} from "@tanstack/react-query";
 import { AppProps } from "next/app";
 import styled, { createGlobalStyle } from "styled-components";
 import { ChakraProvider } from "@chakra-ui/react";
@@ -10,6 +15,8 @@ import bg from "./bg.jpg";
 import React from "react";
 import { Footer } from "../components/Footer";
 import Head from "next/head";
+
+const queryClient = new QueryClient();
 
 const theme = extendTheme({
   fonts: {
@@ -76,18 +83,20 @@ const App = ({ Component, pageProps }: AppProps) => {
       <Head>
         <title>Musikkjulekalender</title>
       </Head>
-      <SessionProvider session={pageProps.session}>
-        <ChakraProvider theme={theme}>
-          <BgImage>
-            <Header />
-            <Wrapper>
-              <GlobalStyle />
-              <Component {...pageProps} />
-            </Wrapper>
-          </BgImage>
-          <Footer />
-        </ChakraProvider>
-      </SessionProvider>
+      <QueryClientProvider client={queryClient}>
+        <SessionProvider session={pageProps.session}>
+          <ChakraProvider theme={theme}>
+            <BgImage>
+              <Header />
+              <Wrapper>
+                <GlobalStyle />
+                <Component {...pageProps} />
+              </Wrapper>
+            </BgImage>
+            <Footer />
+          </ChakraProvider>
+        </SessionProvider>
+      </QueryClientProvider>
     </>
   );
 };

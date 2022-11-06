@@ -25,6 +25,7 @@ model Day {
   solution      Solution[]
   answers       Answer[]
   file          SongFile?
+  Hint          Hint[]
 }
 
 model SongFile {
@@ -49,6 +50,19 @@ model Answer {
   day         Day      @relation(fields: [dayId], references: [id], onDelete: Cascade)
   userId      Int
   user        User     @relation(fields: [userId], references: [id])
+
+  @@unique([dayId, userId])
+}
+
+model Hint {
+  id     Int     @id @default(autoincrement())
+  hint1  Boolean
+  hint2  Boolean
+  hint3  Boolean
+  dayId  Int
+  day    Day     @relation(fields: [dayId], references: [id], onDelete: Cascade)
+  userId Int
+  user   User    @relation(fields: [userId], references: [id])
 
   @@unique([dayId, userId])
 }
@@ -99,6 +113,8 @@ model User {
   role          String?
 
   answer Answer[]
+
+  hints Hint[]
 
   @@map(name: "users")
 }

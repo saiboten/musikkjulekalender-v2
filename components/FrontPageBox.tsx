@@ -5,7 +5,7 @@ export const FrontPageBox = ({ children }: { children: React.ReactNode }) => {
   return (
     <Box
       backgroundColor="#fff"
-      padding="2"
+      padding="4"
       borderRadius="5px"
       boxShadow="rgb(0 0 0 / 50%) 1px 2px 4px 0px"
     >
