@@ -7,17 +7,16 @@ import {
   Button,
   Heading,
   Input,
+  ListItem,
   Spinner,
   Text,
+  UnorderedList,
 } from "@chakra-ui/react";
 import { useMutation } from "@tanstack/react-query";
 import { format } from "date-fns";
 import React, { useState } from "react";
-import Countdown from "react-countdown";
 import { AdminEditLink, DayWithAdmin } from "../pages/p/[id]";
-import { calculatePoints } from "../utils/pointscalculator";
 import { PrimaryRed } from "./constants";
-import { countdownRenderer } from "./Countdown";
 import { Difficulty } from "./Difficulty";
 import Layout from "./Layout";
 import { Audio } from "./lib/Audio";
@@ -32,6 +31,8 @@ export const Today: React.FC<DayWithAdmin> = (props) => {
     [props.hint1, props.hint2, props.hint3].filter((el) => el !== null)
   );
 
+  const [points, setPoints] = useState(props.points);
+
   const [answerFeedback, setAnswerFeedback] = useState<undefined | string>();
   const [artist, setArtist] = useState<string | undefined>(undefined);
   const [song, setSong] = useState<string | undefined>(undefined);
@@ -45,11 +46,13 @@ export const Today: React.FC<DayWithAdmin> = (props) => {
     onSuccess: (data) => {
       if (data.hint) {
         setHints([...hints, data.hint]);
+        setPoints(data.points);
       } else {
         console.log("no hinty?!");
       }
     },
   });
+
   async function handleAnswer(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setAnswer("");
@@ -74,13 +77,15 @@ export const Today: React.FC<DayWithAdmin> = (props) => {
 
   if (isError) {
     return (
-      <Alert status="error">
-        <AlertIcon />
-        <AlertTitle>Noe gikk galt under henting av hint</AlertTitle>
-        <AlertDescription>
-          Your Chakra experience may be degraded.
-        </AlertDescription>
-      </Alert>
+      <Layout whiteBg>
+        <Alert status="error">
+          <AlertIcon />
+          <AlertTitle>Feilmelding</AlertTitle>
+          <AlertDescription>
+            Noe gikk galt under henting av hint. Prøv igjen senere.
+          </AlertDescription>
+        </Alert>
+      </Layout>
     );
   }
 
@@ -105,37 +110,47 @@ export const Today: React.FC<DayWithAdmin> = (props) => {
           </Audio>
         )}
         <Spacer multiply={0.5} />
-        <Text>
-          Verdi:{" "}
-          {props.points ??
-            calculatePoints(new Date(props.now), new Date(props.date))}{" "}
-          poeng!
-        </Text>
-        <Spacer multiply={0.5} />
+
         <Text>{props.description}</Text>
         <Spacer multiply={0.5} />
         <Heading size="md">Hint</Heading>
         <Spacer />
+        {isLoading ? <Spinner /> : null}
+        <Spacer />
+        {hints.length < 3 && !solved ? (
+          <>
+            <Text>Sitter du fast? Du kan få ekstra hint, men det koster!</Text>
+            <UnorderedList listStyleType="none" mt="2">
+              <ListItem ml="1">1 hint = Maks 3 poeng</ListItem>
+              <ListItem ml="1">2 hint = Maks 2 poeng</ListItem>
+              <ListItem ml="1">3 hint = Maks 1 poeng</ListItem>
+            </UnorderedList>
+            <Spacer />
+            <Button onClick={hintPlease} disabled={isLoading}>
+              Klikk her for å hente hint
+            </Button>
+            <Spacer multiply={0.5} />
+          </>
+        ) : null}
+
         {hints.map((el, index) => {
           return (
             <>
               <Text>
-                Hint {index + 1}: {el}
+                <Text display="inline" fontWeight="bold">
+                  Hint {index + 1}
+                </Text>
+                : {el}
               </Text>
               <Spacer multiply={0.5} />
             </>
           );
         })}
-        {isLoading ? <Spinner /> : null}
-        {hints.length < 3 ? (
-          <>
-            <Button onClick={hintPlease} disabled={isLoading}>
-              Klikk her for å få et nytt hint
-            </Button>
-            <Text>Noe med hvor mange poeng man mister?</Text>
-            <Spacer multiply={0.5} />
-          </>
-        ) : null}
+
+        <Text>
+          Denne oppgaven er nå verdt <strong>{points}</strong> poeng!
+        </Text>
+        <Spacer multiply={0.5} />
 
         {solved ? (
           <>

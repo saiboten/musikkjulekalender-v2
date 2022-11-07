@@ -23,13 +23,20 @@ export default async function handler(req, res) {
     },
   });
 
+  const hints = await prisma.hint.findFirst({
+    where: {
+      dayId: day.id,
+      userId: session.id,
+    },
+  });
+
   const rightAnswerList = result.map((el) => el.solution.toLowerCase());
 
   if (rightAnswerList.includes(guess.toLowerCase())) {
     await prisma.answer.create({
       data: {
         timeOfEntry: new Date(),
-        points: calculatePoints(new Date(), day.date),
+        points: calculatePoints([hints.hint1, hints.hint2, hints.hint3]),
         dayId: day.id,
         userId: session.id,
       },

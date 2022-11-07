@@ -11,7 +11,7 @@ import { unstable_getServerSession } from "next-auth/next";
 import { Footer } from "../components/Footer";
 import { TopScores } from "../components/TopScores";
 import { UserStats } from "../components/UserStats";
-import { isBefore } from "date-fns";
+import { isBefore, parseISO } from "date-fns";
 import { BestDaily } from "../components/BestDaily";
 import { Spacer } from "../components/lib/Spacer";
 import { getToday } from "../utils/dates";
@@ -164,7 +164,7 @@ const Blog: React.FC<Props> = (props) => {
           <Grid>
             {props.days.map((day) => (
               <GridItem key={day.id}>
-                <Day day={day} today={new Date(props.today)} />
+                <Day day={day} today={parseISO(props.today)} />
               </GridItem>
             ))}
           </Grid>

@@ -62,7 +62,8 @@ const Button = styled.button<{ today: boolean; shouldBeOpen: boolean }>`
 
 const Post: React.FC<{ day: DayProps; today: Date }> = ({ day, today }) => {
   const shouldBeOpen = isBefore(parseISO(day.date), today);
-  const isToday = isEqual(parseISO(day.date), today);
+  const isToday = isSameDay(parseISO(day.date), today);
+
   return (
     <Button
       shouldBeOpen={shouldBeOpen || isToday}

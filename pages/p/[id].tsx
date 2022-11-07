@@ -15,6 +15,7 @@ import { EditIcon } from "@chakra-ui/icons";
 import { OldDay } from "../../components/OldDay";
 import { authOptions } from "../api/auth/[...nextauth]";
 import { FutureDay } from "../../components/FutureDay";
+import { calculatePoints } from "../../utils/pointscalculator";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { params } = context;
@@ -102,7 +103,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         hint3: hints.hint3 ? day.hint3 : null,
         now: Date.now(),
         video: day.video,
-        points: day.points,
+        points: calculatePoints([hints.hint1, hints.hint2, hints.hint3]),
         id: day.id,
         description: day.description,
       },

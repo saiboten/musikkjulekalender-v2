@@ -1,5 +1,6 @@
 import prisma from "../../lib/prisma";
 import { getSession } from "next-auth/react";
+import { calculatePoints } from "../../utils/pointscalculator";
 
 export default async function handler(req, res) {
   const { dayId } = req.query;
@@ -16,7 +17,7 @@ export default async function handler(req, res) {
     },
   });
 
-  const hints = await prisma.hint.findFirst({
+  let hints = await prisma.hint.findFirst({
     where: {
       userId: session.id,
       dayId: Number(dayId),
@@ -60,6 +61,13 @@ export default async function handler(req, res) {
     await updateHintGiven(3);
   }
 
+  hints = await prisma.hint.findFirst({
+    where: {
+      userId: session.id,
+      dayId: Number(dayId),
+    },
+  });
+
   if (day.date > new Date()) {
     res.status(401).send({ message: "Dag ikke åpnet" });
   } else if (!hintToGive) {
@@ -67,6 +75,7 @@ export default async function handler(req, res) {
   } else {
     res.status(200).json({
       hint: hintToGive,
+      points: calculatePoints([hints.hint1, hints.hint2, hints.hint3]),
     });
   }
 }

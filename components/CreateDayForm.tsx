@@ -31,6 +31,7 @@ import { SingleDatepicker } from "chakra-dayzed-datepicker";
 import { DeleteIcon } from "@chakra-ui/icons";
 import { YoutubeVideo } from "./lib/YoutubeVideo";
 import { UiFileInputButton } from "./lib/UiFileUploadButton";
+import { parseISO } from "date-fns";
 
 const StyledBack = styled.a`
   margin-left: 1rem;
@@ -79,7 +80,7 @@ export const CreateDayForm: React.FC<CreateDayFormProps> = (props) => {
     defaultValues: {
       description: props.description,
       artist: props.artist,
-      date: new Date(props.date),
+      date: parseISO(props.date),
       madeBy: props.madeBy, //TODO
       song: props.song,
       video: props.video,

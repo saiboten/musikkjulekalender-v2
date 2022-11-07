@@ -1,32 +1,22 @@
-import { addHours, parseISO } from "date-fns";
-import { format } from "path";
-import { hint1hours, hint2hours, hint3hours } from "../../components/constants";
 import { calculatePoints } from "./answer";
 
-const startOfDay = parseISO('02/11/2014', 'MM/dd/yyyy', new Date())
-
 test("Answer right away gives max score", () => {
-  const res = calculatePoints(startOfDay, startOfDay);
+  const res = calculatePoints([false, false, false]);
   expect(res).toBe(5);
 });
 
-test("Answer after 1 hour gives max score", () => {
-  const res = calculatePoints(addHours(startOfDay, 1), startOfDay);
-  expect(res).toBe(5);
-});
-
-test("Answer after 1 hint time hour gives some points", () => {
-  const res = calculatePoints(addHours(startOfDay, hint1hours), startOfDay);
+test("One hint gives 3 points", () => {
+  const res = calculatePoints([true, false, false]);
   expect(res).toBe(3);
 });
 
-test("Answer after 2 hint time hour gives less points", () => {
-  const res = calculatePoints(addHours(startOfDay, hint2hours), startOfDay);
+test("two hints gives 2 points", () => {
+  const res = calculatePoints([true, true, false]);
   expect(res).toBe(2);
 });
 
-test("Answer after 3 hint time hour gives min points", () => {
-  const res = calculatePoints(addHours(startOfDay, hint3hours), startOfDay);
+test("three hints gives 1 points", () => {
+  const res = calculatePoints([true, true, true]);
   expect(res).toBe(1);
 });
 

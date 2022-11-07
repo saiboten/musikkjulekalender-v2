@@ -1,5 +1,5 @@
 import { Heading, List, ListItem, Text } from "@chakra-ui/react";
-import { format } from "date-fns";
+import { format, parseISO } from "date-fns";
 import { FrontPageBox } from "./FrontPageBox";
 import { Spacer } from "./lib/Spacer";
 
@@ -17,7 +17,7 @@ export const BestDaily = ({ todayAnswers }: Props) => {
           {todayAnswers.map((el) => {
             return (
               <ListItem key={el.user}>
-                {el.user} @ {format(new Date(el.time), "hh:MM:ss")} -{" "}
+                {el.user} @ {format(parseISO(el.time), "hh:MM:ss")} -{" "}
                 {el.points} poeng
               </ListItem>
             );

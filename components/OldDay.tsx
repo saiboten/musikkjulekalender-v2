@@ -1,5 +1,5 @@
 import { Box, Button, Heading, Text } from "@chakra-ui/react";
-import { format } from "date-fns";
+import { format, parseISO } from "date-fns";
 import { useState } from "react";
 import { AdminEditLink, DayWithAdmin } from "../pages/p/[id]";
 import { Difficulty } from "./Difficulty";
@@ -36,7 +36,7 @@ export const OldDay: React.FC<DayWithAdmin> = (props) => {
           <Difficulty difficulty={props.difficulty ?? 1} />
           <Thumbnail image={props.madeBy} />
         </Box>
-        <Heading>{format(new Date(props.date), "d 'dag jul")}</Heading>
+        <Heading>{format(parseISO(props.date), "d 'dag jul")}</Heading>
         <Spacer multiply={0.5} />
         {props.video ? (
           <YoutubeVideo link={props.video}></YoutubeVideo>
