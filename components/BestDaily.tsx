@@ -17,7 +17,7 @@ export const BestDaily = ({ todayAnswers }: Props) => {
           {todayAnswers.map((el) => {
             return (
               <ListItem key={el.user}>
-                {el.user} @ {format(parseISO(el.time), "hh:MM:ss")} -{" "}
+                {el.user} @ {format(parseISO(el.time), "HH:mm:ss")} -{" "}
                 {el.points} poeng
               </ListItem>
             );

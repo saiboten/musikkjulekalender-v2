@@ -89,7 +89,11 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     };
   } else if (isToday && answer) {
     return {
-      props: { ...dayWithFixedDates, solved: true },
+      props: {
+        ...dayWithFixedDates,
+        solved: true,
+        points: calculatePoints([hints.hint1, hints.hint2, hints.hint3]),
+      },
     };
   } else {
     return {

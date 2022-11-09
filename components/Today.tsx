@@ -135,7 +135,7 @@ export const Today: React.FC<DayWithAdmin> = (props) => {
 
         {hints.map((el, index) => {
           return (
-            <>
+            <React.Fragment key={index}>
               <Text>
                 <Text display="inline" fontWeight="bold">
                   Hint {index + 1}
@@ -143,13 +143,19 @@ export const Today: React.FC<DayWithAdmin> = (props) => {
                 : {el}
               </Text>
               <Spacer multiply={0.5} />
-            </>
+            </React.Fragment>
           );
         })}
 
-        <Text>
-          Denne oppgaven er nå verdt <strong>{points}</strong> poeng!
-        </Text>
+        {solved ? (
+          <Text>
+            På denne oppgaven høstet du <strong>{points}</strong> poeng!
+          </Text>
+        ) : (
+          <Text>
+            Denne oppgaven er nå verdt <strong>{points}</strong> poeng!
+          </Text>
+        )}
         <Spacer multiply={0.5} />
 
         {solved ? (
