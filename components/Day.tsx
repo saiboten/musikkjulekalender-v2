@@ -23,13 +23,13 @@ export type DayProps = {
     id: number;
     dayId: number;
     file: string;
+    hint1file?: string;
+    hint2file?: string;
+    hint3file?: string;
   };
   hint1?: string;
   hint2?: string;
   hint3?: string;
-  hint1file?: string;
-  hint2file?: string;
-  hint3file?: string;
 };
 
 const Button = styled.button<{ today: boolean; shouldBeOpen: boolean }>`
