@@ -29,10 +29,13 @@ model Day {
 }
 
 model SongFile {
-  id    Int    @id @default(autoincrement())
-  dayId Int    @unique
-  file  String
-  day   Day    @relation(fields: [dayId], references: [id], onDelete: Cascade)
+  id        Int     @id @default(autoincrement())
+  dayId     Int     @unique
+  file      String
+  hint1file String?
+  hint2file String?
+  hint3file String?
+  day       Day     @relation(fields: [dayId], references: [id], onDelete: Cascade)
 }
 
 model Solution {

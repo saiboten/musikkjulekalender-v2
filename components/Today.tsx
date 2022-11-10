@@ -24,11 +24,20 @@ import { Spacer } from "./lib/Spacer";
 import { YoutubeVideo } from "./lib/YoutubeVideo";
 import { Thumbnail } from "./Thumbnail";
 
+interface HintAndFile {
+  hint: string;
+  file: boolean;
+}
+
 export const Today: React.FC<DayWithAdmin> = (props) => {
   const [answer, setAnswer] = useState("");
 
-  const [hints, setHints] = useState<string[]>(
-    [props.hint1, props.hint2, props.hint3].filter((el) => el !== null)
+  const [hints, setHints] = useState<HintAndFile[]>(
+    [
+      { hint: props.hint1, file: props.hint1 === "file" },
+      { hint: props.hint2, file: props.hint2 === "file" },
+      { hint: props.hint3, file: props.hint3 === "file" },
+    ].filter((el) => el.hint !== null)
   );
 
   const [points, setPoints] = useState(props.points);
@@ -45,10 +54,9 @@ export const Today: React.FC<DayWithAdmin> = (props) => {
     },
     onSuccess: (data) => {
       if (data.hint) {
-        setHints([...hints, data.hint]);
+        setHints([...hints, { hint: data.hint, file: data.fileHintExists }]);
         setPoints(data.points);
       } else {
-        console.log("no hinty?!");
       }
     },
   });
@@ -92,7 +100,7 @@ export const Today: React.FC<DayWithAdmin> = (props) => {
   return (
     <Layout whiteBg>
       <AdminEditLink />
-      <div>
+      <>
         <Box display="flex" justifyContent="space-between" alignItems="center">
           <Difficulty difficulty={props.difficulty ?? 1} />
           <Thumbnail image={props.madeBy} />
@@ -117,35 +125,6 @@ export const Today: React.FC<DayWithAdmin> = (props) => {
         <Spacer />
         {isLoading ? <Spinner /> : null}
         <Spacer />
-        {hints.length < 3 && !solved ? (
-          <>
-            <Text>Sitter du fast? Du kan få ekstra hint, men det koster!</Text>
-            <UnorderedList listStyleType="none" mt="2">
-              <ListItem ml="1">1 hint = Maks 3 poeng</ListItem>
-              <ListItem ml="1">2 hint = Maks 2 poeng</ListItem>
-              <ListItem ml="1">3 hint = Maks 1 poeng</ListItem>
-            </UnorderedList>
-            <Spacer />
-            <Button onClick={hintPlease} disabled={isLoading}>
-              Klikk her for å hente hint
-            </Button>
-            <Spacer multiply={0.5} />
-          </>
-        ) : null}
-
-        {hints.map((el, index) => {
-          return (
-            <React.Fragment key={index}>
-              <Text>
-                <Text display="inline" fontWeight="bold">
-                  Hint {index + 1}
-                </Text>
-                : {el}
-              </Text>
-              <Spacer multiply={0.5} />
-            </React.Fragment>
-          );
-        })}
 
         {solved ? (
           <Text>
@@ -196,7 +175,47 @@ export const Today: React.FC<DayWithAdmin> = (props) => {
             ) : null}
           </>
         )}
-      </div>
+      </>
+      {hints.length < 3 && !solved ? (
+        <>
+          <Text>Sitter du fast? Du kan få ekstra hint, men det koster!</Text>
+          <UnorderedList listStyleType="none" mt="2">
+            <ListItem ml="1">1 hint = Maks 3 poeng</ListItem>
+            <ListItem ml="1">2 hint = Maks 2 poeng</ListItem>
+            <ListItem ml="1">3 hint = Maks 1 poeng</ListItem>
+          </UnorderedList>
+          <Spacer />
+          <Button onClick={hintPlease} disabled={isLoading}>
+            Klikk her for å hente hint
+          </Button>
+          <Spacer multiply={0.5} />
+        </>
+      ) : null}
+
+      {hints.map(({ hint, file }, index) => {
+        return (
+          <React.Fragment key={index}>
+            <Text>
+              <Text display="inline" fontWeight="bold">
+                Hint {index + 1}
+              </Text>
+              : {hint === "file" ? "Lydfil:" : hint}
+            </Text>
+
+            {file ? (
+              <Audio
+                controls
+                preload="none"
+                src={`/api/hint/${props.id}/${index}`}
+              >
+                Your browser does not support the
+                <code>audio</code> element.
+              </Audio>
+            ) : null}
+            <Spacer multiply={0.5} />
+          </React.Fragment>
+        );
+      })}
     </Layout>
   );
 };

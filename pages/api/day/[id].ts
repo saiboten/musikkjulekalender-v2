@@ -26,7 +26,8 @@ export default async function handle(
       res.status(401).send({ message: "Unauthorized" });
     }
   } else if (req.method === "PUT") {
-    const { solutions, file, ...body } = req.body;
+    const { solutions, file, hint1file, hint2file, hint3file, ...body } =
+      req.body;
 
     const storeSolutions = solutions.map((solution) => ({
       dayId: Number(dayId),
@@ -44,11 +45,17 @@ export default async function handle(
     await prisma.songFile.upsert({
       where: { dayId: Number(dayId) },
       create: {
+        hint1file,
+        hint2file,
+        hint3file,
         file,
         dayId: Number(dayId),
       },
       update: {
         file,
+        hint1file,
+        hint2file,
+        hint3file,
       },
     });
 

@@ -4,7 +4,6 @@ import Router, { useRouter } from "next/router";
 import { DayProps } from "../../components/Day";
 import prisma from "../../lib/prisma";
 import { useSession } from "next-auth/react";
-import styled from "styled-components";
 import { FormData } from "../../components/CreateDayForm";
 import { CreateDayForm } from "../../components/CreateDayForm";
 import { openingHour } from "../../components/constants";
@@ -29,13 +28,6 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
     props: postWithFixedDates,
   };
 };
-
-async function deletePost(id: number): Promise<void> {
-  await fetch(`/api/post/${id}`, {
-    method: "DELETE",
-  });
-  await Router.push("/");
-}
 
 const Post: React.FC<DayProps> = (props) => {
   const { data: session, status } = useSession();
@@ -76,6 +68,8 @@ const Post: React.FC<DayProps> = (props) => {
   if (session?.user.role !== "admin") {
     return null;
   }
+
+  console.log(props);
 
   return (
     <CreateDayForm

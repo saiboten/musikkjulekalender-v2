@@ -61,8 +61,11 @@ export type FormData = {
   solutionVideo: string;
   difficulty: string;
   hint1: string;
+  hint1file: string;
   hint2: string;
+  hint2file: string;
   hint3: string;
+  hint3file: string;
 };
 
 export const CreateDayForm: React.FC<CreateDayFormProps> = (props) => {
@@ -81,7 +84,7 @@ export const CreateDayForm: React.FC<CreateDayFormProps> = (props) => {
       description: props.description,
       artist: props.artist,
       date: parseISO(props.date),
-      madeBy: props.madeBy, //TODO
+      madeBy: props.madeBy,
       song: props.song,
       video: props.video,
       solutions: props.solution?.map((el) => ({ value: el.solution })),
@@ -90,6 +93,9 @@ export const CreateDayForm: React.FC<CreateDayFormProps> = (props) => {
       hint1: props.hint1,
       hint2: props.hint2,
       hint3: props.hint3,
+      hint1file: props.file?.hint1file,
+      hint2file: props.file?.hint2file,
+      hint3file: props.file?.hint3file,
     },
   });
 
@@ -266,6 +272,29 @@ export const CreateDayForm: React.FC<CreateDayFormProps> = (props) => {
           <Spacer multiply={0.5} />
 
           <FormControl>
+            <Controller
+              name="hint1file"
+              control={control}
+              render={({ field }) => (
+                <UiFileInputButton
+                  label="Klikk her for å laste opp hint 1"
+                  uploadFileName="theFiles"
+                  onChange={field.onChange}
+                />
+              )}
+            />
+          </FormControl>
+
+          <Spacer multiply={0.5} />
+
+          <audio controls preload="none" src={watch("hint1file")}>
+            Your browser does not support the
+            <code>audio</code> element.
+          </audio>
+
+          <Spacer multiply={0.5} />
+
+          <FormControl>
             <FormLabel htmlFor="hint2">Hint 2</FormLabel>
             <Input
               name="hint2"
@@ -278,12 +307,58 @@ export const CreateDayForm: React.FC<CreateDayFormProps> = (props) => {
           <Spacer multiply={0.5} />
 
           <FormControl>
+            <Controller
+              name="hint2file"
+              control={control}
+              render={({ field }) => (
+                <UiFileInputButton
+                  label="Klikk her for å laste opp hint 2"
+                  uploadFileName="theFiles"
+                  onChange={field.onChange}
+                />
+              )}
+            />
+          </FormControl>
+
+          <Spacer multiply={0.5} />
+
+          <audio controls preload="none" src={watch("hint2file")}>
+            Your browser does not support the
+            <code>audio</code> element.
+          </audio>
+
+          <Spacer multiply={0.5} />
+
+          <FormControl>
             <FormLabel htmlFor="hint3">Hint 3</FormLabel>
             <Input
               name="hint3"
               {...register("hint3")}
               placeholder="Hint3"
               type="text"
+            />
+          </FormControl>
+
+          <Spacer multiply={0.5} />
+
+          <audio controls preload="none" src={watch("hint3file")}>
+            Your browser does not support the
+            <code>audio</code> element.
+          </audio>
+
+          <Spacer multiply={0.5} />
+
+          <FormControl>
+            <Controller
+              name="hint3file"
+              control={control}
+              render={({ field }) => (
+                <UiFileInputButton
+                  label="Klikk her for å laste opp hint 3"
+                  uploadFileName="theFiles"
+                  onChange={field.onChange}
+                />
+              )}
             />
           </FormControl>
 

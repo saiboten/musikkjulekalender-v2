@@ -20,6 +20,9 @@ export default async function handle(
     hint1,
     hint2,
     hint3,
+    hint1file,
+    hint2file,
+    hint3file,
   } = req.body;
 
   const session = await getSession({ req });
@@ -46,6 +49,9 @@ export default async function handle(
       file: {
         create: {
           file: file ?? "",
+          hint1file: hint1file,
+          hint2file: hint2file,
+          hint3file: hint3file,
         },
       },
     },

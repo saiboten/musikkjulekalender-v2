@@ -15,6 +15,9 @@ export default async function handler(req, res) {
     where: {
       id: Number(dayId),
     },
+    include: {
+      file: true,
+    },
   });
 
   let hints = await prisma.hint.findFirst({
@@ -49,15 +52,19 @@ export default async function handler(req, res) {
   }
 
   let hintToGive: string | undefined = undefined;
+  let hintFileToGive: string | undefined = undefined;
 
   if (!hints.hint1) {
     hintToGive = day.hint1;
+    hintFileToGive = day.file.hint1file;
     await updateHintGiven(1);
   } else if (!hints.hint2) {
     hintToGive = day.hint2;
+    hintFileToGive = day.file.hint2file;
     await updateHintGiven(2);
   } else if (!hints.hint3) {
     hintToGive = day.hint3;
+    hintFileToGive = day.file.hint3file;
     await updateHintGiven(3);
   }
 
@@ -75,6 +82,7 @@ export default async function handler(req, res) {
   } else {
     res.status(200).json({
       hint: hintToGive,
+      fileHintExists: hintFileToGive !== undefined,
       points: calculatePoints([hints.hint1, hints.hint2, hints.hint3]),
     });
   }
