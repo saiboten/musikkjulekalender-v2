@@ -38,7 +38,6 @@ export default async function handle(
       where: { id: Number(dayId) },
       data: {
         ...body,
-        difficulty: parseInt(body.difficulty),
         hasFileHint1: !!hint1file,
         hasFileHint2: !!hint2file,
         hasFileHint3: !!hint3file,

@@ -15,7 +15,6 @@ export default async function handle(
     solutions,
     song,
     video,
-    difficulty,
     file,
     hint1,
     hint2,
@@ -44,7 +43,6 @@ export default async function handle(
       hasFileHint1: !!hint1file,
       hasFileHint2: !!hint2file,
       hasFileHint3: !!hint3file,
-      difficulty: parseInt(difficulty),
       solution: {
         create: solutions.map((el) => ({ solution: el })),
       },

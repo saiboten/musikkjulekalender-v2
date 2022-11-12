@@ -2,7 +2,6 @@ import { Box, Button, Heading, Text } from "@chakra-ui/react";
 import { format, parseISO } from "date-fns";
 import { useState } from "react";
 import { AdminEditLink, DayWithAdmin } from "../pages/p/[id]";
-import { Difficulty } from "./Difficulty";
 import Layout from "./Layout";
 import { Audio } from "./lib/Audio";
 import { Spacer } from "./lib/Spacer";
@@ -58,8 +57,7 @@ export const OldDay: React.FC<DayWithAdmin> = (props) => {
     <Layout whiteBg>
       <AdminEditLink />
       <Box textAlign="center">
-        <Box display="flex" justifyContent="space-between" alignItems="center">
-          <Difficulty difficulty={props.difficulty ?? 1} />
+        <Box display="flex" justifyContent="flex-end" alignItems="center">
           <Thumbnail image={props.madeBy} />
         </Box>
         <Heading>{format(parseISO(props.date), "d 'dag jul")}</Heading>

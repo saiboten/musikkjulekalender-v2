@@ -101,8 +101,7 @@ export const Today: React.FC<DayWithAdmin> = (props) => {
     <Layout whiteBg>
       <AdminEditLink />
       <>
-        <Box display="flex" justifyContent="space-between" alignItems="center">
-          <Difficulty difficulty={props.difficulty ?? 1} />
+        <Box display="flex" justifyContent="flex-end" alignItems="center">
           <Thumbnail image={props.madeBy} />
         </Box>
         <Heading textAlign="center">

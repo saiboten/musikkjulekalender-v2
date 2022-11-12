@@ -89,7 +89,6 @@ export const CreateDayForm: React.FC<CreateDayFormProps> = (props) => {
       video: props.video,
       solutions: props.solution?.map((el) => ({ value: el.solution })),
       file: props.file?.file,
-      difficulty: `${props.difficulty}`,
       hint1: props.hint1,
       hint2: props.hint2,
       hint3: props.hint3,
@@ -362,9 +361,9 @@ export const CreateDayForm: React.FC<CreateDayFormProps> = (props) => {
             />
           </FormControl>
 
-          <Spacer multiply={0.5} />
+          {/* <Spacer multiply={0.5} /> */}
 
-          <Controller
+          {/* <Controller
             name="difficulty"
             control={control}
             render={({ field }) => (
@@ -376,7 +375,7 @@ export const CreateDayForm: React.FC<CreateDayFormProps> = (props) => {
                 </Stack>
               </RadioGroup>
             )}
-          />
+          /> */}
 
           <Spacer multiply={0.5} />
 
