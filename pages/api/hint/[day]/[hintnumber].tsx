@@ -1,19 +1,19 @@
-import { isAfter } from "date-fns";
+import { isAfter, isBefore } from "date-fns";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { getSession } from "next-auth/react";
 import prisma from "../../../../lib/prisma";
 import { getToday } from "../../../../utils/dates";
 
 const numberToHintFile = {
-  0: "hint1file",
-  1: "hint2file",
-  2: "hint3file",
+  1: "hint1file",
+  2: "hint2file",
+  3: "hint3file",
 } as const;
 
 const numberToHint = {
-  0: "hint1",
-  1: "hint2",
-  2: "hint3",
+  1: "hint1",
+  2: "hint2",
+  3: "hint3",
 } as const;
 
 export default async function handle(
@@ -49,17 +49,20 @@ export default async function handle(
 
   const hintCheck = numberToHint[hintNumber];
 
-  if (!hints[hintCheck]) {
-    return res.json({ error: "no access to hint" });
-  }
-
-  if (isAfter(day.date, now)) {
-    return res.json({ error: "nope" });
-  } else {
+  if (isBefore(day.date, now)) {
     const buf = Buffer.from(day.file[numberToHintFile[hintNumber]], "base64");
 
     res.setHeader("Content-Type", "audio/mpeg");
     res.send(buf);
+  } else if (hints[hintCheck]) {
+    const buf = Buffer.from(day.file[numberToHintFile[hintNumber]], "base64");
+
+    res.setHeader("Content-Type", "audio/mpeg");
+    res.send(buf);
+  } else if (!hints[hintCheck]) {
+    return res.json({ error: "no access to hint" });
+  } else {
+    return res.json({ error: "nope" });
   }
 }
 

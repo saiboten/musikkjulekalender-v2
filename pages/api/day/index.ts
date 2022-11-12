@@ -27,8 +27,7 @@ export default async function handle(
 
   const session = await getSession({ req });
   if (session.user?.role !== "admin") {
-    res.status(401).send({ message: "Unauthorized" });
-    return;
+    return res.status(401).send({ message: "Unauthorized" });
   }
 
   const result = await prisma.day.create({
@@ -42,6 +41,9 @@ export default async function handle(
       hint1,
       hint2,
       hint3,
+      hasFileHint1: !!hint1file,
+      hasFileHint2: !!hint2file,
+      hasFileHint3: !!hint3file,
       difficulty: parseInt(difficulty),
       solution: {
         create: solutions.map((el) => ({ solution: el })),

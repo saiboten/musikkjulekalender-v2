@@ -9,11 +9,37 @@ import { Spacer } from "./lib/Spacer";
 import { YoutubeVideo } from "./lib/YoutubeVideo";
 import { Thumbnail } from "./Thumbnail";
 
-function Hint({ hint, hintNumber }: { hint: string; hintNumber: 1 | 2 | 3 }) {
+function Hint({
+  hint,
+  hintNumber,
+  id,
+  fileHintExists,
+}: {
+  hint: string;
+  hintNumber: 1 | 2 | 3;
+  id: number;
+  fileHintExists?: boolean;
+}) {
   const [show, setShow] = useState(false);
 
   if (show) {
-    return <Text>{hint}</Text>;
+    return (
+      <>
+        <Text>
+          <Text display="inline" fontWeight="bold">
+            Hint {hintNumber}
+          </Text>
+          : {fileHintExists ? "Lydfil:" : hint}
+        </Text>
+        {fileHintExists ? (
+          <Audio controls preload="none" src={`/api/hint/${id}/${hintNumber}`}>
+            Your browser does not support the
+            <code>audio</code> element.
+          </Audio>
+        ) : null}
+        <Spacer multiply={0.5} />
+      </>
+    );
   }
 
   return (
@@ -52,13 +78,28 @@ export const OldDay: React.FC<DayWithAdmin> = (props) => {
           <Text>{props.description}</Text>
 
           <Spacer multiply={0.5} />
-          <Hint hint={props.hint1} hintNumber={1} />
+          <Hint
+            hint={props.hint1}
+            hintNumber={1}
+            id={props.id}
+            fileHintExists={props.hasFileHint1}
+          />
 
           <Spacer multiply={0.5} />
-          <Hint hint={props.hint2} hintNumber={2} />
+          <Hint
+            hint={props.hint2}
+            hintNumber={2}
+            id={props.id}
+            fileHintExists={props.hasFileHint2}
+          />
 
           <Spacer multiply={0.5} />
-          <Hint hint={props.hint3} hintNumber={3} />
+          <Hint
+            hint={props.hint3}
+            hintNumber={3}
+            id={props.id}
+            fileHintExists={props.hasFileHint3}
+          />
 
           <Spacer multiply={0.5} />
           {showSolution ? null : (

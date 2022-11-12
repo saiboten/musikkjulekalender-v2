@@ -34,9 +34,9 @@ export const Today: React.FC<DayWithAdmin> = (props) => {
 
   const [hints, setHints] = useState<HintAndFile[]>(
     [
-      { hint: props.hint1, file: props.hint1 === "file" },
-      { hint: props.hint2, file: props.hint2 === "file" },
-      { hint: props.hint3, file: props.hint3 === "file" },
+      { hint: props.hint1, file: props.hasFileHint1 },
+      { hint: props.hint2, file: props.hasFileHint2 },
+      { hint: props.hint3, file: props.hasFileHint3 },
     ].filter((el) => el.hint !== null)
   );
 
@@ -121,8 +121,7 @@ export const Today: React.FC<DayWithAdmin> = (props) => {
 
         <Text>{props.description}</Text>
         <Spacer multiply={0.5} />
-        <Heading size="md">Hint</Heading>
-        <Spacer />
+
         {isLoading ? <Spinner /> : null}
         <Spacer />
 
@@ -176,17 +175,21 @@ export const Today: React.FC<DayWithAdmin> = (props) => {
           </>
         )}
       </>
+
+      <Heading size="md">Hint</Heading>
+      <Spacer />
+
       {hints.length < 3 && !solved ? (
         <>
           <Text>Sitter du fast? Du kan få ekstra hint, men det koster!</Text>
           <UnorderedList listStyleType="none" mt="2">
-            <ListItem ml="1">1 hint = Maks 3 poeng</ListItem>
-            <ListItem ml="1">2 hint = Maks 2 poeng</ListItem>
-            <ListItem ml="1">3 hint = Maks 1 poeng</ListItem>
+            <ListItem ml="1">1 hint = vi trekker 2 poeng</ListItem>
+            <ListItem ml="1">2 hint = vi trekker 3 poeng</ListItem>
+            <ListItem ml="1">3 hint = vi trekker 4 poeng</ListItem>
           </UnorderedList>
           <Spacer />
           <Button onClick={hintPlease} disabled={isLoading}>
-            Klikk her for å hente hint
+            Klikk her for å få hint nummer {hints.length + 1}
           </Button>
           <Spacer multiply={0.5} />
         </>
@@ -199,14 +202,14 @@ export const Today: React.FC<DayWithAdmin> = (props) => {
               <Text display="inline" fontWeight="bold">
                 Hint {index + 1}
               </Text>
-              : {hint === "file" ? "Lydfil:" : hint}
+              : {file ? "Lydfil:" : hint}
             </Text>
 
             {file ? (
               <Audio
                 controls
                 preload="none"
-                src={`/api/hint/${props.id}/${index}`}
+                src={`/api/hint/${props.id}/${index + 1}`}
               >
                 Your browser does not support the
                 <code>audio</code> element.

@@ -21,6 +21,9 @@ model Day {
   hint1         String?
   hint2         String?
   hint3         String?
+  hasFileHint1  Boolean?
+  hasFileHint2  Boolean?
+  hasFileHint3  Boolean?
   madeBy        String?
   solution      Solution[]
   answers       Answer[]

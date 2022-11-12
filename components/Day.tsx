@@ -30,6 +30,9 @@ export type DayProps = {
   hint1?: string;
   hint2?: string;
   hint3?: string;
+  hasFileHint1?: boolean;
+  hasFileHint2?: boolean;
+  hasFileHint3?: boolean;
 };
 
 const Button = styled.button<{ today: boolean; shouldBeOpen: boolean }>`
