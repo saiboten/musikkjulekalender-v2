@@ -59,7 +59,6 @@ export type FormData = {
   video: string;
   file: string;
   solutionVideo: string;
-  difficulty: string;
   hint1: string;
   hint1file: string;
   hint2: string;
@@ -88,6 +87,7 @@ export const CreateDayForm: React.FC<CreateDayFormProps> = (props) => {
       song: props.song,
       video: props.video,
       solutions: props.solution?.map((el) => ({ value: el.solution })),
+      solutionVideo: props.solutionVideo,
       file: props.file?.file,
       hint1: props.hint1,
       hint2: props.hint2,
@@ -360,22 +360,6 @@ export const CreateDayForm: React.FC<CreateDayFormProps> = (props) => {
               )}
             />
           </FormControl>
-
-          {/* <Spacer multiply={0.5} /> */}
-
-          {/* <Controller
-            name="difficulty"
-            control={control}
-            render={({ field }) => (
-              <RadioGroup {...field}>
-                <Stack direction={{ base: "column", lg: "row" }}>
-                  <Radio value="1">Enkel</Radio>
-                  <Radio value="2">Medium</Radio>
-                  <Radio value="3">Vanskelig</Radio>
-                </Stack>
-              </RadioGroup>
-            )}
-          /> */}
 
           <Spacer multiply={0.5} />
 

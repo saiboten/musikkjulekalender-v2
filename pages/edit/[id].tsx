@@ -69,8 +69,6 @@ const Post: React.FC<DayProps> = (props) => {
     return null;
   }
 
-  console.log(props);
-
   return (
     <CreateDayForm
       {...props}
