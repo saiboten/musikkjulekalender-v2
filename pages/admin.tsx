@@ -7,13 +7,19 @@ import { unstable_getServerSession } from "next-auth/next";
 import { LoggedOut } from "../components/LoggedOut";
 import { authOptions } from "./api/auth/[...nextauth]";
 import { Admin } from "../components/Admin";
-import { User } from "@prisma/client";
-import { Heading, Link, List, ListItem } from "@chakra-ui/react";
+import { Day, User } from "@prisma/client";
+import { Heading, Link, List, ListItem, Text } from "@chakra-ui/react";
 import NextLink from "next/link";
 import { Spacer } from "../components/lib/Spacer";
+import { format, parseISO } from "date-fns";
+
+interface DayWithStringDate extends Omit<Day, "date"> {
+  date: string;
+}
 
 type Props = {
   users: User[];
+  days: DayWithStringDate[];
 };
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
@@ -30,11 +36,12 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   });
 
   if (user.role !== "admin") {
-    return {
-      props: {
-        users: [],
-      },
-    };
+    throw new Error("Not admin");
+    // return {
+    //   props: {
+    //     users: [],
+    //   },
+    // };
   }
 
   const users = (await prisma.user.findMany({})).map((el) => ({
@@ -43,14 +50,20 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     updatedAt: el.updatedAt.toISOString(),
   }));
 
+  const days = (await prisma.day.findMany({})).map((day) => ({
+    ...day,
+    date: day.date.toISOString(),
+  }));
+
   return {
     props: {
       users,
+      days,
     },
   };
 };
 
-const AdminPage: React.FC<Props> = ({ users }) => {
+const AdminPage: React.FC<Props> = ({ users, days }) => {
   const session = useSession();
 
   if (!session.data?.user) {
@@ -61,6 +74,31 @@ const AdminPage: React.FC<Props> = ({ users }) => {
     <Layout whiteBg>
       <Admin>
         <Heading size="lg">Admin</Heading>
+
+        <List>
+          {days.map((day) => {
+            return (
+              <NextLink key={day.id} href={`/p/${day.id}`} passHref>
+                <Link>
+                  <ListItem
+                    border="1px solid black"
+                    padding="2"
+                    borderRadius="5px"
+                    margin="2"
+                  >
+                    <Text fontWeight="bold">
+                      {format(parseISO(day.date), "d")}: {day.artist} -{" "}
+                      {day.song}
+                    </Text>
+                    <Text>{day.description}</Text>
+                    <Text>{day.solutionVideo}</Text>
+                  </ListItem>
+                </Link>
+              </NextLink>
+            );
+          })}
+        </List>
+
         <Spacer />
         <List>
           {users.map((el) => {
