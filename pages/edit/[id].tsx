@@ -48,7 +48,7 @@ const Post: React.FC<DayProps> = (props) => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
       });
-      await Router.push(`/p/${id}`);
+      await Router.push(`/admin`);
     } catch (error) {
       console.error(error);
     }
