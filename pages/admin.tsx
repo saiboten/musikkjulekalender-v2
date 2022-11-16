@@ -78,7 +78,7 @@ const AdminPage: React.FC<Props> = ({ users, days }) => {
         <List>
           {days.map((day) => {
             return (
-              <NextLink key={day.id} href={`/p/${day.id}`} passHref>
+              <NextLink key={day.id} href={`/edit/${day.id}`} passHref>
                 <Link>
                   <ListItem
                     border="1px solid black"
