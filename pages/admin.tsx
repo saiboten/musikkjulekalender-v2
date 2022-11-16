@@ -50,10 +50,12 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     updatedAt: el.updatedAt.toISOString(),
   }));
 
-  const days = (await prisma.day.findMany({})).map((day) => ({
-    ...day,
-    date: day.date.toISOString(),
-  }));
+  const days = (await prisma.day.findMany({}))
+    .sort((a, b) => (a.date < b.date ? -1 : 1))
+    .map((day) => ({
+      ...day,
+      date: day.date.toISOString(),
+    }));
 
   return {
     props: {
