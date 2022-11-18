@@ -286,7 +286,15 @@ export const CreateDayForm: React.FC<CreateDayFormProps> = (props) => {
 
           <Spacer multiply={0.5} />
 
-          <audio controls preload="none" src={watch("hint1file")}>
+          <audio
+            controls
+            preload="none"
+            src={
+              watch("hint1file")
+                ? watch("hint1file")
+                : `/api/admin/${props.id}/1`
+            }
+          >
             Your browser does not support the
             <code>audio</code> element.
           </audio>
@@ -321,7 +329,15 @@ export const CreateDayForm: React.FC<CreateDayFormProps> = (props) => {
 
           <Spacer multiply={0.5} />
 
-          <audio controls preload="none" src={watch("hint2file")}>
+          <audio
+            controls
+            preload="none"
+            src={
+              watch("hint2file")
+                ? watch("hint2file")
+                : `/api/admin/${props.id}/2`
+            }
+          >
             Your browser does not support the
             <code>audio</code> element.
           </audio>
@@ -340,7 +356,15 @@ export const CreateDayForm: React.FC<CreateDayFormProps> = (props) => {
 
           <Spacer multiply={0.5} />
 
-          <audio controls preload="none" src={watch("hint3file")}>
+          <audio
+            controls
+            preload="none"
+            src={
+              watch("hint3file")
+                ? watch("hint3file")
+                : `/api/admin/${props.id}/3`
+            }
+          >
             Your browser does not support the
             <code>audio</code> element.
           </audio>

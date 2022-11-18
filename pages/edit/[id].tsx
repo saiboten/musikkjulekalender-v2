@@ -15,7 +15,6 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
     },
     include: {
       solution: true,
-      file: true,
     },
   });
 
