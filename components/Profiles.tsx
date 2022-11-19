@@ -157,6 +157,14 @@ export const Profiles = ({
         </Profile>
       ),
     },
+    {
+      key: "Rune",
+      profile: (
+        <Profile image={skoyerfanden} name="Rune">
+          <P>Info kommer</P>
+        </Profile>
+      ),
+    },
   ];
 
   if (filterBy) {

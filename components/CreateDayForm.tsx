@@ -103,6 +103,8 @@ export const CreateDayForm: React.FC<CreateDayFormProps> = (props) => {
     name: "solutions", // unique name for your Field Array
   });
 
+  console.log(watch("file"));
+
   return (
     <Layout whiteBg>
       <div>
@@ -187,6 +189,7 @@ export const CreateDayForm: React.FC<CreateDayFormProps> = (props) => {
                   <Radio value="Tomas">Tomas</Radio>
                   <Radio value="Kim">Kim</Radio>
                   <Radio value="Matt">Matt</Radio>
+                  <Radio value="Rune">Rune</Radio>
                   <Radio value="Annen">Annen</Radio>
                 </Stack>
               </RadioGroup>
@@ -211,7 +214,11 @@ export const CreateDayForm: React.FC<CreateDayFormProps> = (props) => {
 
           <Spacer multiply={0.5} />
 
-          <audio controls preload="none" src={watch("file")}>
+          <audio
+            controls
+            preload="none"
+            src={watch("file") ? watch("file") : `/api/admin/file/${props.id}`}
+          >
             Your browser does not support the
             <code>audio</code> element.
           </audio>
