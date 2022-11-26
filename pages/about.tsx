@@ -62,8 +62,8 @@ const About: React.FC = () => {
         Sletting av data
       </Heading>
       <Text>
-        Valget om sletting av ens egne data er tilgjengelig etter pålogging
-        under innstillinger.
+        Send en epost til saiboten@gmail.com og be om å få slettet dine data, så
+        sletter vi.
       </Text>
       <Spacer />
       <Heading size="md" mb="2">
@@ -73,18 +73,14 @@ const About: React.FC = () => {
         Vilkår for bruk
       </Heading>
       <Text>
-        Du kan bruke denne tjenesten som du selv ønsker, men ikke gjør noe
-        ugagn. Vet uvettig bruk kan vi stenge ned kontoer og/eller hele
-        tjenesten.
+        Følg <a href="/tos">denne lenken</a>
       </Text>
       <Spacer />
       <Heading size="sm" mb="2">
         Privacy Policy
       </Heading>
       <Text>
-        Vi anbefaler å lese Privacy Policy/Personvern over for detaljer om
-        personvern og hva vi gjør med dine privata data. PS: Svaret er ingenting
-        bortsett fra å få siden til å funke.
+        Følg <a href="/privacypolicy">denne lenken</a>
       </Text>
     </Layout>
   );
