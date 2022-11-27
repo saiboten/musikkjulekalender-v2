@@ -44,22 +44,24 @@ export default async function handle(
       },
     });
 
-    await prisma.songFile.upsert({
-      where: { dayId: Number(dayId) },
-      create: {
-        hint1file,
-        hint2file,
-        hint3file,
-        file,
-        dayId: Number(dayId),
-      },
-      update: {
-        file,
-        hint1file,
-        hint2file,
-        hint3file,
-      },
-    });
+    if (file) {
+      await prisma.songFile.upsert({
+        where: { dayId: Number(dayId) },
+        create: {
+          hint1file,
+          hint2file,
+          hint3file,
+          file,
+          dayId: Number(dayId),
+        },
+        update: {
+          file,
+          hint1file,
+          hint2file,
+          hint3file,
+        },
+      });
+    }
 
     await prisma.solution.deleteMany({
       where: { dayId: Number(dayId) },
