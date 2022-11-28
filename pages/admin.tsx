@@ -93,7 +93,21 @@ const AdminPage: React.FC<Props> = ({ users, days }) => {
                       {day.song}
                     </Text>
                     <Text>{day.description}</Text>
+                    <Spacer />
+                    <Text>Laget av: {day.madeBy}</Text>
                     <Text>{day.solutionVideo}</Text>
+                    <Text>
+                      Hint 1: {day.hint1} - filhint?{" "}
+                      {day.hasFileHint1 ? "ja" : "nei"}
+                    </Text>
+                    <Text>
+                      Hint 2: {day.hint2} - filhint?{" "}
+                      {day.hasFileHint2 ? "ja" : "nei"}
+                    </Text>
+                    <Text>
+                      Hint 3: {day.hint3} - filhint?{" "}
+                      {day.hasFileHint3 ? "ja" : "nei"}
+                    </Text>
                   </ListItem>
                 </Link>
               </NextLink>
