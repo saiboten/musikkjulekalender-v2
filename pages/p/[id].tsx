@@ -95,7 +95,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         points: calculatePoints([hints.hint1, hints.hint2, hints.hint3]),
       },
     };
-  } else {
+  } else if (isToday) {
     return {
       props: {
         madeBy: day.madeBy,
@@ -113,6 +113,15 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         points: calculatePoints([hints.hint1, hints.hint2, hints.hint3]),
         id: day.id,
         description: day.description,
+      },
+    };
+  } else {
+    return {
+      props: {
+        date: day.date.toISOString(),
+        isToday,
+        isDayPassed,
+        now: Date.now(),
       },
     };
   }
