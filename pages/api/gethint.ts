@@ -54,6 +54,11 @@ export default async function handler(req, res) {
   let hintToGive: string | undefined = undefined;
   let hintFileToGive: string | undefined = undefined;
 
+  if (day.date > new Date()) {
+    res.status(401).send({ message: "Dag ikke åpnet" });
+    return;
+  }
+
   if (!hints.hint1) {
     hintToGive = day.hint1;
     hintFileToGive = day.file.hint1file;

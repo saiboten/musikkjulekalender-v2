@@ -72,7 +72,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     });
   }
 
-  const isToday = isSameDay(day.date, new Date());
+  const isToday = isSameDay(day.date, new Date()) && day.date < new Date();
   const isDayPassed = isBefore(day.date, new Date());
 
   const dayWithFixedDates = {
