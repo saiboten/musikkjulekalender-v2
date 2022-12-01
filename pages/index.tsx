@@ -77,13 +77,17 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         dayId: todayDay?.id ?? -1,
       },
     })
-  ).map((e) => {
-    return {
-      points: e.points,
-      user: e.user.nickname ?? e.user.email?.split("@")[0] ?? "ukjent",
-      time: e.timeOfEntry.toISOString(),
-    };
-  });
+  )
+    .sort((el1, el2) =>
+      el1.points > el2.points ? -1 : el1.timeOfEntry > el2.timeOfEntry ? -1 : 1
+    )
+    .map((e) => {
+      return {
+        points: e.points,
+        user: e.user.nickname ?? e.user.email?.split("@")[0] ?? "ukjent",
+        time: e.timeOfEntry.toISOString(),
+      };
+    });
 
   const userScores = days
     .filter((day) => isBefore(day.date, new Date()))

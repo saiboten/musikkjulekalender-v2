@@ -1,4 +1,4 @@
-import { Heading, Text } from "@chakra-ui/react";
+import { Button, Heading, Text } from "@chakra-ui/react";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
 import { Spacer } from "./lib/Spacer";
@@ -58,6 +58,9 @@ export const TopScores = ({
         );
       })}
       <Spacer />
+      {!showAll ? (
+        <Button onClick={() => setShowAll(true)}>Vis alle</Button>
+      ) : null}
     </FrontPageBox>
   );
 };
