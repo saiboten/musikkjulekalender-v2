@@ -78,9 +78,25 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       },
     })
   )
-    .sort((el1, el2) =>
-      el1.points > el2.points ? -1 : el1.timeOfEntry > el2.timeOfEntry ? -1 : 1
-    )
+    .sort((el1, el2) => {
+      if (el1.points > el2.points) {
+        return -1;
+      }
+
+      if (el2.points > el1.points) {
+        return 1;
+      }
+
+      if (el1.timeOfEntry < el2.timeOfEntry) {
+        return -1;
+      }
+
+      if (el2.timeOfEntry < el1.timeOfEntry) {
+        return 1;
+      }
+
+      return 0;
+    })
     .map((e) => {
       return {
         points: e.points,
