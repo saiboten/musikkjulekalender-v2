@@ -16,7 +16,7 @@ export const FutureDay = (props: Props) => {
     <Layout whiteBg>
       <AdminEditLink />
       <Box textAlign="center">
-        <Heading>{format(parseISO(props.date), "d 'dag jul")}</Heading>
+        <Heading>{format(parseISO(props.date), "d 'desember")}</Heading>
         <Spacer />
         <Box>
           Tid før luken åpner: <Spacer />

@@ -60,7 +60,7 @@ export const OldDay: React.FC<DayWithAdmin> = (props) => {
         <Box display="flex" justifyContent="flex-end" alignItems="center">
           <Thumbnail image={props.madeBy} />
         </Box>
-        <Heading>{format(parseISO(props.date), "d 'dag jul")}</Heading>
+        <Heading>{format(parseISO(props.date), "d 'desember")}</Heading>
         <Spacer multiply={0.5} />
         {props.video ? (
           <YoutubeVideo link={props.video}></YoutubeVideo>

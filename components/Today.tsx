@@ -105,7 +105,7 @@ export const Today: React.FC<DayWithAdmin> = (props) => {
           <Thumbnail image={props.madeBy} />
         </Box>
         <Heading textAlign="center">
-          {format(new Date(props.date), "d 'dag jul")}
+          {format(new Date(props.date), "d 'desember")}
         </Heading>
         <Spacer multiply={0.5} />
         {props.video ? (
