@@ -8,7 +8,7 @@ import { FrontPageBox } from "./FrontPageBox";
 export const TopScores = ({
   scores,
 }: {
-  scores: { name: string; score: number }[];
+  scores: { id: number; name: string; score: number }[];
 }) => {
   const [showAll, setShowAll] = useState(false);
   const session = useSession();
@@ -43,11 +43,7 @@ export const TopScores = ({
           <div key={index}>
             <Text
               display="inline"
-              fontWeight={
-                el.name === session.data.user.email.split("@")[0]
-                  ? "bold"
-                  : "normal"
-              }
+              fontWeight={el.id === session.data.id ? "bold" : "normal"}
             >
               {el.pos}: {el.name}:{" "}
             </Text>

@@ -28,7 +28,7 @@ const TopGrid = styled.div`
 type Props = {
   days: DayProps[];
   points: number;
-  scores?: { name: string; score: number }[];
+  scores?: { name: string; score: number; id: number }[];
   todayAnswers: { points: number; user: string; time: string }[];
   userScores: {
     day: string;
@@ -132,6 +132,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       return {
         name: user.nickname ?? user.email?.split("@")[0] ?? "ukjent",
         score: points,
+        id: user.id,
       };
     })
     .sort((el1, el2) => (el1.score > el2.score ? -1 : 1));
