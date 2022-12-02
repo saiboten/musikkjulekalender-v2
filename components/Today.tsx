@@ -154,7 +154,7 @@ export const Today: React.FC<DayWithAdmin> = (props) => {
             <form onSubmit={handleAnswer}>
               <Box display="flex">
                 <Input
-                  placeholder="Legg inn ditt svar her"
+                  placeholder="Hvilken sang skal vi fram til?"
                   name="svar"
                   value={answer}
                   onChange={(e) => setAnswer(e.target.value)}
