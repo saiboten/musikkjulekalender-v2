@@ -6,6 +6,7 @@ import matt from "../img/thumbnail/matt.png";
 import kim from "../img/thumbnail/kim.png";
 import bjarte from "../img/thumbnail/bjarte.png";
 import tomas from "../img/thumbnail/tomas.png";
+import rune from "../img/thumbnail/rune.jpg";
 import skoyerfanden from "../img/thumbnail/skoyerfanden.png";
 import { Link } from "@chakra-ui/react";
 
@@ -17,6 +18,7 @@ const thumbnailMap = {
   Bjarte: bjarte,
   Skoyerfanden: skoyerfanden,
   Tomas: tomas,
+  Rune: rune,
 };
 
 export const Thumbnail = ({ image }: { image: string }) => {

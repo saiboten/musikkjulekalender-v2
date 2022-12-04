@@ -2,6 +2,7 @@ import { ListElement, UnorderedList } from "./lib/ListElement";
 import { Profile } from "./Profile";
 import { P } from "./lib/Paragraph";
 import bjarte from "../img/bjarte.png";
+import rune from "../img/rune.jpg";
 import stein from "../img/stein.png";
 import tomas from "../img/tomas.png";
 import skoyerfanden from "../img/skoyerfanden.png";
@@ -160,8 +161,12 @@ export const Profiles = ({
     {
       key: "Rune",
       profile: (
-        <Profile image={skoyerfanden} name="Rune">
-          <P>Info kommer</P>
+        <Profile image={rune} name="Oslo-Arrogansen">
+          <P>
+            Ble innhentet av Skøyerfanden etter en bryllups-gig ikke langt fra
+            bryggen. Sliter nå med tidsklemma grunnet småbarnslivet. Mener selv
+            han gehør.
+          </P>
         </Profile>
       ),
     },
