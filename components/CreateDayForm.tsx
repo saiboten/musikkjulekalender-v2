@@ -103,8 +103,6 @@ export const CreateDayForm: React.FC<CreateDayFormProps> = (props) => {
     name: "solutions", // unique name for your Field Array
   });
 
-  console.log(watch("file"));
-
   return (
     <Layout whiteBg>
       <div>

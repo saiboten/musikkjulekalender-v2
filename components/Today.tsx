@@ -53,7 +53,7 @@ export const Today: React.FC<DayWithAdmin> = (props) => {
       return await (await fetch(`/api/gethint?dayId=${props.id}`)).json();
     },
     onSuccess: (data) => {
-      if (data.hint) {
+      if (data.hint || data.fileHintExists) {
         setHints([...hints, { hint: data.hint, file: data.fileHintExists }]);
         setPoints(data.points);
       } else {

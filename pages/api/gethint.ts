@@ -28,7 +28,7 @@ export default async function handler(req, res) {
   });
 
   if (!hints) {
-    await prisma.hint.create({
+    hints = await prisma.hint.create({
       data: {
         hint1: false,
         hint2: false,
@@ -80,11 +80,9 @@ export default async function handler(req, res) {
     },
   });
 
-  console.log(hintFileToGive);
-
   if (day.date > new Date()) {
     res.status(401).send({ message: "Dag ikke åpnet" });
-  } else if (!hintToGive) {
+  } else if (!hintToGive && !hintFileToGive) {
     res.status(503).send({ message: "Alle hint er gitt?!" });
   } else {
     res.status(200).json({
