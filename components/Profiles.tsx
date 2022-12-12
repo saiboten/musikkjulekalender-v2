@@ -125,15 +125,12 @@ export const Profiles = ({
       profile: (
         <Profile image={kim} name="Kim">
           <P>
-            Altmuligmann på trommer, bass og gitar. Kim fant ut i fjor at det
-            var moro å klippe opp musikk til det ugjenkjennelige, så derfor har
-            han valgt å gjøre dette til et fast innslag i julekalenderen.
-          </P>
-          <P>
-            Kim spiller for tiden i Yona Yona (instagram:{" "}
-            <a href="https://www.instagram.com/yonayonaband/">@yonayonaband</a>
-            ), så sjekk det ut, og bor du i Oslo er det konsert 7. desember på
-            Brewgata (Gratis!). Møte opp!
+            Til dagen er Kim sysadmin/IT-potet, men på kveldene dukker han opp i
+            anerkjente (ifølge ham selv) band som Yona Yona og Taxi Bear, kjent
+            helt fra Stovner til Carl Berners Plass. Foreløpig har det blitt
+            rolig på konsert-fronten, men håper å dukke opp på en scene nær deg
+            (dersom "nær deg" er et sted mellom Stovner og Carl Berners Plass)
+            til nyåret.
           </P>
         </Profile>
       ),

@@ -11,6 +11,7 @@ import {
   Spinner,
   Text,
   UnorderedList,
+  useToast,
 } from "@chakra-ui/react";
 import { useMutation } from "@tanstack/react-query";
 import { format } from "date-fns";
@@ -41,12 +42,11 @@ export const Today: React.FC<DayWithAdmin> = (props) => {
   );
 
   const [points, setPoints] = useState(props.points);
-
-  const [answerFeedback, setAnswerFeedback] = useState<undefined | string>();
   const [artist, setArtist] = useState<string | undefined>(undefined);
   const [song, setSong] = useState<string | undefined>(undefined);
   const [solutionVideo, setSolutionVideo] = useState<string | undefined>();
   const [solved, setSolved] = useState(props.solved);
+  const toast = useToast();
 
   const { isLoading, isError, mutate } = useMutation({
     mutationFn: async () => {
@@ -67,9 +67,15 @@ export const Today: React.FC<DayWithAdmin> = (props) => {
     const res = await (
       await fetch(`/api/answer?guess=${answer.trim()}&dayId=${props.id}`)
     ).json();
-    setAnswerFeedback(
-      res.success ? "Riktig" : "Det var dessverre feil, prøv igjen!"
-    );
+    toast({
+      title: res.success ? "Riktig" : "Galt",
+      description: res.success
+        ? "Du klarte oppgaven!"
+        : "Det var dessverre feil, prøv igjen!",
+      status: res.success ? "success" : "error",
+      duration: 6000,
+      isClosable: true,
+    });
 
     if (res.success) {
       setArtist(res.artist);
@@ -137,7 +143,6 @@ export const Today: React.FC<DayWithAdmin> = (props) => {
 
         {solved ? (
           <>
-            {answerFeedback ? <Text>{answerFeedback}</Text> : null}
             <Spacer />
             <Heading size="lg">Fasit:</Heading>
             <Spacer />
@@ -166,11 +171,6 @@ export const Today: React.FC<DayWithAdmin> = (props) => {
               </Box>
             </form>
             <Spacer multiply={0.5} />
-            {answerFeedback ? (
-              <Text p="3" borderRadius="5" border={`1px solid ${PrimaryRed}`}>
-                {answerFeedback}
-              </Text>
-            ) : null}
           </>
         )}
       </>
