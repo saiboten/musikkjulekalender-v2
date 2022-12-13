@@ -8,7 +8,7 @@ import tomas from "../img/tomas.png";
 import skoyerfanden from "../img/skoyerfanden.png";
 import kim from "../img/kim.png";
 import matt from "../img/matt.png";
-import tobias from "../img/tobias21.png";
+import tobias from "../img/tobias22.png";
 import React from "react";
 import { useRouter } from "next/router";
 import { Box, Button, propNames } from "@chakra-ui/react";
