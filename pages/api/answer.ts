@@ -1,6 +1,8 @@
 import prisma from "../../lib/prisma";
 import { getSession } from "next-auth/react";
 import { calculatePoints } from "../../utils/pointscalculator";
+import { getDayOfYear, isSameDay } from "date-fns";
+import { getToday } from "../../utils/dates";
 
 export default async function handler(req, res) {
   const { guess, dayId } = req.query;
@@ -13,8 +15,8 @@ export default async function handler(req, res) {
     },
   });
 
-  if (day.date > new Date()) {
-    res.status(401).send({ message: "Dag ikke åpnet" });
+  if (!isSameDay(getToday(), day.date)) {
+    res.status(401).send({ message: "Dag ikke åpen" });
   }
 
   const result = await prisma.solution.findMany({
