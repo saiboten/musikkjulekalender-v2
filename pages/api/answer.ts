@@ -15,7 +15,7 @@ export default async function handler(req, res) {
     },
   });
 
-  if (!isSameDay(getToday(), day.date)) {
+  if (!isSameDay(getToday(), day.date) || day.date > new Date()) {
     res.status(401).send({ message: "Dag ikke åpen" });
   }
 
