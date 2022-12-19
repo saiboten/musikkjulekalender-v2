@@ -76,28 +76,32 @@ export const OldDay: React.FC<DayWithAdmin> = (props) => {
           <Text>{props.description}</Text>
 
           <Spacer multiply={0.5} />
-          <Hint
-            hint={props.hint1}
-            hintNumber={1}
-            id={props.id}
-            fileHintExists={props.hasFileHint1}
-          />
+          {props.hasHints ? (
+            <>
+              <Hint
+                hint={props.hint1}
+                hintNumber={1}
+                id={props.id}
+                fileHintExists={props.hasFileHint1}
+              />
 
-          <Spacer multiply={0.5} />
-          <Hint
-            hint={props.hint2}
-            hintNumber={2}
-            id={props.id}
-            fileHintExists={props.hasFileHint2}
-          />
+              <Spacer multiply={0.5} />
+              <Hint
+                hint={props.hint2}
+                hintNumber={2}
+                id={props.id}
+                fileHintExists={props.hasFileHint2}
+              />
 
-          <Spacer multiply={0.5} />
-          <Hint
-            hint={props.hint3}
-            hintNumber={3}
-            id={props.id}
-            fileHintExists={props.hasFileHint3}
-          />
+              <Spacer multiply={0.5} />
+              <Hint
+                hint={props.hint3}
+                hintNumber={3}
+                id={props.id}
+                fileHintExists={props.hasFileHint3}
+              />
+            </>
+          ) : null}
 
           <Spacer multiply={0.5} />
           {showSolution ? null : (

@@ -80,6 +80,8 @@ export default async function handler(req, res) {
     },
   });
 
+  console.log("yes", hintToGive && !hintFileToGive);
+
   if (day.date > new Date()) {
     res.status(401).send({ message: "Dag ikke åpnet" });
   } else if (!hintToGive && !hintFileToGive) {

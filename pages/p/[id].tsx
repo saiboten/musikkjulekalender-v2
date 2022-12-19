@@ -81,6 +81,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     isToday,
     isDayPassed,
     now: new Date().toISOString(),
+    hasHints: day.hint1 !== "" || day.hasFileHint1,
   };
 
   if (isDayPassed && !isToday) {
@@ -102,7 +103,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         date: day.date.toISOString(),
         isToday,
         isDayPassed,
-        hasHints: day.hint1 !== null,
+        hasHints: day.hint1 !== "" || day.hasFileHint1,
         hint1: hints.hint1 ? day.hint1 : null,
         hint2: hints.hint2 ? day.hint2 : null,
         hint3: hints.hint3 ? day.hint3 : null,

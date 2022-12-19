@@ -175,7 +175,7 @@ export const Today: React.FC<DayWithAdmin> = (props) => {
         )}
       </>
 
-      {!props.hasHints ? (
+      {props.hasHints ? (
         <>
           <Heading size="md">Hint</Heading>
           <Spacer />
@@ -184,7 +184,7 @@ export const Today: React.FC<DayWithAdmin> = (props) => {
         <Text>Denne oppgaven har ingen hint.</Text>
       )}
 
-      {hints.length < 3 && !solved && !props.hasHints ? (
+      {hints.length < 3 && !solved && props.hasHints ? (
         <>
           <Text>Sitter du fast? Du kan få ekstra hint, men det koster!</Text>
           <UnorderedList listStyleType="none" mt="2">
@@ -200,30 +200,32 @@ export const Today: React.FC<DayWithAdmin> = (props) => {
         </>
       ) : null}
 
-      {hints.map(({ hint, file }, index) => {
-        return (
-          <React.Fragment key={index}>
-            <Text>
-              <Text display="inline" fontWeight="bold">
-                Hint {index + 1}
-              </Text>
-              : {file ? "Lydfil:" : hint}
-            </Text>
+      {props.hasHints
+        ? hints.map(({ hint, file }, index) => {
+            return (
+              <React.Fragment key={index}>
+                <Text>
+                  <Text display="inline" fontWeight="bold">
+                    Hint {index + 1}
+                  </Text>
+                  : {file ? "Lydfil:" : hint}
+                </Text>
 
-            {file ? (
-              <Audio
-                controls
-                preload="none"
-                src={`/api/hint/${props.id}/${index + 1}`}
-              >
-                Your browser does not support the
-                <code>audio</code> element.
-              </Audio>
-            ) : null}
-            <Spacer multiply={0.5} />
-          </React.Fragment>
-        );
-      })}
+                {file ? (
+                  <Audio
+                    controls
+                    preload="none"
+                    src={`/api/hint/${props.id}/${index + 1}`}
+                  >
+                    Your browser does not support the
+                    <code>audio</code> element.
+                  </Audio>
+                ) : null}
+                <Spacer multiply={0.5} />
+              </React.Fragment>
+            );
+          })
+        : null}
     </Layout>
   );
 };

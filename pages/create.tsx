@@ -36,6 +36,7 @@ const Draft: React.FC = () => {
 
   return (
     <CreateDayForm
+      hasHints
       artist=""
       date={standardDate.toISOString()}
       id={1}
