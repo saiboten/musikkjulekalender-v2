@@ -9,6 +9,7 @@ export type DayProps = {
   id: number;
   difficulty?: number;
   points?: number;
+  hasHints: boolean;
   description?: string;
   video?: string;
   date: string;

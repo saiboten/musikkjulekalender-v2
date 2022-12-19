@@ -34,13 +34,19 @@ export default async function handle(
       solution,
     }));
 
+    const existingDay = await prisma.day.findUnique({
+      where: {
+        id: Number(dayId),
+      },
+    });
+
     await prisma.day.update({
       where: { id: Number(dayId) },
       data: {
         ...body,
-        hasFileHint1: !!hint1file,
-        hasFileHint2: !!hint2file,
-        hasFileHint3: !!hint3file,
+        hasFileHint1: !!hint1file || existingDay.hasFileHint1,
+        hasFileHint2: !!hint2file || existingDay.hasFileHint2,
+        hasFileHint3: !!hint3file || existingDay.hasFileHint3,
       },
     });
 

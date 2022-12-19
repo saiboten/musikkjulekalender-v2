@@ -175,10 +175,16 @@ export const Today: React.FC<DayWithAdmin> = (props) => {
         )}
       </>
 
-      <Heading size="md">Hint</Heading>
-      <Spacer />
+      {!props.hasHints ? (
+        <>
+          <Heading size="md">Hint</Heading>
+          <Spacer />
+        </>
+      ) : (
+        <Text>Denne oppgaven har ingen hint.</Text>
+      )}
 
-      {hints.length < 3 && !solved ? (
+      {hints.length < 3 && !solved && !props.hasHints ? (
         <>
           <Text>Sitter du fast? Du kan få ekstra hint, men det koster!</Text>
           <UnorderedList listStyleType="none" mt="2">
