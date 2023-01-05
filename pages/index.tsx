@@ -18,6 +18,10 @@ import { getToday } from "../utils/dates";
 import { LoggedOut } from "../components/LoggedOut";
 import { MainHeading } from "../components/MainHeading";
 import { authOptions } from "./api/auth/[...nextauth]";
+import { Day as DayType, Texts } from "@prisma/client";
+import { P } from "../components/lib/Paragraph";
+import { FrontPageBox } from "../components/FrontPageBox";
+import { Heading } from "@chakra-ui/react";
 
 const TopGrid = styled.div`
   display: grid;
@@ -26,7 +30,10 @@ const TopGrid = styled.div`
 `;
 
 type Props = {
-  days: DayProps[];
+  days: {
+    id: number;
+    date: string;
+  }[];
   points: number;
   scores?: { name: string; score: number; id: number }[];
   todayAnswers: { points: number; user: string; time: string }[];
@@ -35,9 +42,12 @@ type Props = {
     score: number;
   }[];
   today: string;
+  texts: Texts;
 };
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
+export const getServerSideProps: GetServerSideProps<Props> = async (
+  context
+) => {
   const session = await unstable_getServerSession(
     context.req,
     context.res,
@@ -51,6 +61,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       date: today,
     },
   });
+
+  const texts = await prisma.texts.findFirst();
 
   const days = await prisma.day.findMany({
     orderBy: {
@@ -160,6 +172,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       userScores,
       todayAnswers,
       today: today.toISOString(),
+      texts,
     },
   };
 };
@@ -171,10 +184,20 @@ const Blog: React.FC<Props> = (props) => {
     return <LoggedOut />;
   }
 
+  console.log(props.texts);
+
   return (
     <Layout>
       <div>
         <MainHeading />
+        {props.texts.frontpageMessage ? (
+          <FrontPageBox>
+            <Heading>{props.texts.frontpageHeading}</Heading>
+            <P>{props.texts.frontpageMessage}</P>
+          </FrontPageBox>
+        ) : null}
+
+        <Spacer />
         <main>
           <TopGrid>
             <BestDaily todayAnswers={props.todayAnswers} />

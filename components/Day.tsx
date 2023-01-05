@@ -1,9 +1,8 @@
 import React from "react";
 import Router from "next/router";
-import { format, isBefore, isEqual, isSameDay, parseISO } from "date-fns";
+import { format, isBefore, isSameDay, parseISO } from "date-fns";
 import styled from "styled-components";
 import { PrimaryRed } from "./constants";
-import { getToday } from "../utils/dates";
 
 export type DayProps = {
   id: number;
@@ -67,7 +66,10 @@ const Button = styled.button<{ today: boolean; shouldBeOpen: boolean }>`
   }
 `;
 
-const Post: React.FC<{ day: DayProps; today: Date }> = ({ day, today }) => {
+const Post: React.FC<{ day: { id: number; date: string }; today: Date }> = ({
+  day,
+  today,
+}) => {
   const shouldBeOpen = isBefore(parseISO(day.date), today);
   const isToday = isSameDay(parseISO(day.date), today);
 

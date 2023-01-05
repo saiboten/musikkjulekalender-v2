@@ -7,6 +7,12 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Texts {
+  id               Int    @id @default(autoincrement())
+  frontpageHeading String
+  frontpageMessage String
+}
+
 model Day {
   id            Int        @id @default(autoincrement())
   difficulty    Int?
