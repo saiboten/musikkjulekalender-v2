@@ -23,7 +23,7 @@ const StyledHeader = styled.div`
 export const MainHeading = () => {
   return (
     <StyledHeader>
-      <Heading>Musikkjulekalender 2022!</Heading>
+      <Heading>Musikkjulekalender 2023!</Heading>
       <HorisontalDraggable>
         <Box
           textAlign="center"
