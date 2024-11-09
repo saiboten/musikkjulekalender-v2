@@ -3,7 +3,7 @@ import type { GetServerSideProps } from "next";
 import Layout from "../components/Layout";
 import prisma from "../lib/prisma";
 import { useSession } from "next-auth/react";
-import { unstable_getServerSession } from "next-auth/next";
+import { getServerSession } from "next-auth/next";
 import { LoggedOut } from "../components/LoggedOut";
 import { authOptions } from "./api/auth/[...nextauth]";
 import { Admin } from "../components/Admin";
@@ -23,11 +23,7 @@ type Props = {
 };
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const session = await unstable_getServerSession(
-    context.req,
-    context.res,
-    authOptions
-  );
+  const session = await getServerSession(context.req, context.res, authOptions);
 
   const user = await prisma.user.findUnique({
     where: {

@@ -7,7 +7,7 @@ import Day, { DayProps } from "../components/Day";
 import prisma from "../lib/prisma";
 import { Grid, GridItem } from "../components/Grid";
 import { useSession } from "next-auth/react";
-import { unstable_getServerSession } from "next-auth/next";
+import { getServerSession } from "next-auth/next";
 import { Footer } from "../components/Footer";
 import { TopScores } from "../components/TopScores";
 import { UserStats } from "../components/UserStats";
@@ -48,11 +48,7 @@ type Props = {
 export const getServerSideProps: GetServerSideProps<Props> = async (
   context
 ) => {
-  const session = await unstable_getServerSession(
-    context.req,
-    context.res,
-    authOptions
-  );
+  const session = await getServerSession(context.req, context.res, authOptions);
 
   const today = getToday();
 

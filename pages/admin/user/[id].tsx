@@ -3,21 +3,15 @@ import { GetServerSideProps } from "next";
 import { useSession } from "next-auth/react";
 import Layout from "../../../components/Layout";
 import { authOptions } from "../../api/auth/[...nextauth]";
-import { unstable_getServerSession } from "next-auth";
+import { getServerSession } from "next-auth";
 import prisma from "../../../lib/prisma";
 import { Answer, Day } from "@prisma/client";
 import { Heading, List, ListItem, Text } from "@chakra-ui/react";
-import { EOL } from "os";
-import { ExternalLinkIcon } from "@chakra-ui/icons";
 import { Spacer } from "../../../components/lib/Spacer";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { params } = context;
-  const session = await unstable_getServerSession(
-    context.req,
-    context.res,
-    authOptions
-  );
+  const session = await getServerSession(context.req, context.res, authOptions);
 
   const adminUser = await prisma.user.findUnique({
     where: {

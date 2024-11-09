@@ -1,7 +1,7 @@
 import prisma from "../../lib/prisma";
 import { getSession } from "next-auth/react";
 import { calculatePoints } from "../../utils/pointscalculator";
-import { getDayOfYear, isSameDay } from "date-fns";
+import { isSameDay } from "date-fns";
 import { getToday } from "../../utils/dates";
 
 export default async function handler(req, res) {

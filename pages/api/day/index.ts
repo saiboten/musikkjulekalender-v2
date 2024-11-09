@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import prisma from "../../../lib/prisma";
-import { getSession } from "next-auth/react";
+import { getServerSession } from "next-auth/next";
 
 // POST /api/post
 export default async function handle(
@@ -24,7 +24,7 @@ export default async function handle(
     hint3file,
   } = req.body;
 
-  const session = await getSession({ req });
+  const session = await getServerSession();
   if (session.user?.role !== "admin") {
     return res.status(401).send({ message: "Unauthorized" });
   }
