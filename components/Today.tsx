@@ -114,9 +114,9 @@ export const Today: React.FC<DayWithAdmin> = (props) => {
           {format(new Date(props.date), "d 'desember")}
         </Heading>
         <Spacer multiply={0.5} />
-        {props.video ? (
-          <YoutubeVideo link={props.video}></YoutubeVideo>
-        ) : (
+        {props.video ? <YoutubeVideo link={props.video}></YoutubeVideo> : null}
+
+        {props.hasTextSolution ? null : (
           <Audio controls preload="none" src={`/api/song/${props.id}`}>
             Your browser does not support the
             <code>audio</code> element.
