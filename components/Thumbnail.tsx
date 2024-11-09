@@ -1,5 +1,5 @@
 import NextLink from "next/link";
-import Image from "next/image";
+import Image from "next/legacy/image";
 import stein from "../img/thumbnail/stein.png";
 import tobias from "../img/thumbnail/tobias21.png";
 import matt from "../img/thumbnail/matt.png";

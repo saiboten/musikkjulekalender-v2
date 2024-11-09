@@ -10,7 +10,7 @@ import { ChakraProvider } from "@chakra-ui/react";
 
 import Header from "../components/Header";
 import { extendTheme } from "@chakra-ui/react";
-import Image from "next/image";
+import Image from "next/legacy/image";
 import bg from "./bg.jpg";
 import React from "react";
 import { Footer } from "../components/Footer";
