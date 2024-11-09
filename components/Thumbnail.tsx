@@ -24,24 +24,22 @@ const thumbnailMap = {
 export const Thumbnail = ({ image }: { image: string }) => {
   let imageSrc = thumbnailMap[image];
 
-  return (
-    <>
-      {imageSrc ? (
-        <NextLink href={`/profile/${image}`} passHref>
-          <Link
-            transition="transform 0.2s"
-            _hover={{ transform: "scale(1.1)" }}
-          >
-            <Image
-              src={imageSrc}
-              alt="Profile picture"
-              width="132px"
-              height="132px"
-              style={{ borderRadius: "50%", cursor: "pointer" }}
-            />
-          </Link>
-        </NextLink>
-      ) : null}
-    </>
-  );
+  return (<>
+    {imageSrc ? (
+      <NextLink href={`/profile/${image}`} passHref legacyBehavior>
+        <Link
+          transition="transform 0.2s"
+          _hover={{ transform: "scale(1.1)" }}
+        >
+          <Image
+            src={imageSrc}
+            alt="Profile picture"
+            width="132px"
+            height="132px"
+            style={{ borderRadius: "50%", cursor: "pointer" }}
+          />
+        </Link>
+      </NextLink>
+    ) : null}
+  </>);
 };

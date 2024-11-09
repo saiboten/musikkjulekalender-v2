@@ -31,7 +31,7 @@ const Nav = styled.nav`
 const Header: React.FC = () => {
   const { data: session, status } = useSession();
 
-  <NextLink href="/create" passHref>
+  <NextLink href="/create" passHref legacyBehavior>
     <Link mr="2">Opprett dag</Link>
   </NextLink>;
 
@@ -57,10 +57,10 @@ const Header: React.FC = () => {
           <HamburgerIcon />
         </MenuButton>
         <MenuList>
-          <NextLink href="/api/auth/signin" passHref>
+          <NextLink href="/api/auth/signin" passHref legacyBehavior>
             <MenuItem color="black">Logg inn</MenuItem>
           </NextLink>
-          <NextLink href="/about" passHref>
+          <NextLink href="/about" passHref legacyBehavior>
             <MenuItem color="black" mr="2">
               Om kalenderen
             </MenuItem>
@@ -88,23 +88,23 @@ const Header: React.FC = () => {
           </MenuButton>
           <MenuList>
             <Admin>
-              <NextLink href="/create" passHref>
+              <NextLink href="/create" passHref legacyBehavior>
                 <MenuItem color="black" mr="2">
                   Opprett dag
                 </MenuItem>
               </NextLink>
-              <NextLink href="/admin" passHref>
+              <NextLink href="/admin" passHref legacyBehavior>
                 <MenuItem color="black" mr="2">
                   Admin
                 </MenuItem>
               </NextLink>
             </Admin>
-            <NextLink href="/settings" passHref>
+            <NextLink href="/settings" passHref legacyBehavior>
               <MenuItem color="black" mr="2">
                 Innstillinger
               </MenuItem>
             </NextLink>
-            <NextLink href="/about" passHref>
+            <NextLink href="/about" passHref legacyBehavior>
               <MenuItem color="black" mr="2">
                 Om kalenderen
               </MenuItem>
@@ -122,14 +122,14 @@ const Header: React.FC = () => {
   }
 
   return (
-    <Nav>
+    (<Nav>
       <Box
         display="flex"
         width="100%"
         justifyContent="space-between"
         alignItems="center"
       >
-        <NextLink href="/" passHref>
+        <NextLink href="/" passHref legacyBehavior>
           <Link display="inline" mr="5" fontSize="24px">
             Musikkjulekalender!
           </Link>
@@ -144,7 +144,7 @@ const Header: React.FC = () => {
         ) : null} */}
         {right}
       </Box>
-    </Nav>
+    </Nav>)
   );
 };
 

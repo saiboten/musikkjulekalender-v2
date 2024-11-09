@@ -143,14 +143,14 @@ export const AdminEditLink = () => {
   const { id } = router.query;
 
   return (
-    <Admin>
-      <NextLink href={`/edit/${id}`} passHref>
+    (<Admin>
+      <NextLink href={`/edit/${id}`} passHref legacyBehavior>
         <Link display="flex" alignItems="center">
           <EditIcon mr="2" />
           <span>Endre dag</span>
         </Link>
       </NextLink>
-    </Admin>
+    </Admin>)
   );
 };
 

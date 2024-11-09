@@ -7,7 +7,7 @@ import { MainHeading } from "./MainHeading";
 
 export const LoggedOut = () => {
   return (
-    <Box>
+    (<Box>
       <Box margin="0 auto" maxWidth="65rem">
         <MainHeading />
       </Box>
@@ -30,13 +30,13 @@ export const LoggedOut = () => {
         </Text>
         <Spacer />
         <Text>
-          <Link href="/auth/signin" passHref>
+          <Link href="/auth/signin" passHref legacyBehavior>
             <Button>Logg inn</Button>
           </Link>{" "}
           for å starte morroa!
         </Text>
       </Layout>
       <Footer />
-    </Box>
+    </Box>)
   );
 };

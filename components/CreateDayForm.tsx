@@ -109,8 +109,8 @@ export const CreateDayForm: React.FC<CreateDayFormProps> = (props) => {
   });
 
   return (
-    <Layout whiteBg>
-      <Link href="/admin">
+    (<Layout whiteBg>
+      <Link href="/admin" legacyBehavior>
         <ChakraLink>Til oversikt</ChakraLink>
       </Link>
       <Spacer />
@@ -483,6 +483,6 @@ export const CreateDayForm: React.FC<CreateDayFormProps> = (props) => {
           </StyledBack>
         </form>
       </div>
-    </Layout>
+    </Layout>)
   );
 };

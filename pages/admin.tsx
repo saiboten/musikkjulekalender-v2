@@ -69,14 +69,14 @@ const AdminPage: React.FC<Props> = ({ users, days }) => {
   }
 
   return (
-    <Layout whiteBg>
+    (<Layout whiteBg>
       <Admin>
         <Heading size="lg">Admin</Heading>
 
         <List>
           {days.map((day) => {
             return (
-              <NextLink key={day.id} href={`/edit/${day.id}`} passHref>
+              (<NextLink key={day.id} href={`/edit/${day.id}`} passHref legacyBehavior>
                 <Link>
                   <ListItem
                     border="1px solid black"
@@ -106,7 +106,7 @@ const AdminPage: React.FC<Props> = ({ users, days }) => {
                     </Text>
                   </ListItem>
                 </Link>
-              </NextLink>
+              </NextLink>)
             );
           })}
         </List>
@@ -115,18 +115,18 @@ const AdminPage: React.FC<Props> = ({ users, days }) => {
         <List>
           {users.map((el) => {
             return (
-              <NextLink key={el.id} href={`/admin/user/${el.id}`} passHref>
+              (<NextLink key={el.id} href={`/admin/user/${el.id}`} passHref legacyBehavior>
                 <Link>
                   <ListItem>
                     {el.nickname ?? el.name} - {el.email}
                   </ListItem>
                 </Link>
-              </NextLink>
+              </NextLink>)
             );
           })}
         </List>
       </Admin>
-    </Layout>
+    </Layout>)
   );
 };
 
