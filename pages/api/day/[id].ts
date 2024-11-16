@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { getSession } from "next-auth/react";
 import prisma from "../../../lib/prisma";
+import { getServerSession } from "next-auth";
+import { authOptions } from "../auth/[...nextauth]";
 
 // DELETE /api/post/:id
 export default async function handle(
@@ -9,7 +10,7 @@ export default async function handle(
 ) {
   const dayId = req.query.id;
 
-  const session = await getSession({ req });
+  const session = await getServerSession(req, res, authOptions);
 
   if (session.user?.role !== "admin") {
     res.status(401).send({ message: "Unauthorized" });

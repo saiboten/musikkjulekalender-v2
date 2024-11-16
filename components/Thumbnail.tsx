@@ -1,5 +1,5 @@
 import NextLink from "next/link";
-import Image from "next/image";
+import Image from "next/legacy/image";
 import stein from "../img/thumbnail/stein.png";
 import tobias from "../img/thumbnail/tobias21.png";
 import matt from "../img/thumbnail/matt.png";
@@ -24,24 +24,22 @@ const thumbnailMap = {
 export const Thumbnail = ({ image }: { image: string }) => {
   let imageSrc = thumbnailMap[image];
 
-  return (
-    <>
-      {imageSrc ? (
-        <NextLink href={`/profile/${image}`} passHref>
-          <Link
-            transition="transform 0.2s"
-            _hover={{ transform: "scale(1.1)" }}
-          >
-            <Image
-              src={imageSrc}
-              alt="Profile picture"
-              width="132px"
-              height="132px"
-              style={{ borderRadius: "50%", cursor: "pointer" }}
-            />
-          </Link>
-        </NextLink>
-      ) : null}
-    </>
-  );
+  return (<>
+    {imageSrc ? (
+      <NextLink href={`/profile/${image}`} passHref legacyBehavior>
+        <Link
+          transition="transform 0.2s"
+          _hover={{ transform: "scale(1.1)" }}
+        >
+          <Image
+            src={imageSrc}
+            alt="Profile picture"
+            width="132px"
+            height="132px"
+            style={{ borderRadius: "50%", cursor: "pointer" }}
+          />
+        </Link>
+      </NextLink>
+    ) : null}
+  </>);
 };

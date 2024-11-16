@@ -10,6 +10,7 @@ import {
   FormLabel,
   Heading,
   Input,
+  Link as ChakraLink,
   Text,
   Radio,
   RadioGroup,
@@ -23,6 +24,7 @@ import {
   AlertDialogContent,
   AlertDialogOverlay,
   useDisclosure,
+  Checkbox,
 } from "@chakra-ui/react";
 import styled from "styled-components";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
@@ -32,6 +34,21 @@ import { DeleteIcon } from "@chakra-ui/icons";
 import { YoutubeVideo } from "./lib/YoutubeVideo";
 import { UiFileInputButton } from "./lib/UiFileUploadButton";
 import { parseISO } from "date-fns";
+import Link from "next/link";
+
+import {
+  MDXEditor,
+  UndoRedo,
+  BoldItalicUnderlineToggles,
+  toolbarPlugin,
+  BlockTypeSelect,
+  headingsPlugin,
+  listsPlugin,
+  quotePlugin,
+  thematicBreakPlugin,
+} from "@mdxeditor/editor";
+
+import "@mdxeditor/editor/style.css";
 
 const StyledBack = styled.a`
   margin-left: 1rem;
@@ -52,6 +69,7 @@ interface CreateDayFormProps extends DayProps {
 export type FormData = {
   description: string;
   date: Date;
+  hasTextSolution: boolean;
   song: string;
   artist: string;
   solutions: { id: string; value: string }[];
@@ -82,6 +100,7 @@ export const CreateDayForm: React.FC<CreateDayFormProps> = (props) => {
     defaultValues: {
       description: props.description,
       artist: props.artist,
+      hasTextSolution: props.hasTextSolution ?? false,
       date: parseISO(props.date),
       madeBy: props.madeBy,
       song: props.song,
@@ -105,8 +124,20 @@ export const CreateDayForm: React.FC<CreateDayFormProps> = (props) => {
 
   return (
     <Layout whiteBg>
+      <Link href="/admin" legacyBehavior>
+        <ChakraLink>Til oversikt</ChakraLink>
+      </Link>
+      <Spacer />
       <div>
         <form onSubmit={handleSubmit(props.onSubmit)}>
+          <Spacer />
+          <Button
+            disabled={!isDirty || !isValid} // here
+            type="submit"
+          >
+            {props.submitButtonText ? props.submitButtonText : "Opprett rute"}
+          </Button>
+
           <Spacer />
           <Box display="flex" justifyContent="space-between">
             <Heading size="lg">Luke</Heading>
@@ -165,11 +196,42 @@ export const CreateDayForm: React.FC<CreateDayFormProps> = (props) => {
 
           <FormControl>
             <FormLabel htmlFor="description">Beskrivelse</FormLabel>
-            <Textarea
+
+            <Controller
+              name="description"
+              control={control}
+              render={({ field }) => {
+                return (
+                  <MDXEditor
+                    markdown={field.value}
+                    onChange={field.onChange}
+                    plugins={[
+                      headingsPlugin(),
+                      listsPlugin(),
+                      quotePlugin(),
+                      thematicBreakPlugin(),
+                      toolbarPlugin({
+                        toolbarClassName: "my-classname",
+                        toolbarContents: () => (
+                          <>
+                            {" "}
+                            <UndoRedo />
+                            <BoldItalicUnderlineToggles />
+                            <BlockTypeSelect />
+                          </>
+                        ),
+                      }),
+                    ]}
+                  />
+                );
+              }}
+            />
+
+            {/* <Textarea
               name="description"
               {...register("description", { required: true })}
               placeholder="Description"
-            />
+            /> */}
           </FormControl>
 
           <Spacer multiply={0.5} />
@@ -208,6 +270,23 @@ export const CreateDayForm: React.FC<CreateDayFormProps> = (props) => {
                 />
               )}
             />
+          </FormControl>
+          <Spacer />
+          <FormControl>
+            <Controller
+              name="hasTextSolution"
+              control={control}
+              render={({ field }) => (
+                <Checkbox
+                  onChange={(e) => {
+                    field.onChange(e.target.value === "off" ? true : false);
+                  }}
+                  value={field.value ? "on" : "off"}
+                >
+                  Tekstoppgave
+                </Checkbox>
+              )}
+            ></Controller>
           </FormControl>
 
           <Spacer multiply={0.5} />
@@ -452,7 +531,7 @@ export const CreateDayForm: React.FC<CreateDayFormProps> = (props) => {
           >
             {props.submitButtonText ? props.submitButtonText : "Opprett rute"}
           </Button>
-          <StyledBack href="#" onClick={() => Router.push("/")}>
+          <StyledBack href="#" onClick={() => Router.push("/admin")}>
             eller avbryt
           </StyledBack>
         </form>

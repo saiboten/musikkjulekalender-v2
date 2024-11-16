@@ -6,7 +6,7 @@ import Router from "next/router";
 import { DayProps } from "../../components/Day";
 import prisma from "../../lib/prisma";
 import { useSession } from "next-auth/react";
-import { unstable_getServerSession } from "next-auth/next";
+import { getServerSession } from "next-auth/next";
 import { Box, Heading, Link } from "@chakra-ui/react";
 import NextLink from "next/link";
 import { Today } from "../../components/Today";
@@ -19,11 +19,7 @@ import { calculatePoints } from "../../utils/pointscalculator";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { params } = context;
-  const session = await unstable_getServerSession(
-    context.req,
-    context.res,
-    authOptions
-  );
+  const session = await getServerSession(context.req, context.res, authOptions);
 
   if (!params.id) {
     throw Error("No id given");
@@ -103,6 +99,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         date: day.date.toISOString(),
         isToday,
         isDayPassed,
+        hasTextSolution: day.hasTextSolution,
         hasHints: day.hint1 !== "" || day.hasFileHint1,
         hint1: hints.hint1 ? day.hint1 : null,
         hint2: hints.hint2 ? day.hint2 : null,
@@ -148,10 +145,10 @@ export const AdminEditLink = () => {
 
   return (
     <Admin>
-      <NextLink href={`/edit/${id}`} passHref>
+      <NextLink href={`/edit/${id}`} passHref legacyBehavior>
         <Link display="flex" alignItems="center">
           <EditIcon mr="2" />
-          <span> Endre dag</span>
+          <span>Endre dag</span>
         </Link>
       </NextLink>
     </Admin>

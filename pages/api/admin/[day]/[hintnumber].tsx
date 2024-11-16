@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { getSession } from "next-auth/react";
 import prisma from "../../../../lib/prisma";
+import { getServerSession } from "next-auth";
+import { authOptions } from "../../auth/[...nextauth]";
 
 const numberToHintFile = {
   1: "hint1file",
@@ -15,7 +16,7 @@ export default async function handle(
   const dayId = req.query.day;
   const hintNumber = Number(req.query.hintnumber);
 
-  const session = await getSession({ req });
+  const session = await getServerSession(req, res, authOptions);
 
   if (!session) {
     return res.json({ error: "No session" });

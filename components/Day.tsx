@@ -6,6 +6,7 @@ import { PrimaryRed } from "./constants";
 
 export type DayProps = {
   id: number;
+  hasTextSolution?: boolean;
   difficulty?: number;
   points?: number;
   hasHints: boolean;

@@ -25,6 +25,10 @@ import { Spacer } from "./lib/Spacer";
 import { YoutubeVideo } from "./lib/YoutubeVideo";
 import { Thumbnail } from "./Thumbnail";
 
+import { MDXEditor } from "@mdxeditor/editor";
+
+import "@mdxeditor/editor/style.css";
+
 interface HintAndFile {
   hint: string;
   file: boolean;
@@ -114,9 +118,9 @@ export const Today: React.FC<DayWithAdmin> = (props) => {
           {format(new Date(props.date), "d 'desember")}
         </Heading>
         <Spacer multiply={0.5} />
-        {props.video ? (
-          <YoutubeVideo link={props.video}></YoutubeVideo>
-        ) : (
+        {props.video ? <YoutubeVideo link={props.video}></YoutubeVideo> : null}
+
+        {props.hasTextSolution ? null : (
           <Audio controls preload="none" src={`/api/song/${props.id}`}>
             Your browser does not support the
             <code>audio</code> element.
@@ -124,7 +128,7 @@ export const Today: React.FC<DayWithAdmin> = (props) => {
         )}
         <Spacer multiply={0.5} />
 
-        <Text>{props.description}</Text>
+        <MDXEditor markdown={props.description} />
         <Spacer multiply={0.5} />
 
         {isLoading ? <Spinner /> : null}
