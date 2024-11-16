@@ -180,8 +180,6 @@ const Blog: React.FC<Props> = (props) => {
     return <LoggedOut />;
   }
 
-  console.log(props.texts);
-
   return (
     <Layout>
       <div>

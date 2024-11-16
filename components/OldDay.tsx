@@ -7,6 +7,7 @@ import { Audio } from "./lib/Audio";
 import { Spacer } from "./lib/Spacer";
 import { YoutubeVideo } from "./lib/YoutubeVideo";
 import { Thumbnail } from "./Thumbnail";
+import { MDXEditor } from "@mdxeditor/editor";
 
 function Hint({
   hint,
@@ -73,7 +74,7 @@ export const OldDay: React.FC<DayWithAdmin> = (props) => {
 
         <Spacer multiply={0.5} />
         <Box textAlign="left" maxWidth="30rem" m="0 auto">
-          <Text>{props.description}</Text>
+          <MDXEditor markdown={props.description} readOnly />
 
           <Spacer multiply={0.5} />
           {props.hasHints ? (

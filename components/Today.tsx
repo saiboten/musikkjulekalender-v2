@@ -25,6 +25,10 @@ import { Spacer } from "./lib/Spacer";
 import { YoutubeVideo } from "./lib/YoutubeVideo";
 import { Thumbnail } from "./Thumbnail";
 
+import { MDXEditor } from "@mdxeditor/editor";
+
+import "@mdxeditor/editor/style.css";
+
 interface HintAndFile {
   hint: string;
   file: boolean;
@@ -124,7 +128,7 @@ export const Today: React.FC<DayWithAdmin> = (props) => {
         )}
         <Spacer multiply={0.5} />
 
-        <Text>{props.description}</Text>
+        <MDXEditor markdown={props.description} />
         <Spacer multiply={0.5} />
 
         {isLoading ? <Spinner /> : null}

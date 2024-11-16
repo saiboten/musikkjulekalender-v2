@@ -36,6 +36,20 @@ import { UiFileInputButton } from "./lib/UiFileUploadButton";
 import { parseISO } from "date-fns";
 import Link from "next/link";
 
+import {
+  MDXEditor,
+  UndoRedo,
+  BoldItalicUnderlineToggles,
+  toolbarPlugin,
+  BlockTypeSelect,
+  headingsPlugin,
+  listsPlugin,
+  quotePlugin,
+  thematicBreakPlugin,
+} from "@mdxeditor/editor";
+
+import "@mdxeditor/editor/style.css";
+
 const StyledBack = styled.a`
   margin-left: 1rem;
 `;
@@ -109,13 +123,21 @@ export const CreateDayForm: React.FC<CreateDayFormProps> = (props) => {
   });
 
   return (
-    (<Layout whiteBg>
+    <Layout whiteBg>
       <Link href="/admin" legacyBehavior>
         <ChakraLink>Til oversikt</ChakraLink>
       </Link>
       <Spacer />
       <div>
         <form onSubmit={handleSubmit(props.onSubmit)}>
+          <Spacer />
+          <Button
+            disabled={!isDirty || !isValid} // here
+            type="submit"
+          >
+            {props.submitButtonText ? props.submitButtonText : "Opprett rute"}
+          </Button>
+
           <Spacer />
           <Box display="flex" justifyContent="space-between">
             <Heading size="lg">Luke</Heading>
@@ -174,11 +196,42 @@ export const CreateDayForm: React.FC<CreateDayFormProps> = (props) => {
 
           <FormControl>
             <FormLabel htmlFor="description">Beskrivelse</FormLabel>
-            <Textarea
+
+            <Controller
+              name="description"
+              control={control}
+              render={({ field }) => {
+                return (
+                  <MDXEditor
+                    markdown={field.value}
+                    onChange={field.onChange}
+                    plugins={[
+                      headingsPlugin(),
+                      listsPlugin(),
+                      quotePlugin(),
+                      thematicBreakPlugin(),
+                      toolbarPlugin({
+                        toolbarClassName: "my-classname",
+                        toolbarContents: () => (
+                          <>
+                            {" "}
+                            <UndoRedo />
+                            <BoldItalicUnderlineToggles />
+                            <BlockTypeSelect />
+                          </>
+                        ),
+                      }),
+                    ]}
+                  />
+                );
+              }}
+            />
+
+            {/* <Textarea
               name="description"
               {...register("description", { required: true })}
               placeholder="Description"
-            />
+            /> */}
           </FormControl>
 
           <Spacer multiply={0.5} />
@@ -483,6 +536,6 @@ export const CreateDayForm: React.FC<CreateDayFormProps> = (props) => {
           </StyledBack>
         </form>
       </div>
-    </Layout>)
+    </Layout>
   );
 };

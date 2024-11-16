@@ -99,6 +99,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         date: day.date.toISOString(),
         isToday,
         isDayPassed,
+        hasTextSolution: day.hasTextSolution,
         hasHints: day.hint1 !== "" || day.hasFileHint1,
         hint1: hints.hint1 ? day.hint1 : null,
         hint2: hints.hint2 ? day.hint2 : null,
@@ -143,14 +144,14 @@ export const AdminEditLink = () => {
   const { id } = router.query;
 
   return (
-    (<Admin>
+    <Admin>
       <NextLink href={`/edit/${id}`} passHref legacyBehavior>
         <Link display="flex" alignItems="center">
           <EditIcon mr="2" />
           <span>Endre dag</span>
         </Link>
       </NextLink>
-    </Admin>)
+    </Admin>
   );
 };
 
