@@ -72,7 +72,7 @@ export type FormData = {
   hasTextSolution: boolean;
   song: string;
   artist: string;
-  solutions: { id: string; value: string }[];
+  solutions: { id?: string; value: string }[];
   madeBy: string;
   video: string;
   file: string;

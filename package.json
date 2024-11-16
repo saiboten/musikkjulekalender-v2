@@ -13,7 +13,7 @@
     "test": "jest .",
     "cy:open": "cypress open",
     "cy:run": "cypress run",
-    "tsc": "tsc ./src"
+    "tsc": "tsc -noEmit"
   },
   "dependencies": {
     "@chakra-ui/icons": "^2.2.4",
