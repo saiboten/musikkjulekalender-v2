@@ -77,6 +77,7 @@ export type FormData = {
   video: string;
   file: string;
   solutionVideo: string;
+  solutionDescription: string;
   hint1: string;
   hint1file: string;
   hint2: string;
@@ -107,6 +108,7 @@ export const CreateDayForm: React.FC<CreateDayFormProps> = (props) => {
       video: props.video,
       solutions: props.solution?.map((el) => ({ value: el.solution })),
       solutionVideo: props.solutionVideo,
+      solutionDescription: props.solutionDescription,
       file: props.file?.file,
       hint1: props.hint1,
       hint2: props.hint2,
@@ -203,7 +205,7 @@ export const CreateDayForm: React.FC<CreateDayFormProps> = (props) => {
               render={({ field }) => {
                 return (
                   <MDXEditor
-                    markdown={field.value}
+                    markdown={field.value ?? ""}
                     onChange={field.onChange}
                     plugins={[
                       headingsPlugin(),
@@ -226,12 +228,6 @@ export const CreateDayForm: React.FC<CreateDayFormProps> = (props) => {
                 );
               }}
             />
-
-            {/* <Textarea
-              name="description"
-              {...register("description", { required: true })}
-              placeholder="Description"
-            /> */}
           </FormControl>
 
           <Spacer multiply={0.5} />
@@ -251,6 +247,8 @@ export const CreateDayForm: React.FC<CreateDayFormProps> = (props) => {
                   <Radio value="Matt">Matt</Radio>
                   <Radio value="Rune">Rune</Radio>
                   <Radio value="Annen">Annen</Radio>
+                  <Radio value="TobiasStein">Tobias og Stein</Radio>
+                  <Radio value="TobiasSindre">Tobias og Sindre</Radio>
                 </Stack>
               </RadioGroup>
             )}

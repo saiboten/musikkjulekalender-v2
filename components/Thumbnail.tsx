@@ -13,6 +13,8 @@ import { Link } from "@chakra-ui/react";
 const thumbnailMap = {
   Stein: stein,
   Tobias: tobias,
+  TobiasStein: tobias,
+  TobiasSindre: tobias,
   Matt: matt,
   Kim: kim,
   Bjarte: bjarte,

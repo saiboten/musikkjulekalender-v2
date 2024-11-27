@@ -20,6 +20,7 @@ export type DayProps = {
   isToday: boolean;
   isDayPassed: boolean;
   solutionVideo?: string;
+  solutionDescription?: string;
   file?: {
     id: number;
     dayId: number;

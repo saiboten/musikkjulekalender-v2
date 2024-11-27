@@ -10,8 +10,9 @@ import kim from "../img/kim.png";
 import matt from "../img/matt.png";
 import tobias from "../img/tobias22.png";
 import React from "react";
+import NextLink from "next/link";
 import { useRouter } from "next/router";
-import { Box, Button, propNames } from "@chakra-ui/react";
+import { Box, Button, Link, propNames } from "@chakra-ui/react";
 import { Spacer } from "./lib/Spacer";
 
 interface Profile {
@@ -117,6 +118,30 @@ export const Profiles = ({
         <Profile image={skoyerfanden} name="Skøyerfanden">
           Hvem er denne mystiske skikkelsen? Har du anelse om hvem det kan være?
           Ikke nøl med å ta kontakt, vi lurer fælt!
+        </Profile>
+      ),
+    },
+    {
+      key: "TobiasSindre",
+      profile: (
+        <Profile image={skoyerfanden} name="Tobias og Sindre">
+          Tobias og Sindre
+        </Profile>
+      ),
+    },
+    {
+      key: "TobiasStein",
+      profile: (
+        <Profile image={skoyerfanden} name="Tobias og Stein">
+          To hoder fungerer bedre enn ett! Det kan skje at{" "}
+          <Link>
+            <NextLink href="/profile/tobias">Tobias</NextLink>
+          </Link>{" "}
+          og{" "}
+          <Link>
+            <NextLink href="/profile/stein">Stein</NextLink>
+          </Link>{" "}
+          slå hodene sine sammen.
         </Profile>
       ),
     },
