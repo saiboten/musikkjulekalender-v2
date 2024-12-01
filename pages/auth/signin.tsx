@@ -57,6 +57,16 @@ export default function SignIn({
           </Alert>
         ) : null}
 
+        <Alert status="info" display="flex" flexDir="column">
+          <Box display="flex" mb="2" mt="2">
+            <AlertTitle>Facebook</AlertTitle>
+          </Box>
+          <AlertDescription>
+            Innlogging med Facebook er ikke lenger en mulighet. Håper du kan
+            bruke en av de andre alternativene!
+          </AlertDescription>
+        </Alert>
+
         {Object.values(providers).map((provider) => (
           <Box key={provider.name}>
             <Button onClick={() => signIn(provider.id, { callbackUrl: "/" })}>
