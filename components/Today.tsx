@@ -13,6 +13,7 @@ import {
   UnorderedList,
   useToast,
 } from "@chakra-ui/react";
+import Markdown from "react-markdown";
 import { useMutation } from "@tanstack/react-query";
 import { format } from "date-fns";
 import React, { useState } from "react";
@@ -24,11 +25,6 @@ import { Audio } from "./lib/Audio";
 import { Spacer } from "./lib/Spacer";
 import { YoutubeVideo } from "./lib/YoutubeVideo";
 import { Thumbnail } from "./Thumbnail";
-
-import { MDXEditor } from "@mdxeditor/editor";
-
-import "@mdxeditor/editor/style.css";
-import { P } from "./lib/Paragraph";
 
 interface HintAndFile {
   hint: string;
@@ -129,8 +125,7 @@ export const Today: React.FC<DayWithAdmin> = (props) => {
         )}
         <Spacer multiply={0.5} />
 
-        {/* <MDXEditor markdown={props.description} readOnly /> */}
-        <P>{props.description}</P>
+        <Markdown>{props.description}</Markdown>
         <Spacer multiply={0.5} />
 
         {isLoading ? <Spinner /> : null}
