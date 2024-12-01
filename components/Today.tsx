@@ -28,6 +28,7 @@ import { Thumbnail } from "./Thumbnail";
 import { MDXEditor } from "@mdxeditor/editor";
 
 import "@mdxeditor/editor/style.css";
+import { P } from "./lib/Paragraph";
 
 interface HintAndFile {
   hint: string;
@@ -128,7 +129,8 @@ export const Today: React.FC<DayWithAdmin> = (props) => {
         )}
         <Spacer multiply={0.5} />
 
-        <MDXEditor markdown={props.description} />
+        {/* <MDXEditor markdown={props.description} readOnly /> */}
+        <P>{props.description}</P>
         <Spacer multiply={0.5} />
 
         {isLoading ? <Spinner /> : null}
