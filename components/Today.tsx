@@ -154,6 +154,12 @@ export const Today: React.FC<DayWithAdmin> = (props) => {
               {artist ?? props.artist} - {song ?? props.song}
             </Text>
             <Spacer />
+            {props.solutionDescription ? (
+              <>
+                {props.solutionDescription}
+                <Spacer />
+              </>
+            ) : null}
             <YoutubeVideo link={solutionVideo ?? props.solutionVideo} />
           </>
         ) : (

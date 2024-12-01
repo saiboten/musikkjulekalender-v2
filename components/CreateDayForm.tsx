@@ -249,6 +249,7 @@ export const CreateDayForm: React.FC<CreateDayFormProps> = (props) => {
                   <Radio value="Annen">Annen</Radio>
                   <Radio value="TobiasStein">Tobias og Stein</Radio>
                   <Radio value="TobiasSindre">Tobias og Sindre</Radio>
+                  <Radio value="Arild">Arild</Radio>
                 </Stack>
               </RadioGroup>
             )}
@@ -334,6 +335,18 @@ export const CreateDayForm: React.FC<CreateDayFormProps> = (props) => {
               name="song"
               {...register("song", { required: true })}
               placeholder="Sang"
+              type="text"
+            />
+          </FormControl>
+
+          <Spacer multiply={0.5} />
+
+          <FormControl>
+            <FormLabel htmlFor="solutionDescription">Løsningstekst</FormLabel>
+            <Input
+              name="solutionDescription"
+              {...register("solutionDescription", { required: false })}
+              placeholder="Løsningstekst"
               type="text"
             />
           </FormControl>

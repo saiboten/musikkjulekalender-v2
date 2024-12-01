@@ -111,9 +111,16 @@ export const OldDay: React.FC<DayWithAdmin> = (props) => {
           {showSolution ? (
             <>
               <Heading>Fasit</Heading>
+
               <Text textAlign="center" fontWeight="bold" fontSize="22px">
                 {props.artist} - {props.song}
               </Text>
+              {props.solutionDescription ? (
+                <>
+                  {props.solutionDescription}
+                  <Spacer />
+                </>
+              ) : null}
               <YoutubeVideo link={props.solutionVideo} />
             </>
           ) : null}

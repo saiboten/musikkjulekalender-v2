@@ -12,7 +12,7 @@ import tobias from "../img/tobias22.png";
 import React from "react";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
-import { Box, Button, Link, propNames } from "@chakra-ui/react";
+import { Alert, Box, Button, Link, LinkBox } from "@chakra-ui/react";
 import { Spacer } from "./lib/Spacer";
 
 interface Profile {
@@ -47,6 +47,14 @@ export const Profiles = ({
       ),
     },
     {
+      key: "Arild",
+      profile: (
+        <Profile image={skoyerfanden} name="Arild Øren Wanwik">
+          <P>Arild er en multiinstrumentalist og produsent, bosatt i Bergen.</P>
+        </Profile>
+      ),
+    },
+    {
       key: "Bjarte",
       profile: (
         <Profile image={bjarte} name="Bjarte K. Helland">
@@ -54,6 +62,10 @@ export const Profiles = ({
             Bjarte er en ekstremt dyktig og allsidig trommis, som spiller i
             flere band enn de fleste. Han spiller blant annet i/med:
           </p>
+          <Alert variant="solid" status="info">
+            Bjarte spiller live med Quadrasonic lørdag 7. desember (2024) på
+            Kvarteret i Bergen! Løp og se!
+          </Alert>
           <UnorderedList>
             <ListElement>Jarle H Olsen Quadrasonic</ListElement>
             <ListElement>Powerslaves</ListElement>
@@ -87,9 +99,16 @@ export const Profiles = ({
           </P>
           <P>
             Når Stein ikke spiller musikk, så løper han. Og han løper langt, og
-            fort. I år sprang han inn til 2:38:59 på Berlin Maraton, en tid som
-            er hinsides all fornuft.
+            fort.
           </P>
+        </Profile>
+      ),
+    },
+    {
+      key: "Sindre",
+      profile: (
+        <Profile image={skoyerfanden} name="Sindre Tveiterås">
+          <P>Mer info om Sindre kommer snart.</P>
         </Profile>
       ),
     },
@@ -99,7 +118,10 @@ export const Profiles = ({
         <Profile image={tomas} name="Tomas Osland">
           <P>
             Tomas er en rivende dyktig musiker som spiller bass i band som{" "}
-            <a href="https://galar.bandcamp.com/">Galar</a> og{" "}
+            <a href="https://www.facebook.com/Bismarckdoom/?locale=nb_NO/">
+              Bismarck
+            </a>
+            , <a href="https://galar.bandcamp.com/">Galar</a> og{" "}
             <a href="https://vaerbitt.bandcamp.com/">Værbitt</a>. Han er også
             kapabel på både gitar, vokal og trommer, og du kan forvente å høre
             oppgaver der alt dette tas i bruk!
@@ -125,7 +147,21 @@ export const Profiles = ({
       key: "TobiasSindre",
       profile: (
         <Profile image={skoyerfanden} name="Tobias og Sindre">
-          Tobias og Sindre
+          <Link
+            href="/profile/tobias"
+            as={NextLink}
+            style={{ textDecoration: "underline" }}
+          >
+            Tobias
+          </Link>{" "}
+          og{" "}
+          <Link
+            as={NextLink}
+            style={{ textDecoration: "underline" }}
+            href="/profile/sindre"
+          >
+            Sindre
+          </Link>
         </Profile>
       ),
     },
@@ -154,8 +190,8 @@ export const Profiles = ({
             anerkjente (ifølge ham selv) band som Yona Yona og Taxi Bear, kjent
             helt fra Stovner til Carl Berners Plass. Foreløpig har det blitt
             rolig på konsert-fronten, men håper å dukke opp på en scene nær deg
-            (dersom "nær deg" er et sted mellom Stovner og Carl Berners Plass)
-            til nyåret.
+            (dersom &quot;nær deg&quot; er et sted mellom Stovner og Carl
+            Berners Plass) til nyåret.
           </P>
         </Profile>
       ),
