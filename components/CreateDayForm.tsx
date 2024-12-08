@@ -275,16 +275,19 @@ export const CreateDayForm: React.FC<CreateDayFormProps> = (props) => {
             <Controller
               name="hasTextSolution"
               control={control}
-              render={({ field }) => (
-                <Checkbox
-                  onChange={(e) => {
-                    field.onChange(e.target.value === "off" ? true : false);
-                  }}
-                  value={field.value ? "on" : "off"}
-                >
-                  Tekstoppgave
-                </Checkbox>
-              )}
+              render={({ field }) => {
+                return (
+                  <Checkbox
+                    onChange={(e) => {
+                      field.onChange(e.target.value === "off" ? true : false);
+                    }}
+                    defaultChecked={field.value}
+                    value={field.value ? "on" : "off"}
+                  >
+                    Tekstoppgave
+                  </Checkbox>
+                );
+              }}
             ></Controller>
           </FormControl>
 
