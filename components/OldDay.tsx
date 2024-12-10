@@ -8,6 +8,7 @@ import { Audio } from "./lib/Audio";
 import { Spacer } from "./lib/Spacer";
 import { YoutubeVideo } from "./lib/YoutubeVideo";
 import { Thumbnail } from "./Thumbnail";
+import Link from "next/link";
 
 function Hint({
   hint,
@@ -57,6 +58,10 @@ export const OldDay: React.FC<DayWithAdmin> = (props) => {
   return (
     <Layout whiteBg>
       <AdminEditLink />
+      <Link href="/">
+        <Button>Tilbake</Button>
+      </Link>
+      <Spacer />
       <Box textAlign="center">
         <Box display="flex" justifyContent="flex-end" alignItems="center">
           <Thumbnail image={props.madeBy} />
@@ -65,7 +70,7 @@ export const OldDay: React.FC<DayWithAdmin> = (props) => {
         <Spacer multiply={0.5} />
         {props.video ? (
           <YoutubeVideo link={props.video}></YoutubeVideo>
-        ) : (
+        ) : props.hasTextSolution ? null : (
           <Audio controls preload="none" src={`/api/song/${props.id}`}>
             Your browser does not support the
             <code>audio</code> element.

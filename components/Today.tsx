@@ -25,6 +25,7 @@ import { Audio } from "./lib/Audio";
 import { Spacer } from "./lib/Spacer";
 import { YoutubeVideo } from "./lib/YoutubeVideo";
 import { Thumbnail } from "./Thumbnail";
+import Link from "next/link";
 
 interface HintAndFile {
   hint: string;
@@ -107,6 +108,10 @@ export const Today: React.FC<DayWithAdmin> = (props) => {
   return (
     <Layout whiteBg>
       <AdminEditLink />
+      <Link href="/">
+        <Button>Tilbake</Button>
+      </Link>
+      <Spacer />
       <>
         <Box display="flex" justifyContent="flex-end" alignItems="center">
           <Thumbnail image={props.madeBy} />
