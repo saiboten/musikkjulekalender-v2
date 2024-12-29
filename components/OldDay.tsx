@@ -9,48 +9,8 @@ import { Spacer } from "./lib/Spacer";
 import { YoutubeVideo } from "./lib/YoutubeVideo";
 import { Thumbnail } from "./Thumbnail";
 import Link from "next/link";
-
-function Hint({
-  hint,
-  hintNumber,
-  id,
-  fileHintExists,
-}: {
-  hint: string;
-  hintNumber: 1 | 2 | 3;
-  id: number;
-  fileHintExists?: boolean;
-}) {
-  const [show, setShow] = useState(false);
-
-  if (show) {
-    return (
-      <>
-        <Text>
-          <Text display="inline" fontWeight="bold">
-            Hint {hintNumber}
-          </Text>
-          : {fileHintExists ? "Lydfil:" : hint}
-        </Text>
-        {fileHintExists ? (
-          <Audio controls preload="none" src={`/api/hint/${id}/${hintNumber}`}>
-            Your browser does not support the
-            <code>audio</code> element.
-          </Audio>
-        ) : null}
-        <Spacer multiply={0.5} />
-      </>
-    );
-  }
-
-  return (
-    <div>
-      <Button onClick={() => setShow(true)}>
-        Vis hint nummer {hintNumber}
-      </Button>{" "}
-    </div>
-  );
-}
+import { Hint } from "./Hint";
+import { BestDaily } from "./BestDaily";
 
 export const OldDay: React.FC<DayWithAdmin> = (props) => {
   const [showSolution, setShowSolution] = useState(false);
@@ -66,6 +26,7 @@ export const OldDay: React.FC<DayWithAdmin> = (props) => {
         <Box display="flex" justifyContent="flex-end" alignItems="center">
           <Thumbnail image={props.madeBy} />
         </Box>
+
         <Heading>{format(parseISO(props.date), "d 'desember")}</Heading>
         <Spacer multiply={0.5} />
         {props.video ? (
@@ -132,6 +93,11 @@ export const OldDay: React.FC<DayWithAdmin> = (props) => {
           <Spacer multiply={1} />
         </Box>
       </Box>
+      <Text>
+        Denne dagen klarte {props.todayAnswers.length} personer oppgaven.
+      </Text>
+      <Spacer />
+      <BestDaily frontPage={false} todayAnswers={props.todayAnswers} />
     </Layout>
   );
 };

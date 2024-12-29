@@ -31,6 +31,46 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     },
   });
 
+  const todayAnswers = (
+    await prisma.answer.findMany({
+      include: {
+        user: true,
+      },
+      where: {
+        points: {
+          gt: 0,
+        },
+        dayId: day?.id ?? -1,
+      },
+    })
+  )
+    .sort((el1, el2) => {
+      if (el1.points > el2.points) {
+        return -1;
+      }
+
+      if (el2.points > el1.points) {
+        return 1;
+      }
+
+      if (el1.timeOfEntry < el2.timeOfEntry) {
+        return -1;
+      }
+
+      if (el2.timeOfEntry < el1.timeOfEntry) {
+        return 1;
+      }
+
+      return 0;
+    })
+    .map((e) => {
+      return {
+        points: e.points,
+        user: e.user.nickname ?? e.user.email?.split("@")[0] ?? "ukjent",
+        time: e.timeOfEntry.toISOString(),
+      };
+    });
+
   if (!day) {
     throw Error("Could not find day");
   }
@@ -82,13 +122,14 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   if (isDayPassed && !isToday) {
     return {
-      props: dayWithFixedDates,
+      props: { ...dayWithFixedDates, todayAnswers },
     };
   } else if (isToday && answer) {
     return {
       props: {
         ...dayWithFixedDates,
         solved: true,
+        todayAnswers,
         points: calculatePoints([hints.hint1, hints.hint2, hints.hint3]),
       },
     };
@@ -120,6 +161,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         date: day.date.toISOString(),
         isToday,
         isDayPassed,
+        todayAnswers,
         now: Date.now(),
       },
     };
@@ -137,6 +179,7 @@ export interface DayWithAdmin extends DayProps {
   solved: boolean;
   now: Date;
   id: number;
+  todayAnswers: { points: number; user: string; time: string }[];
 }
 
 export const AdminEditLink = () => {

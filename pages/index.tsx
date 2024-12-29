@@ -194,7 +194,7 @@ const Blog: React.FC<Props> = (props) => {
         <Spacer />
         <main>
           <TopGrid>
-            <BestDaily todayAnswers={props.todayAnswers} />
+            <BestDaily frontPage todayAnswers={props.todayAnswers} />
             <UserStats userScores={props.userScores ?? []} />
             <TopScores scores={props.scores ?? []} />
           </TopGrid>

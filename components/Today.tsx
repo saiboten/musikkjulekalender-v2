@@ -26,6 +26,8 @@ import { Spacer } from "./lib/Spacer";
 import { YoutubeVideo } from "./lib/YoutubeVideo";
 import { Thumbnail } from "./Thumbnail";
 import Link from "next/link";
+import { Hint } from "./Hint";
+import { BestDaily } from "./BestDaily";
 
 interface HintAndFile {
   hint: string;
@@ -80,10 +82,12 @@ export const Today: React.FC<DayWithAdmin> = (props) => {
     });
 
     if (res.success) {
-      setArtist(res.artist);
-      setSong(res.song);
-      setSolutionVideo(res.solutionVideo);
-      setSolved(true);
+      // setArtist(res.artist);
+      // setSong(res.song);
+      // setSolutionVideo(res.solutionVideo);
+      // setSolved(true);
+      // setHints(res.hints);
+      window.location.reload();
     }
   }
 
@@ -193,6 +197,7 @@ export const Today: React.FC<DayWithAdmin> = (props) => {
 
       {props.hasHints ? (
         <>
+          <Spacer />
           <Heading size="md">Hint</Heading>
           <Spacer />
         </>
@@ -200,7 +205,7 @@ export const Today: React.FC<DayWithAdmin> = (props) => {
         <Text>Denne oppgaven har ingen hint.</Text>
       )}
 
-      {hints.length < 3 && !solved && props.hasHints ? (
+      {props.hasHints && hints?.length < 3 && !solved ? (
         <>
           <Text>Sitter du fast? Du kan få ekstra hint, men det koster!</Text>
           <UnorderedList listStyleType="none" mt="2">
@@ -242,6 +247,11 @@ export const Today: React.FC<DayWithAdmin> = (props) => {
             );
           })
         : null}
+      <Text>
+        Denne dagen klarte {props.todayAnswers.length} personer oppgaven.
+      </Text>
+      <Spacer />
+      <BestDaily frontPage={false} todayAnswers={props.todayAnswers} />
     </Layout>
   );
 };

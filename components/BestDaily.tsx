@@ -5,12 +5,15 @@ import { Spacer } from "./lib/Spacer";
 
 interface Props {
   todayAnswers: { points: number; user: string; time: string }[];
+  frontPage: boolean;
 }
 
-export const BestDaily = ({ todayAnswers }: Props) => {
+export const BestDaily = ({ frontPage, todayAnswers }: Props) => {
   return (
     <FrontPageBox>
-      <Heading size="md">Dagens beste</Heading>
+      <Heading size="md">
+        {frontPage ? "Dagens beste" : "Disse har klart oppgaven"}
+      </Heading>
       <Spacer />
       {todayAnswers.length > 0 ? (
         <List>
