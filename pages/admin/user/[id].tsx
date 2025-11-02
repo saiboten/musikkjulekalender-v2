@@ -4,7 +4,7 @@ import { useSession } from "next-auth/react";
 import Layout from "../../../components/Layout";
 import { authOptions } from "../../api/auth/[...nextauth]";
 import { getServerSession } from "next-auth";
-import prisma from "../../../lib/prisma";
+import { prisma } from "../../../lib/prisma";
 import { Answer, Day } from "@prisma/client";
 import { Heading, List, ListItem, Text } from "@chakra-ui/react";
 import { Spacer } from "../../../components/lib/Spacer";

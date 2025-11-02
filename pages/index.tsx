@@ -4,7 +4,7 @@ import Head from "next/head";
 import Layout from "../components/Layout";
 import styled from "styled-components";
 import Day, { DayProps } from "../components/Day";
-import prisma from "../lib/prisma";
+import { prisma } from "../lib/prisma";
 import { Grid, GridItem } from "../components/Grid";
 import { useSession } from "next-auth/react";
 import { getServerSession } from "next-auth/next";

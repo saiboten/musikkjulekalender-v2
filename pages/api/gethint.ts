@@ -1,4 +1,4 @@
-import prisma from "../../lib/prisma";
+import { prisma } from "../../lib/prisma";
 import { calculatePoints } from "../../utils/pointscalculator";
 import { getServerSession } from "next-auth";
 import { authOptions } from "./auth/[...nextauth]";

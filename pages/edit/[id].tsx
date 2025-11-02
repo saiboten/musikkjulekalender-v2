@@ -2,7 +2,7 @@ import React from "react";
 import { GetServerSideProps } from "next";
 import Router, { useRouter } from "next/router";
 import { DayProps } from "../../components/Day";
-import prisma from "../../lib/prisma";
+import { prisma } from "../../lib/prisma";
 import { useSession } from "next-auth/react";
 import { FormData } from "../../components/CreateDayForm";
 import { CreateDayForm } from "../../components/CreateDayForm";

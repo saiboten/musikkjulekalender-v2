@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import { addHours, daysToWeeks, isBefore, isSameDay } from "date-fns";
 import Router from "next/router";
 import { DayProps } from "../../components/Day";
-import prisma from "../../lib/prisma";
+import { prisma } from "../../lib/prisma";
 import { useSession } from "next-auth/react";
 import { getServerSession } from "next-auth/next";
 import { Box, Heading, Link } from "@chakra-ui/react";

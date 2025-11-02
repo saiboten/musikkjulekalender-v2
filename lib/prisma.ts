@@ -1,19 +1,16 @@
 import { PrismaClient } from "@prisma/client";
+import { PrismaNeon } from "@prisma/adapter-neon";
+import { Pool } from "@neondatabase/serverless";
 
-// PrismaClient is attached to the `global` object in development to prevent
-// exhausting your database connection limit.
-//
-// Learn more: 
-// https://pris.ly/d/help/next-js-best-practices
+const connectionString = process.env.DATABASE_URL;
 
-let prisma: PrismaClient
-
-if (process.env.NODE_ENV === 'production') {
-  prisma = new PrismaClient()
-} else {
-  if (!global.prisma) {
-    global.prisma = new PrismaClient()
-  }
-  prisma = global.prisma
+if (!connectionString) {
+  throw new Error("DATABASE_URL environment variable is not set");
 }
-export default prisma
+
+// Create the adapter with the pool configuration
+const adapter = new PrismaNeon({ 
+  connectionString 
+});
+
+export const prisma = new PrismaClient({ adapter });

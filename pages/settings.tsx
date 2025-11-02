@@ -3,7 +3,7 @@ import Layout from "../components/Layout";
 import { getServerSession } from "next-auth";
 import { authOptions } from "./api/auth/[...nextauth]";
 import { GetServerSideProps } from "next";
-import prisma from "../lib/prisma";
+import { prisma } from "../lib/prisma";
 import { AddNickName } from "../components/AddNickName";
 import {
   Box,

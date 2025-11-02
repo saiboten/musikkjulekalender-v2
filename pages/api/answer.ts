@@ -1,4 +1,4 @@
-import prisma from "../../lib/prisma";
+import { prisma } from "../../lib/prisma";
 import { calculatePoints } from "../../utils/pointscalculator";
 import { isSameDay } from "date-fns";
 import { getToday } from "../../utils/dates";
