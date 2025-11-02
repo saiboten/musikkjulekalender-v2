@@ -13,7 +13,8 @@
     "test": "jest .",
     "cy:open": "cypress open",
     "cy:run": "cypress run",
-    "tsc": "tsc -noEmit"
+    "tsc": "tsc -noEmit",
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "@chakra-ui/icons": "^2.2.4",
