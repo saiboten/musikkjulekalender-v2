@@ -3,3 +3,5 @@ node_modules/
 .env
 .eslintrc.json
 .swc/
+.vercel
+.env*.local
