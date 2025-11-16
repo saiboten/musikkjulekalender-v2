@@ -7,6 +7,7 @@ import { useSession } from "next-auth/react";
 import { FormData } from "../../components/CreateDayForm";
 import { CreateDayForm } from "../../components/CreateDayForm";
 import { openingHour } from "../../components/constants";
+import { isAdminRole } from "../../utils/adminRoles";
 
 export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   const post = await prisma.day.findUnique({
@@ -64,7 +65,7 @@ const Post: React.FC<DayProps> = (props) => {
     return <div>Authenticating ...</div>;
   }
 
-  if (session?.user.role !== "admin") {
+  if (!isAdminRole(session?.user.role)) {
     return null;
   }
 

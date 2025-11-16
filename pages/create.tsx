@@ -5,6 +5,7 @@ import { CreateDayForm } from "../components/CreateDayForm";
 import { FormData } from "../components/CreateDayForm";
 import { getToday } from "../utils/dates";
 import { openingHour } from "../components/constants";
+import { isAdminRole } from "../utils/adminRoles";
 
 const Draft: React.FC = () => {
   const onSubmit = async (data: FormData) => {
@@ -28,7 +29,7 @@ const Draft: React.FC = () => {
 
   const session = useSession();
 
-  if (session.data?.user.role !== "admin") {
+  if (!isAdminRole(session.data?.user.role)) {
     return null;
   }
 

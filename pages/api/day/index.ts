@@ -2,6 +2,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { prisma } from "../../../lib/prisma";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "../auth/[...nextauth]";
+import { isAdminRole } from "../../../utils/adminRoles";
 
 // POST /api/post
 export default async function handle(
@@ -26,7 +27,7 @@ export default async function handle(
   } = req.body;
 
   const session = await getServerSession(req, res, authOptions);
-  if (session.user?.role !== "admin") {
+  if (!isAdminRole(session.user?.role)) {
     return res.status(401).send({ message: "Unauthorized" });
   }
 

@@ -2,6 +2,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { prisma } from "../../../../lib/prisma";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../auth/[...nextauth]";
+import { isAdminRole } from "../../../../utils/adminRoles";
 
 const numberToHintFile = {
   1: "hint1file",
@@ -22,7 +23,7 @@ export default async function handle(
     return res.json({ error: "No session" });
   }
 
-  if (!(session.user.role === "admin")) {
+  if (!isAdminRole(session.user.role)) {
     return res.json({ error: "not admin" });
   }
 

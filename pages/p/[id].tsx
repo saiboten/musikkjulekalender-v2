@@ -16,6 +16,7 @@ import { OldDay } from "../../components/OldDay";
 import { authOptions } from "../api/auth/[...nextauth]";
 import { FutureDay } from "../../components/FutureDay";
 import { calculatePoints } from "../../utils/pointscalculator";
+import { is } from "cypress/types/bluebird";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { params } = context;
@@ -71,6 +72,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       };
     });
 
+    console.log("todayAnswers", todayAnswers);
+
   if (!day) {
     throw Error("Could not find day");
   }
@@ -120,6 +123,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     hasHints: day.hint1 !== "" || day.hasFileHint1,
   };
 
+  console.log("isToday", isToday);
+
   if (isDayPassed && !isToday) {
     return {
       props: { ...dayWithFixedDates, todayAnswers },
@@ -134,6 +139,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       },
     };
   } else if (isToday) {
+    console.log("is today?!", isToday);
     return {
       props: {
         madeBy: day.madeBy,
@@ -153,6 +159,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         points: calculatePoints([hints.hint1, hints.hint2, hints.hint3]),
         id: day.id,
         description: day.description,
+        todayAnswers,
       },
     };
   } else {
@@ -200,6 +207,8 @@ export const AdminEditLink = () => {
 
 const Post: React.FC<DayWithAdmin> = (props) => {
   const { status } = useSession();
+
+  console.log(props);
 
   if (status === "loading") {
     return <div>Authenticating ...</div>;

@@ -12,6 +12,7 @@ import { Heading, Link, List, ListItem, Text } from "@chakra-ui/react";
 import NextLink from "next/link";
 import { Spacer } from "../components/lib/Spacer";
 import { format, parseISO } from "date-fns";
+import { isAdminRole } from "../utils/adminRoles";
 
 interface DayWithStringDate extends Omit<Day, "date"> {
   date: string;
@@ -31,7 +32,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     },
   });
 
-  if (user.role !== "admin") {
+  if (!isAdminRole(user.role)) {
     throw new Error("Not admin");
     // return {
     //   props: {
@@ -46,7 +47,14 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     updatedAt: el.updatedAt.toISOString(),
   }));
 
-  const days = (await prisma.day.findMany({}))
+  const allDays = await prisma.day.findMany({});
+  
+  // Filter days: admin sees all, other roles only see their own
+  const filteredDays = user.role === "admin" 
+    ? allDays 
+    : allDays.filter(day => day.madeBy === user.role);
+
+  const days = filteredDays
     .sort((a, b) => (a.date < b.date ? -1 : 1))
     .map((day) => ({
       ...day,

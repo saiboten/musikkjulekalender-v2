@@ -8,6 +8,7 @@ import { prisma } from "../../../lib/prisma";
 import { Answer, Day } from "@prisma/client";
 import { Heading, List, ListItem, Text } from "@chakra-ui/react";
 import { Spacer } from "../../../components/lib/Spacer";
+import { isAdminRole } from "../../../utils/adminRoles";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { params } = context;
@@ -19,7 +20,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     },
   });
 
-  if (adminUser.role !== "admin") {
+  if (!isAdminRole(adminUser.role)) {
     return {
       props: {
         users: [],
