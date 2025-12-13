@@ -48,7 +48,6 @@ export const Today: React.FC<DayWithAdmin> = (props) => {
   const [points, setPoints] = useState(props.points);
   const [artist, setArtist] = useState<string | undefined>(undefined);
   const [song, setSong] = useState<string | undefined>(undefined);
-  const [solutionVideo, setSolutionVideo] = useState<string | undefined>();
   const [solved, setSolved] = useState(props.solved);
   const toast = useToast();
 
@@ -166,7 +165,6 @@ export const Today: React.FC<DayWithAdmin> = (props) => {
                 <Spacer />
               </>
             ) : null}
-            <YoutubeVideo link={solutionVideo ?? props.solutionVideo} />
           </>
         ) : (
           <>

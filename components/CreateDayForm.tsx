@@ -486,22 +486,6 @@ export const CreateDayForm: React.FC<CreateDayFormProps> = (props) => {
           <Spacer multiply={0.5} />
 
           <FormControl>
-            <FormLabel htmlFor="solutionVideo">Løsningsvideo</FormLabel>
-            <Input
-              name="solutionVideo"
-              {...register("solutionVideo")}
-              placeholder="Løsningsvideo"
-              type="text"
-            />
-          </FormControl>
-
-          <Spacer multiply={0.5} />
-
-          <YoutubeVideo link={watch("solutionVideo")} />
-
-          <Spacer multiply={0.5} />
-
-          <FormControl>
             <FormLabel htmlFor="singlesolution">Legg til løsning</FormLabel>
             <Flex>
               <Input

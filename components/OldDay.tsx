@@ -87,7 +87,6 @@ export const OldDay: React.FC<DayWithAdmin> = (props) => {
                   <Spacer />
                 </>
               ) : null}
-              <YoutubeVideo link={props.solutionVideo} />
             </>
           ) : null}
           <Spacer multiply={1} />
