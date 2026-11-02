@@ -1,9 +1,11 @@
-import { useSession } from "next-auth/react";
+"use client";
+
+import { useSession } from "./session";
 import React from "react";
 import { isAdminRole } from "../utils/adminRoles";
 
 export const Admin = ({ children }: { children: React.ReactNode }) => {
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
 
   const isAdmin = isAdminRole(session?.user?.role);
 

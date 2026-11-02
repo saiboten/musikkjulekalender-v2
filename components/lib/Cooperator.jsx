@@ -8,7 +8,7 @@ export function Cooperator({ cooperator }) {
   return (
     <div
       style={{
-        marginTop: "0.5rem"
+        marginTop: "0.5rem",
       }}
     >
       Oppgave av: <strong>{cooperator}</strong>

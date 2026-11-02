@@ -1,25 +1,13 @@
-import styled from "styled-components";
-import { PrimaryRed } from "./constants";
+import React from "react";
 
-export const Grid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
-  gap: 3.5rem;
-  margin: 3rem;
-`;
+export const Grid = ({ children }: { children: React.ReactNode }) => (
+  <div className="m-12 grid grid-cols-[repeat(auto-fit,minmax(9rem,1fr))] gap-14">
+    {children}
+  </div>
+);
 
-export const GridItem = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  box-shadow: rgb(0 0 0 / 50%) 1px 2px 4px 0px;
-  text-align: center;
-  position: relative;
-  background-color: white;
-  color: black;
-  aspect-ratio: 1 / 1; /* ↔️ is double the ↕️ */
-
-  /* &:hover {
-    transform: scale(1.05);
-  } */
-`;
+export const GridItem = ({ children }: { children: React.ReactNode }) => (
+  <div className="relative flex aspect-square items-center justify-center bg-white text-center text-black shadow-card">
+    {children}
+  </div>
+);

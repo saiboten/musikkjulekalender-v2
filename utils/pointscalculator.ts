@@ -11,6 +11,6 @@ export function calculatePoints(hints: boolean[]) {
     case 3:
       return 1;
     default:
-      1;
+      return 1;
   }
 }

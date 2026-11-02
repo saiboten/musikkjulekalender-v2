@@ -1,3 +1,5 @@
+"use client";
+
 import { useRef } from "react";
 
 export interface IProps {
@@ -38,7 +40,7 @@ export const UiFileInputButton: React.FC<IProps> = (props) => {
         {props.label}
       </button>
       <input
-        accept={props.acceptedFileTypes}
+        accept={props.acceptedFileTypes ?? ""}
         name={props.uploadFileName}
         onChange={onChangeHandler}
         ref={fileInputRef}
@@ -47,8 +49,4 @@ export const UiFileInputButton: React.FC<IProps> = (props) => {
       />
     </>
   );
-};
-
-UiFileInputButton.defaultProps = {
-  acceptedFileTypes: "",
 };

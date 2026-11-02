@@ -3,15 +3,9 @@
 const nextConfig = {
   transpilePackages: ["@mdxeditor/editor"],
   reactStrictMode: true,
-  compiler: {
-    styledComponents: true,
-  },
-  webpack: (config) => {
-    // this will override the experiments
-    config.experiments = { ...config.experiments, topLevelAwait: true };
-    // this will just update topLevelAwait property of config.experiments
-    // config.experiments.topLevelAwait = true
-    return config;
+  images: {
+    // The background image is served at quality 100.
+    qualities: [75, 100],
   },
 };
 

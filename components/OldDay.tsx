@@ -1,14 +1,17 @@
-import { Box, Button, Heading, Text } from "@chakra-ui/react";
+"use client";
+
+import { Button, Heading } from "./ui";
 import { format, parseISO } from "date-fns";
 import { useState } from "react";
-import { AdminEditLink, DayWithAdmin } from "../pages/p/[id]";
+import { DayWithAdmin } from "./Day";
+import { AdminEditLink } from "./AdminEditLink";
 import Layout from "./Layout";
 import Markdown from "react-markdown";
 import { Audio } from "./lib/Audio";
 import { Spacer } from "./lib/Spacer";
 import { YoutubeVideo } from "./lib/YoutubeVideo";
 import { Thumbnail } from "./Thumbnail";
-import Link from "next/link";
+import { BackLink } from "./BackLink";
 import { Hint } from "./Hint";
 import { BestDaily } from "./BestDaily";
 
@@ -17,15 +20,13 @@ export const OldDay: React.FC<DayWithAdmin> = (props) => {
 
   return (
     <Layout whiteBg>
-      <AdminEditLink />
-      <Link href="/">
-        <Button>Tilbake</Button>
-      </Link>
+      <AdminEditLink id={props.id} />
+      <BackLink />
       <Spacer />
-      <Box textAlign="center">
-        <Box display="flex" justifyContent="flex-end" alignItems="center">
+      <div className="text-center">
+        <div className="flex items-center justify-end">
           <Thumbnail image={props.madeBy} />
-        </Box>
+        </div>
 
         <Heading>{format(parseISO(props.date), "d 'desember")}</Heading>
         <Spacer multiply={0.5} />
@@ -39,7 +40,7 @@ export const OldDay: React.FC<DayWithAdmin> = (props) => {
         )}
 
         <Spacer multiply={0.5} />
-        <Box textAlign="left" maxWidth="30rem" m="0 auto">
+        <div className="mx-auto max-w-[30rem] text-left">
           <Markdown>{props.description}</Markdown>
 
           <Spacer multiply={0.5} />
@@ -78,9 +79,9 @@ export const OldDay: React.FC<DayWithAdmin> = (props) => {
             <>
               <Heading>Fasit</Heading>
 
-              <Text textAlign="center" fontWeight="bold" fontSize="22px">
+              <p className="text-center text-[22px] font-bold">
                 {props.artist} - {props.song}
-              </Text>
+              </p>
               {props.solutionDescription ? (
                 <>
                   {props.solutionDescription}
@@ -90,11 +91,9 @@ export const OldDay: React.FC<DayWithAdmin> = (props) => {
             </>
           ) : null}
           <Spacer multiply={1} />
-        </Box>
-      </Box>
-      <Text>
-        Denne dagen klarte {props.todayAnswers.length} personer oppgaven.
-      </Text>
+        </div>
+      </div>
+      <p>Denne dagen klarte {props.todayAnswers.length} personer oppgaven.</p>
       <Spacer />
       <BestDaily frontPage={false} todayAnswers={props.todayAnswers} />
     </Layout>

@@ -1,5 +1,1 @@
-import styled from "styled-components";
-
-export const P = styled.p`
-  margin-bottom: 1rem;
-`;
+export const P = ({ children }) => <p className="mb-4">{children}</p>;

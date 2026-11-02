@@ -1,32 +1,32 @@
-import { Box, Button, Heading, Text } from "@chakra-ui/react";
-import styled from "styled-components";
+"use client";
+
+import { Heading } from "./ui";
 import { format, parseISO } from "date-fns";
 import Countdown from "react-countdown";
-import { AdminEditLink } from "../pages/p/[id]";
+import { AdminEditLink } from "./AdminEditLink";
 import Layout from "./Layout";
 import { Spacer } from "./lib/Spacer";
 import { countdownRenderer } from "./Countdown";
-import Link from "next/link";
+import { BackLink } from "./BackLink";
 
 interface Props {
+  id: number;
   date: string;
 }
 
 export const FutureDay = (props: Props) => {
   return (
     <Layout whiteBg>
-      <AdminEditLink />
-      <Link href="/">
-        <Button>Tilbake</Button>
-      </Link>
-      <Box textAlign="center">
+      <AdminEditLink id={props.id} />
+      <BackLink />
+      <div className="text-center">
         <Heading>{format(parseISO(props.date), "d 'desember")}</Heading>
         <Spacer />
-        <Box>
+        <div>
           Tid før luken åpner: <Spacer />
           <Countdown renderer={countdownRenderer} date={parseISO(props.date)} />
-        </Box>
-      </Box>
+        </div>
+      </div>
     </Layout>
   );
 };

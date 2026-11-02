@@ -1,5 +1,7 @@
+"use client";
+
 import React from "react";
-import { animated, useSpring } from "react-spring";
+import { animated, useSpring } from "@react-spring/web";
 
 export function NumberAnimation({ children }: { children: number }) {
   const { x } = useSpring({

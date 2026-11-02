@@ -1,3 +1,5 @@
+"use client";
+
 import { ListElement, UnorderedList } from "./lib/ListElement";
 import { Profile } from "./Profile";
 import { P } from "./lib/Paragraph";
@@ -11,13 +13,13 @@ import matt from "../img/matt.png";
 import tobias from "../img/tobias22.png";
 import React from "react";
 import NextLink from "next/link";
-import { useRouter } from "next/router";
-import { Alert, Box, Button, Link, LinkBox } from "@chakra-ui/react";
+import { useRouter } from "next/navigation";
+import { Alert, Button } from "./ui";
 import { Spacer } from "./lib/Spacer";
 
 interface Profile {
   key: string;
-  profile: JSX.Element;
+  profile: React.JSX.Element;
 }
 
 export const Profiles = ({
@@ -62,7 +64,7 @@ export const Profiles = ({
             Bjarte er en ekstremt dyktig og allsidig trommis, som spiller i
             flere band enn de fleste. Han spiller blant annet i/med:
           </p>
-          <Alert variant="solid" status="info">
+          <Alert variant="solid" status="info" icon>
             Bjarte spiller live med Quadrasonic lørdag 7. desember (2024) på
             Kvarteret i Bergen! Løp og se!
           </Alert>
@@ -147,21 +149,13 @@ export const Profiles = ({
       key: "TobiasSindre",
       profile: (
         <Profile image={skoyerfanden} name="Tobias og Sindre">
-          <Link
-            href="/profile/tobias"
-            as={NextLink}
-            style={{ textDecoration: "underline" }}
-          >
+          <NextLink href="/profile/tobias" className="underline">
             Tobias
-          </Link>{" "}
+          </NextLink>{" "}
           og{" "}
-          <Link
-            as={NextLink}
-            style={{ textDecoration: "underline" }}
-            href="/profile/sindre"
-          >
+          <NextLink href="/profile/sindre" className="underline">
             Sindre
-          </Link>
+          </NextLink>
         </Profile>
       ),
     },
@@ -170,13 +164,13 @@ export const Profiles = ({
       profile: (
         <Profile image={skoyerfanden} name="Tobias og Stein">
           To hoder fungerer bedre enn ett! Det kan skje at{" "}
-          <Link>
-            <NextLink href="/profile/tobias">Tobias</NextLink>
-          </Link>{" "}
+          <NextLink href="/profile/tobias" className="hover:underline">
+            Tobias
+          </NextLink>{" "}
           og{" "}
-          <Link>
-            <NextLink href="/profile/stein">Stein</NextLink>
-          </Link>{" "}
+          <NextLink href="/profile/stein" className="hover:underline">
+            Stein
+          </NextLink>{" "}
           slå hodene sine sammen.
         </Profile>
       ),
@@ -239,9 +233,9 @@ export const Profiles = ({
   return (
     <>
       {showBackLink ? (
-        <Box display="flex" justifyContent="flex-end">
+        <div className="flex justify-end">
           <Button onClick={() => router.back()}>Tilbake</Button>
-        </Box>
+        </div>
       ) : null}
 
       {profiles.map((el, index) => (

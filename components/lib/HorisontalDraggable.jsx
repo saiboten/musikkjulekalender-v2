@@ -1,23 +1,25 @@
+"use client";
+
 import React from "react";
-import { useSpring, animated, to } from "react-spring";
+import { useSpring, animated, to } from "@react-spring/web";
 import { useGesture } from "react-with-gesture";
 
 export function HorisontalDraggable({ children }) {
   const [bind, { delta, down }] = useGesture();
   const { x, bg } = useSpring({
     x: down ? delta[0] : 0,
-    immediate: name => down && name === "x",
+    immediate: (name) => down && name === "x",
     config: {
       mass: 1,
       tension: 180,
-      friction: 4
-    }
+      friction: 4,
+    },
   });
   return (
     <animated.div {...bind()} style={{ background: bg }}>
       <animated.div
         style={{
-          transform: to([x], x => `translate3d(${x}px,0,0)`)
+          transform: to([x], (x) => `translate3d(${x}px,0,0)`),
         }}
       >
         {children}

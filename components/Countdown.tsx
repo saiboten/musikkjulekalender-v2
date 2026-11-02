@@ -1,17 +1,10 @@
-import { Box } from "@chakra-ui/react";
-import styled from "styled-components";
+import React from "react";
 
-const StyledCard = styled.div`
-  width: 5rem;
-  height: 6rem;
-  border-radius: 10px;
-  background-color: #eaf2eb;
-  color: #174e1e;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-`;
+const StyledCard = ({ children }: { children: React.ReactNode }) => (
+  <div className="flex h-24 w-20 flex-col items-center justify-center rounded-[10px] bg-[#eaf2eb] text-[#174e1e]">
+    {children}
+  </div>
+);
 
 export const countdownRenderer = ({
   days,
@@ -26,29 +19,29 @@ export const countdownRenderer = ({
   } else {
     // Render a countdown
     return (
-      <Box display="flex" gap=".5rem" justifyContent="center">
+      <div className="flex justify-center gap-2">
         {days !== 0 ? (
           <StyledCard>
-            <Box fontSize={"2.2rem"}>{days}</Box>
-            <Box>dager</Box>
+            <div className="text-[2.2rem]">{days}</div>
+            <div>dager</div>
           </StyledCard>
         ) : null}
 
         <StyledCard>
-          <Box fontSize={"2.2rem"}>{hours}</Box>
-          <Box>timer</Box>
+          <div className="text-[2.2rem]">{hours}</div>
+          <div>timer</div>
         </StyledCard>
         <StyledCard>
-          <Box fontSize={"2.2rem"}>{minutes}</Box>
-          <Box>minutter</Box>
+          <div className="text-[2.2rem]">{minutes}</div>
+          <div>minutter</div>
         </StyledCard>
         {hours === 0 ? (
           <StyledCard>
-            <Box fontSize={"2.2rem"}>{seconds}</Box>
-            <Box>sekunder</Box>
+            <div className="text-[2.2rem]">{seconds}</div>
+            <div>sekunder</div>
           </StyledCard>
         ) : null}
-      </Box>
+      </div>
     );
   }
 };

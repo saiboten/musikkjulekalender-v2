@@ -1,5 +1,7 @@
+"use client";
+
 import React from "react";
-import { useTrail, animated } from "react-spring";
+import { useTrail, animated } from "@react-spring/web";
 
 export function FadeInList({ list }) {
   const trail = useTrail(list.length, {
@@ -7,13 +9,15 @@ export function FadeInList({ list }) {
       mass: 1,
       clamp: true,
       tension: 2000,
-      friction: 50
+      friction: 50,
     },
     opacity: 1,
-    from: { opacity: 0 }
+    from: { opacity: 0 },
   });
 
   return trail.map(({ opacity }, index) => (
-    <animated.div key={index} style={{ opacity }}>{list[index]}</animated.div>
+    <animated.div key={index} style={{ opacity }}>
+      {list[index]}
+    </animated.div>
   ));
 }

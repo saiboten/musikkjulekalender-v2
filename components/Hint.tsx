@@ -1,4 +1,6 @@
-import { Button, Text } from "@chakra-ui/react";
+"use client";
+
+import { Button } from "./ui";
 import { useState } from "react";
 import { Audio } from "./lib/Audio";
 import { Spacer } from "./lib/Spacer";
@@ -19,12 +21,10 @@ export function Hint({
   if (show) {
     return (
       <>
-        <Text>
-          <Text display="inline" fontWeight="bold">
-            Hint {hintNumber}
-          </Text>
-          : {fileHintExists ? "Lydfil:" : hint}
-        </Text>
+        <p>
+          <span className="font-bold">Hint {hintNumber}</span>:{" "}
+          {fileHintExists ? "Lydfil:" : hint}
+        </p>
         {fileHintExists ? (
           <Audio controls preload="none" src={`/api/hint/${id}/${hintNumber}`}>
             Your browser does not support the

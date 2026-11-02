@@ -1,10 +1,7 @@
-import styled from "styled-components";
+export const ListElement = ({ children }) => (
+  <li className="ml-12 pl-4">{children}</li>
+);
 
-export const ListElement = styled.li`
-  padding-left: 1rem;
-  margin-left: 3rem;
-`;
-
-export const UnorderedList = styled.ul`
-  margin-bottom: 1rem;
-`;
+export const UnorderedList = ({ children }) => (
+  <ul className="mb-4">{children}</ul>
+);

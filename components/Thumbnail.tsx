@@ -1,5 +1,5 @@
 import NextLink from "next/link";
-import Image from "next/legacy/image";
+import Image from "next/image";
 import stein from "../img/thumbnail/stein.png";
 import tobias from "../img/thumbnail/tobias21.png";
 import matt from "../img/thumbnail/matt.png";
@@ -8,7 +8,6 @@ import bjarte from "../img/thumbnail/bjarte.png";
 import tomas from "../img/thumbnail/tomas.png";
 import rune from "../img/thumbnail/rune.jpg";
 import skoyerfanden from "../img/thumbnail/skoyerfanden.png";
-import { Link } from "@chakra-ui/react";
 
 const thumbnailMap = {
   Stein: stein,
@@ -29,19 +28,17 @@ export const Thumbnail = ({ image }: { image: string }) => {
   return (
     <>
       {imageSrc ? (
-        <NextLink href={`/profile/${image}`} passHref legacyBehavior>
-          <Link
-            transition="transform 0.2s"
-            _hover={{ transform: "scale(1.1)" }}
-          >
-            <Image
-              src={imageSrc}
-              alt="Profile picture"
-              width={132}
-              height={132}
-              style={{ borderRadius: "50%", cursor: "pointer" }}
-            />
-          </Link>
+        <NextLink
+          href={`/profile/${image}`}
+          className="inline-block transition-transform duration-200 hover:scale-110"
+        >
+          <Image
+            src={imageSrc}
+            alt="Profile picture"
+            width={132}
+            height={132}
+            style={{ borderRadius: "50%", cursor: "pointer" }}
+          />
         </NextLink>
       ) : null}
     </>

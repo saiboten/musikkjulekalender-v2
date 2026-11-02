@@ -1,8 +1,9 @@
+"use client";
+
 import React from "react";
-import Router from "next/router";
+import { useRouter } from "next/navigation";
 import { format, isBefore, isSameDay, parseISO } from "date-fns";
-import styled from "styled-components";
-import { PrimaryRed } from "./constants";
+import { cn } from "./ui";
 
 export type DayProps = {
   id: number;
@@ -37,52 +38,38 @@ export type DayProps = {
   hasFileHint3?: boolean;
 };
 
-const Button = styled.button<{ today: boolean; shouldBeOpen: boolean }>`
-  transition: transform 0.5s;
-  font-size: 4rem;
-  background-color: inherit;
-  width: 100%;
-  height: 100%;
-  border: ${(props) => (props.today ? `5px solid ${PrimaryRed}` : "0")};
-  position: relative;
-  transform-style: preserve-3d;
-  transform: perspective(1200px)
-    ${(props) => (props.shouldBeOpen ? "rotateY(-40deg)" : "")};
-  transform-origin: left;
-  background-color: white;
+export interface DayWithAdmin extends DayProps {
+  solved: boolean;
+  now: Date;
+  id: number;
+  todayAnswers: { points: number; user: string; time: string }[];
+}
 
-  &:hover {
-    transform: perspective(1200px)
-      ${(props) => (props.shouldBeOpen ? "rotateY(-50deg)" : "")};
-  }
-
-  &:after {
-    content: "";
-    border: 1px solid;
-    position: absolute;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    right: 0;
-    z-index: -1;
-  }
-`;
+const doorClasses =
+  "relative h-full w-full origin-left bg-white text-[4rem] transition-transform duration-500 [transform-style:preserve-3d] after:absolute after:inset-0 after:-z-1 after:border after:border-solid after:content-['']";
 
 const Post: React.FC<{ day: { id: number; date: string }; today: Date }> = ({
   day,
   today,
 }) => {
+  const router = useRouter();
   const shouldBeOpen = isBefore(parseISO(day.date), today);
   const isToday = isSameDay(parseISO(day.date), today);
 
   return (
-    <Button
-      shouldBeOpen={shouldBeOpen || isToday}
-      today={isToday}
-      onClick={() => Router.push("/p/[id]", `/p/${day.id}`)}
+    <button
+      type="button"
+      className={cn(
+        doorClasses,
+        isToday ? "border-[5px] border-solid border-primary" : "border-0",
+        shouldBeOpen || isToday
+          ? "[transform:perspective(1200px)_rotateY(-40deg)] hover:[transform:perspective(1200px)_rotateY(-50deg)]"
+          : "[transform:perspective(1200px)]"
+      )}
+      onClick={() => router.push(`/p/${day.id}`)}
     >
       {format(new Date(day.date), "d")}
-    </Button>
+    </button>
   );
 };
 

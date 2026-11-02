@@ -1,0 +1,24 @@
+@import "tailwindcss";
+
+/* --font-rubik is set on <html> by next/font in app/layout.tsx. */
+@theme inline {
+  --font-sans: var(--font-rubik), ui-sans-serif, system-ui, sans-serif;
+}
+
+@theme {
+  --color-primary: #8e1515;
+  --color-ink: #1a202c;
+  --shadow-card: rgb(0 0 0 / 50%) 1px 2px 4px 0px;
+}
+
+@layer base {
+  body {
+    @apply font-sans text-ink bg-white leading-normal antialiased;
+  }
+
+  /* Buttons have pointer cursors by default, like before (Tailwind v4 resets it). */
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+}

@@ -1,89 +1,37 @@
 import React from "react";
-import styled from "styled-components";
+import { cn } from "./ui";
 
-const Wrapper = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  margin-bottom: 1rem;
-  font-size: 1rem;
-  flex-direction: column;
-`;
+// A shiny "ball" with two highlight dots drawn by ::before/::after.
+const ballClasses = [
+  "relative ml-2 size-10 rounded-full border",
+  "before:absolute before:top-[0.85rem] before:left-[1.6rem] before:h-[0.65rem] before:w-2 before:skew-x-2 before:rounded-full before:bg-[#fdf2f2] before:shadow-[0_0_10px_rgba(250,250,250,0.9),inset_0_0_4px_#fdf2f2] before:transition-all before:duration-350 before:ease-in-out before:content-['']",
+  "after:absolute after:top-[0.4rem] after:left-6 after:h-[0.3rem] after:w-1 after:skew-x-10 after:rounded-full after:bg-[#fdf2f2] after:shadow-[0_0_10px_rgba(250,250,250,0.9),inset_0_0_4px_#fdf2f2] after:transition-all after:duration-350 after:ease-in-out after:content-['']",
+].join(" ");
 
-const Balls = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  margin-bottom: 0.5rem;
-`;
+const emptyClasses =
+  "border-[#c5ff00] bg-[linear-gradient(to_bottom,#6de381_50%,#0bce00)] shadow-[inset_0px_2px_1px_#29ce00,inset_0px_-4px_0px_2px_#16ce00]";
 
-const Base = styled.span`
-  border-radius: 50%;
-  height: 2.5rem;
-  width: 2.5rem;
-  margin-left: 0.5rem;
-  position: relative;
-
-  box-shadow: inset 0px 2px 1px #29ce00, inset 0px -4px 0px 2px #16ce00;
-  border: 1px solid #c5ff00;
-  background-image: linear-gradient(to bottom, #6de381 50%, #0bce00);
-
-  &::after {
-    content: "";
-    position: absolute;
-    top: 0.4rem;
-    left: 1.5rem;
-    width: 0.25rem;
-    height: 0.3rem;
-    border-radius: 100%;
-    box-shadow: 0 0 10px rgba(250, 250, 250, 0.9), inset 0 0 4px #fdf2f2;
-    background-color: #fdf2f2;
-    transform: skew(10deg);
-    transition: 0.35s ease-in-out;
-  }
-
-  &::before {
-    content: "";
-    position: absolute;
-    top: 0.85rem;
-    left: 1.6rem;
-    width: 0.5rem;
-    height: 0.65rem;
-    border-radius: 100%;
-    box-shadow: 0 0 10px rgba(250, 250, 250, 0.9), inset 0 0 4px #fdf2f2;
-    background-color: #fdf2f2;
-    transform: skew(2deg);
-    transition: 0.35s ease-in-out;
-  }
-`;
-
-const Filled = styled(Base)`
-  background-image: linear-gradient(to bottom, #e36d6d 50%, #ce0000);
-  box-shadow: inset 0px 2px 1px #ce0000, inset 0px -4px 0px 2px #ce0000;
-  border: 1px solid red;
-`;
+const filledClasses =
+  "border-[red] bg-[linear-gradient(to_bottom,#e36d6d_50%,#ce0000)] shadow-[inset_0px_2px_1px_#ce0000,inset_0px_-4px_0px_2px_#ce0000]";
 
 interface Props {
   difficulty: number;
 }
 
 export function Difficulty({ difficulty }: Props) {
-  let list = [];
-  for (let i = 0; i < 3; i++) {
-    if (i < difficulty) {
-      list.push(true);
-    } else {
-      list.push(false);
-    }
-  }
+  const list = [0, 1, 2].map((i) => i < difficulty);
 
   return (
-    <Wrapper>
-      <Balls>
-        {list.map((el, index) =>
-          el ? <Filled key={index} /> : <Base key={index} />
-        )}
-      </Balls>
-      <span style={{ paddingRight: ".3rem" }}>Vanskelighetsgrad</span>
-    </Wrapper>
+    <div className="mb-4 flex flex-col items-end justify-between text-base">
+      <div className="mb-2 flex justify-end">
+        {list.map((filled, index) => (
+          <span
+            key={index}
+            className={cn(ballClasses, filled ? filledClasses : emptyClasses)}
+          />
+        ))}
+      </div>
+      <span className="pr-[0.3rem]">Vanskelighetsgrad</span>
+    </div>
   );
 }

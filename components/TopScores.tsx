@@ -1,5 +1,7 @@
-import { Button, Heading, Text } from "@chakra-ui/react";
-import { useSession } from "next-auth/react";
+"use client";
+
+import { Button, Heading } from "./ui";
+import { useSession } from "./session";
 import { useState } from "react";
 import { Spacer } from "./lib/Spacer";
 import { NumberAnimation } from "./lib/NumberAnimation";
@@ -14,25 +16,12 @@ export const TopScores = ({
   const session = useSession();
   const scoresAboveZero = scores.filter((user) => user.score > -1);
 
-  let tmpScore = Number.MAX_SAFE_INTEGER;
-  let pos = 0;
-
-  var fixedScores = scoresAboveZero
+  const fixedScores = scoresAboveZero
     .filter((user, index) => index < 5 || showAll)
-    .map((user, index) => {
-      if (user.score < tmpScore) {
-        pos = index;
-        tmpScore = user.score;
-        return {
-          ...user,
-          pos: pos + 1,
-        };
-      }
-      return {
-        ...user,
-        pos: index + 1,
-      };
-    });
+    .map((user, index) => ({
+      ...user,
+      pos: index + 1,
+    }));
 
   return (
     <FrontPageBox>
@@ -41,12 +30,13 @@ export const TopScores = ({
       {fixedScores.map((el, index) => {
         return (
           <div key={index}>
-            <Text
-              display="inline"
-              fontWeight={el.id === session.data.id ? "bold" : "normal"}
+            <span
+              className={
+                el.id === session.data?.id ? "font-bold" : "font-normal"
+              }
             >
               {el.pos}: {el.name}:{" "}
-            </Text>
+            </span>
             <strong>
               <NumberAnimation>{el.score}</NumberAnimation>
             </strong>

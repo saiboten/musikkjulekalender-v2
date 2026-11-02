@@ -1,10 +1,10 @@
 generator client {
-  provider = "prisma-client-js"
+  provider = "prisma-client"
+  output   = "../lib/generated/prisma"
 }
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
 model Texts {
@@ -82,34 +82,39 @@ model Hint {
 }
 
 model Account {
-  id                 Int     @id @default(autoincrement())
-  userId             Int     @map("user_id")
-  type               String
-  provider           String
-  providerAccountId  String  @map("provider_account_id")
-  refresh_token      String?
-  access_token       String?
-  expires_at         Int?
-  token_type         String?
-  scope              String?
-  id_token           String?
-  session_state      String?
-  oauth_token_secret String?
-  oauth_token        String?
+  id                    Int       @id @default(autoincrement())
+  userId                Int       @map("user_id")
+  providerId            String    @map("provider")
+  accountId             String    @map("provider_account_id")
+  accessToken           String?   @map("access_token")
+  refreshToken          String?   @map("refresh_token")
+  idToken               String?   @map("id_token")
+  accessTokenExpiresAt  DateTime? @map("access_token_expires_at")
+  refreshTokenExpiresAt DateTime? @map("refresh_token_expires_at")
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now()) @map("created_at")
+  updatedAt             DateTime  @default(now()) @updatedAt @map("updated_at")
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@unique([provider, providerAccountId])
+  @@unique([providerId, accountId])
+  @@index([userId])
   @@map("accounts")
 }
 
 model Session {
-  id           Int      @id @default(autoincrement())
-  sessionToken String   @unique @map("session_token")
-  userId       Int      @map("user_id")
-  expires      DateTime
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id        Int      @id @default(autoincrement())
+  token     String   @unique @map("session_token")
+  userId    Int      @map("user_id")
+  expiresAt DateTime @map("expires")
+  ipAddress String?  @map("ip_address")
+  userAgent String?  @map("user_agent")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  @@index([userId])
   @@map("sessions")
 }
 
@@ -118,7 +123,7 @@ model User {
   name          String?
   nickname      String?
   email         String?   @unique
-  emailVerified DateTime? @map("email_verified")
+  emailVerified Boolean   @default(false) @map("email_verified")
   image         String?
   createdAt     DateTime  @default(now()) @map(name: "created_at")
   updatedAt     DateTime  @updatedAt @map(name: "updated_at")
@@ -133,11 +138,15 @@ model User {
   @@map(name: "users")
 }
 
-model VerificationToken {
+// Short-lived values Better Auth needs, such as OAuth state.
+model Verification {
+  id         Int      @id @default(autoincrement())
   identifier String
-  token      String   @unique
-  expires    DateTime
+  value      String
+  expiresAt  DateTime @map("expires_at")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @default(now()) @updatedAt @map("updated_at")
 
-  @@unique([identifier, token])
-  @@map("verificationtokens")
+  @@index([identifier])
+  @@map("verifications")
 }

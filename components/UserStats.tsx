@@ -1,4 +1,4 @@
-import { Heading, List, ListItem } from "@chakra-ui/react";
+import { Heading, List, ListItem } from "./ui";
 import { format, parseISO } from "date-fns";
 import { nb } from "date-fns/locale";
 import React from "react";

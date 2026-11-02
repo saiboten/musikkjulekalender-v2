@@ -1,39 +1,24 @@
+"use client";
+
 import React, { useState } from "react";
 import Layout from "../components/Layout";
 
-import Router from "next/router";
 import { DayProps } from "../components/Day";
 import {
   Button,
-  Flex,
-  FormControl,
-  FormLabel,
+  Checkbox,
+  ConfirmDialog,
+  DeleteIcon,
   Heading,
   Input,
-  Link as ChakraLink,
-  Text,
+  Label,
   Radio,
-  RadioGroup,
-  Stack,
-  Textarea,
-  Box,
-  AlertDialog,
-  AlertDialogBody,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogContent,
-  AlertDialogOverlay,
-  useDisclosure,
-  Checkbox,
-} from "@chakra-ui/react";
-import styled from "styled-components";
+} from "./ui";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { Spacer } from "../components/lib/Spacer";
-import { SingleDatepicker } from "chakra-dayzed-datepicker";
-import { DeleteIcon } from "@chakra-ui/icons";
 import { YoutubeVideo } from "./lib/YoutubeVideo";
 import { UiFileInputButton } from "./lib/UiFileUploadButton";
-import { parseISO } from "date-fns";
+import { format, parseISO } from "date-fns";
 import Link from "next/link";
 
 import {
@@ -49,16 +34,6 @@ import {
 } from "@mdxeditor/editor";
 
 import "@mdxeditor/editor/style.css";
-
-const StyledBack = styled.a`
-  margin-left: 1rem;
-`;
-
-const StyledSubmit = styled.input`
-  background: #ececec;
-  border: 0;
-  padding: 1rem 2rem;
-`;
 
 interface CreateDayFormProps extends DayProps {
   onSubmit: (data: FormData) => Promise<void>;
@@ -86,10 +61,24 @@ export type FormData = {
   hint3file: string;
 };
 
+const madeByOptions: [string, string][] = [
+  ["Stein", "Stein"],
+  ["Tobias", "Tobias"],
+  ["Skoyerfanden", "Skøyerfanden"],
+  ["Bjarte", "Bjarte"],
+  ["Tomas", "Tomas"],
+  ["Kim", "Kim"],
+  ["Matt", "Matt"],
+  ["Rune", "Rune"],
+  ["Annen", "Annen"],
+  ["TobiasStein", "Tobias og Stein"],
+  ["TobiasSindre", "Tobias og Sindre"],
+  ["Arild", "Arild"],
+];
+
 export const CreateDayForm: React.FC<CreateDayFormProps> = (props) => {
   const [solution, setSolution] = useState("");
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const cancelRef = React.useRef();
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
   const {
     control,
@@ -126,8 +115,8 @@ export const CreateDayForm: React.FC<CreateDayFormProps> = (props) => {
 
   return (
     <Layout whiteBg>
-      <Link href="/admin" legacyBehavior>
-        <ChakraLink>Til oversikt</ChakraLink>
+      <Link href="/admin" className="hover:underline">
+        Til oversikt
       </Link>
       <Spacer />
       <div>
@@ -141,63 +130,61 @@ export const CreateDayForm: React.FC<CreateDayFormProps> = (props) => {
           </Button>
 
           <Spacer />
-          <Box display="flex" justifyContent="space-between">
+          <div className="flex justify-between">
             <Heading size="lg">Luke</Heading>
-            <Box>
+            <div>
               {props.deleteAction ? (
-                <Button onClick={onOpen}>
+                <Button
+                  aria-label="Slett dag"
+                  onClick={() => setIsDeleteOpen(true)}
+                >
                   <DeleteIcon />
                 </Button>
               ) : null}
-            </Box>
-          </Box>
+            </div>
+          </div>
 
-          <AlertDialog
-            isOpen={isOpen}
-            leastDestructiveRef={cancelRef}
-            onClose={onClose}
+          <ConfirmDialog
+            isOpen={isDeleteOpen}
+            onClose={() => setIsDeleteOpen(false)}
+            onConfirm={() => props.deleteAction?.()}
+            title="Slett dag"
+            cancelText="Avbryt"
+            confirmText="Slett"
           >
-            <AlertDialogOverlay>
-              <AlertDialogContent>
-                <AlertDialogHeader fontSize="lg" fontWeight="bold">
-                  Slett dag
-                </AlertDialogHeader>
-
-                <AlertDialogBody>Er du sikker?</AlertDialogBody>
-
-                <AlertDialogFooter>
-                  <Button ref={cancelRef} onClick={onClose}>
-                    Avbryt
-                  </Button>
-                  <Button colorScheme="red" onClick={props.deleteAction} ml={3}>
-                    Slett
-                  </Button>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialogOverlay>
-          </AlertDialog>
+            Er du sikker?
+          </ConfirmDialog>
 
           <Spacer />
 
-          <FormControl>
-            <FormLabel>Dato</FormLabel>
+          <div>
+            <Label htmlFor="date-input">Dato</Label>
             <Controller
               name="date"
               control={control}
               render={({ field }) => (
-                <SingleDatepicker
+                <Input
+                  id="date-input"
                   name="date-input"
-                  date={field.value}
-                  onDateChange={field.onChange}
+                  type="date"
+                  className="w-auto"
+                  value={field.value ? format(field.value, "yyyy-MM-dd") : ""}
+                  onChange={(e) => {
+                    if (!e.target.value) return;
+                    const [year, month, day] = e.target.value
+                      .split("-")
+                      .map(Number);
+                    field.onChange(new Date(year, month - 1, day));
+                  }}
                 />
               )}
-            ></Controller>
-          </FormControl>
+            />
+          </div>
 
           <Spacer multiply={0.5} />
 
-          <FormControl>
-            <FormLabel htmlFor="description">Beskrivelse</FormLabel>
+          <div>
+            <Label htmlFor="description">Beskrivelse</Label>
 
             <Controller
               name="description"
@@ -228,7 +215,7 @@ export const CreateDayForm: React.FC<CreateDayFormProps> = (props) => {
                 );
               }}
             />
-          </FormControl>
+          </div>
 
           <Spacer multiply={0.5} />
 
@@ -236,28 +223,30 @@ export const CreateDayForm: React.FC<CreateDayFormProps> = (props) => {
             name="madeBy"
             control={control}
             render={({ field }) => (
-              <RadioGroup {...field}>
-                <Stack direction={{ base: "column", lg: "row" }}>
-                  <Radio value="Stein">Stein</Radio>
-                  <Radio value="Tobias">Tobias</Radio>
-                  <Radio value="Skoyerfanden">Skøyerfanden</Radio>
-                  <Radio value="Bjarte">Bjarte</Radio>
-                  <Radio value="Tomas">Tomas</Radio>
-                  <Radio value="Kim">Kim</Radio>
-                  <Radio value="Matt">Matt</Radio>
-                  <Radio value="Rune">Rune</Radio>
-                  <Radio value="Annen">Annen</Radio>
-                  <Radio value="TobiasStein">Tobias og Stein</Radio>
-                  <Radio value="TobiasSindre">Tobias og Sindre</Radio>
-                  <Radio value="Arild">Arild</Radio>
-                </Stack>
-              </RadioGroup>
+              <div
+                role="radiogroup"
+                aria-label="Laget av"
+                className="flex flex-col gap-2 lg:flex-row lg:flex-wrap"
+              >
+                {madeByOptions.map(([value, label]) => (
+                  <Radio
+                    key={value}
+                    name={field.name}
+                    value={value}
+                    checked={field.value === value}
+                    onChange={() => field.onChange(value)}
+                    onBlur={field.onBlur}
+                  >
+                    {label}
+                  </Radio>
+                ))}
+              </div>
             )}
           />
 
           <Spacer multiply={0.5} />
 
-          <FormControl>
+          <div>
             <Controller
               name="file"
               control={control}
@@ -269,27 +258,24 @@ export const CreateDayForm: React.FC<CreateDayFormProps> = (props) => {
                 />
               )}
             />
-          </FormControl>
+          </div>
           <Spacer />
-          <FormControl>
+          <div>
             <Controller
               name="hasTextSolution"
               control={control}
               render={({ field }) => {
                 return (
                   <Checkbox
-                    onChange={(e) => {
-                      field.onChange(e.target.value === "off" ? true : false);
-                    }}
-                    defaultChecked={field.value}
-                    value={field.value ? "on" : "off"}
+                    checked={!!field.value}
+                    onChange={(e) => field.onChange(e.target.checked)}
                   >
                     Tekstoppgave
                   </Checkbox>
                 );
               }}
             ></Controller>
-          </FormControl>
+          </div>
 
           <Spacer multiply={0.5} />
 
@@ -304,15 +290,16 @@ export const CreateDayForm: React.FC<CreateDayFormProps> = (props) => {
 
           <Spacer multiply={0.5} />
 
-          <FormControl>
-            <FormLabel htmlFor="video">Valgfri oppgavevideo</FormLabel>
+          <div>
+            <Label htmlFor="video">Valgfri oppgavevideo</Label>
             <Input
+              id="video"
               name="video"
               {...register("video")}
               placeholder="Video"
               type="text"
             />
-          </FormControl>
+          </div>
 
           <Spacer multiply={0.5} />
 
@@ -320,55 +307,59 @@ export const CreateDayForm: React.FC<CreateDayFormProps> = (props) => {
 
           <Spacer multiply={0.5} />
 
-          <FormControl>
-            <FormLabel htmlFor="artist">Artist</FormLabel>
+          <div>
+            <Label htmlFor="artist">Artist</Label>
             <Input
+              id="artist"
               name="artist"
               {...register("artist", { required: true })}
               placeholder="Artist"
               type="text"
             />
-          </FormControl>
+          </div>
 
           <Spacer multiply={0.5} />
 
-          <FormControl>
-            <FormLabel htmlFor="song">Sang</FormLabel>
+          <div>
+            <Label htmlFor="song">Sang</Label>
             <Input
+              id="song"
               name="song"
               {...register("song", { required: true })}
               placeholder="Sang"
               type="text"
             />
-          </FormControl>
+          </div>
 
           <Spacer multiply={0.5} />
 
-          <FormControl>
-            <FormLabel htmlFor="solutionDescription">Løsningstekst</FormLabel>
+          <div>
+            <Label htmlFor="solutionDescription">Løsningstekst</Label>
             <Input
+              id="solutionDescription"
               name="solutionDescription"
               {...register("solutionDescription", { required: false })}
               placeholder="Løsningstekst"
               type="text"
             />
-          </FormControl>
+          </div>
 
           <Spacer multiply={0.5} />
 
-          <FormControl>
-            <FormLabel htmlFor="hint1">Hint 1</FormLabel>
+          <div>
+            <Label htmlFor="hint1">Hint 1</Label>
             <Input
+              id="hint1"
               name="hint1"
               {...register("hint1")}
               placeholder="Hint1"
               type="text"
             />
-          </FormControl>
+          </div>
 
           <Spacer multiply={0.5} />
 
-          <FormControl>
+          <div>
             <Controller
               name="hint1file"
               control={control}
@@ -380,7 +371,7 @@ export const CreateDayForm: React.FC<CreateDayFormProps> = (props) => {
                 />
               )}
             />
-          </FormControl>
+          </div>
 
           <Spacer multiply={0.5} />
 
@@ -399,19 +390,20 @@ export const CreateDayForm: React.FC<CreateDayFormProps> = (props) => {
 
           <Spacer multiply={0.5} />
 
-          <FormControl>
-            <FormLabel htmlFor="hint2">Hint 2</FormLabel>
+          <div>
+            <Label htmlFor="hint2">Hint 2</Label>
             <Input
+              id="hint2"
               name="hint2"
               {...register("hint2")}
               placeholder="Hint2"
               type="text"
             />
-          </FormControl>
+          </div>
 
           <Spacer multiply={0.5} />
 
-          <FormControl>
+          <div>
             <Controller
               name="hint2file"
               control={control}
@@ -423,7 +415,7 @@ export const CreateDayForm: React.FC<CreateDayFormProps> = (props) => {
                 />
               )}
             />
-          </FormControl>
+          </div>
 
           <Spacer multiply={0.5} />
 
@@ -442,15 +434,16 @@ export const CreateDayForm: React.FC<CreateDayFormProps> = (props) => {
 
           <Spacer multiply={0.5} />
 
-          <FormControl>
-            <FormLabel htmlFor="hint3">Hint 3</FormLabel>
+          <div>
+            <Label htmlFor="hint3">Hint 3</Label>
             <Input
+              id="hint3"
               name="hint3"
               {...register("hint3")}
               placeholder="Hint3"
               type="text"
             />
-          </FormControl>
+          </div>
 
           <Spacer multiply={0.5} />
 
@@ -469,7 +462,7 @@ export const CreateDayForm: React.FC<CreateDayFormProps> = (props) => {
 
           <Spacer multiply={0.5} />
 
-          <FormControl>
+          <div>
             <Controller
               name="hint3file"
               control={control}
@@ -481,20 +474,20 @@ export const CreateDayForm: React.FC<CreateDayFormProps> = (props) => {
                 />
               )}
             />
-          </FormControl>
+          </div>
 
           <Spacer multiply={0.5} />
 
-          <FormControl>
-            <FormLabel htmlFor="singlesolution">Legg til løsning</FormLabel>
-            <Flex>
+          <div>
+            <Label htmlFor="singlesolution">Legg til løsning</Label>
+            <div className="flex">
               <Input
                 id="singlesolution"
                 value={solution}
                 placeholder="Løsning"
                 type="text"
                 onChange={(e) => setSolution(e.target.value)}
-                mr="5"
+                className="mr-5"
               />
               <Button
                 type="button"
@@ -505,8 +498,8 @@ export const CreateDayForm: React.FC<CreateDayFormProps> = (props) => {
               >
                 Legg til løsning
               </Button>
-            </Flex>
-          </FormControl>
+            </div>
+          </div>
 
           <Spacer multiply={0.5} />
 
@@ -514,7 +507,11 @@ export const CreateDayForm: React.FC<CreateDayFormProps> = (props) => {
             <p
               key={field.id} // important to include key with field's id
             >
-              <Button mr="3" mb="3" onClick={() => remove(index)}>
+              <Button
+                aria-label="Fjern løsning"
+                className="mr-3 mb-3"
+                onClick={() => remove(index)}
+              >
                 <DeleteIcon />
               </Button>
               {field.value}
@@ -529,9 +526,9 @@ export const CreateDayForm: React.FC<CreateDayFormProps> = (props) => {
           >
             {props.submitButtonText ? props.submitButtonText : "Opprett rute"}
           </Button>
-          <StyledBack href="#" onClick={() => Router.push("/admin")}>
+          <Link href="/admin" className="ml-4">
             eller avbryt
-          </StyledBack>
+          </Link>
         </form>
       </div>
     </Layout>

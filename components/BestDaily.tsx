@@ -1,4 +1,4 @@
-import { Heading, List, ListItem, Text } from "@chakra-ui/react";
+import { Heading, List, ListItem } from "./ui";
 import { format, parseISO } from "date-fns";
 import { FrontPageBox } from "./FrontPageBox";
 import { Spacer } from "./lib/Spacer";
@@ -27,7 +27,7 @@ export const BestDaily = ({ frontPage, todayAnswers }: Props) => {
           })}
         </List>
       ) : (
-        <Text>-</Text>
+        <p>-</p>
       )}
     </FrontPageBox>
   );

@@ -1,150 +1,70 @@
-import React from "react";
-import styled from "styled-components";
-import NextLink from "next/link";
-import { signOut, useSession } from "next-auth/react";
-import {
-  Box,
-  Link,
-  Text,
-  Menu,
-  MenuButton,
-  MenuList,
-  MenuItem,
-  Button,
-} from "@chakra-ui/react";
-import { HamburgerIcon } from "@chakra-ui/icons";
-import { Admin } from "./Admin";
-import { PrimaryRed } from "./constants";
+"use client";
 
-const Nav = styled.nav`
-  display: flex;
-  justify-content: space-between;
-  flex-direction: column;
-  width: 100%;
-  background-color: ${PrimaryRed};
-  padding: 1rem;
-  gap: 1.5rem;
-  color: #fff;
-  align-items: flex-start;
-`;
+import React from "react";
+import NextLink from "next/link";
+import { useSession } from "./session";
+import { authClient } from "../lib/auth-client";
+import { Admin } from "./Admin";
+import { HamburgerIcon, Menu, MenuItem, buttonClasses } from "./ui";
+
+const menuButtonClasses = buttonClasses(
+  "default",
+  "bg-primary text-white hover:bg-primary hover:outline hover:outline-1 hover:outline-black active:bg-primary"
+);
 
 const Header: React.FC = () => {
-  const { data: session, status } = useSession();
-
-  <NextLink href="/create" passHref legacyBehavior>
-    <Link mr="2">Opprett dag</Link>
-  </NextLink>;
+  const { data: session } = useSession();
 
   let right = null;
 
-  if (status === "loading") {
-    right = <p>Laster ...</p>;
-  }
-
   if (!session) {
     right = (
-      <Menu>
-        <MenuButton
-          as={Button}
-          backgroundColor={PrimaryRed}
-          _hover={{
-            backgroundColor: PrimaryRed,
-            outline: "1px solid",
-            outlineColor: "#000",
-          }}
-          _active={{ backgroundColor: PrimaryRed }}
-        >
-          <HamburgerIcon />
-        </MenuButton>
-        <MenuList>
-          <NextLink href="/api/auth/signin" passHref legacyBehavior>
-            <MenuItem color="black">Logg inn</MenuItem>
-          </NextLink>
-          <NextLink href="/about" passHref legacyBehavior>
-            <MenuItem color="black" mr="2">
-              Om kalenderen
-            </MenuItem>
-          </NextLink>
-        </MenuList>
+      <Menu
+        label={<HamburgerIcon />}
+        buttonAriaLabel="Meny"
+        buttonClassName={menuButtonClasses}
+      >
+        <MenuItem href="/auth/signin">Logg inn</MenuItem>
+        <MenuItem href="/about">Om kalenderen</MenuItem>
       </Menu>
     );
   }
 
   if (session) {
     right = (
-      <>
-        <Menu>
-          <MenuButton
-            as={Button}
-            backgroundColor={PrimaryRed}
-            _hover={{
-              backgroundColor: PrimaryRed,
-              outline: "1px solid",
-              outlineColor: "#000",
-            }}
-            _active={{ backgroundColor: PrimaryRed }}
-          >
-            <HamburgerIcon />
-          </MenuButton>
-          <MenuList>
-            <Admin>
-              <NextLink href="/create" passHref legacyBehavior>
-                <MenuItem color="black" mr="2">
-                  Opprett dag
-                </MenuItem>
-              </NextLink>
-              <NextLink href="/admin" passHref legacyBehavior>
-                <MenuItem color="black" mr="2">
-                  Admin
-                </MenuItem>
-              </NextLink>
-            </Admin>
-            <NextLink href="/settings" passHref legacyBehavior>
-              <MenuItem color="black" mr="2">
-                Innstillinger
-              </MenuItem>
-            </NextLink>
-            <NextLink href="/about" passHref legacyBehavior>
-              <MenuItem color="black" mr="2">
-                Om kalenderen
-              </MenuItem>
-            </NextLink>
-            <MenuItem
-              color="black"
-              onClick={() => signOut({ callbackUrl: "/" })}
-            >
-              Logg ut
-            </MenuItem>
-          </MenuList>
-        </Menu>
-      </>
+      <Menu
+        label={<HamburgerIcon />}
+        buttonAriaLabel="Meny"
+        buttonClassName={menuButtonClasses}
+      >
+        <Admin>
+          <MenuItem href="/create">Opprett dag</MenuItem>
+          <MenuItem href="/admin">Admin</MenuItem>
+        </Admin>
+        <MenuItem href="/settings">Innstillinger</MenuItem>
+        <MenuItem href="/about">Om kalenderen</MenuItem>
+        <MenuItem
+          onClick={async () => {
+            await authClient.signOut();
+            // Full reload, so the server-rendered layout drops the session too.
+            window.location.href = "/";
+          }}
+        >
+          Logg ut
+        </MenuItem>
+      </Menu>
     );
   }
 
   return (
-    (<Nav>
-      <Box
-        display="flex"
-        width="100%"
-        justifyContent="space-between"
-        alignItems="center"
-      >
-        <NextLink href="/" passHref legacyBehavior>
-          <Link display="inline" mr="5" fontSize="24px">
-            Musikkjulekalender!
-          </Link>
+    <nav className="flex w-full flex-col items-start justify-between gap-6 bg-primary p-4 text-white">
+      <div className="flex w-full items-center justify-between">
+        <NextLink href="/" className="mr-5 inline text-2xl hover:underline">
+          Musikkjulekalender!
         </NextLink>
-
-        {/* {session?.user ? (
-          <Box>
-            <Text>
-              {session.user.name} ({session.user.email})
-            </Text>
-          </Box>
-        ) : null} */}
         {right}
-      </Box>
-    </Nav>)
+      </div>
+    </nav>
   );
 };
 

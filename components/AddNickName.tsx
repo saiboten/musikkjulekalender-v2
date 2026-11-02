@@ -1,18 +1,7 @@
+"use client";
+
 import React, { useState } from "react";
-import {
-  Alert,
-  AlertDescription,
-  AlertIcon,
-  AlertTitle,
-  Button,
-  Flex,
-  FormControl,
-  FormLabel,
-  Heading,
-  Input,
-  Text,
-  useToast,
-} from "@chakra-ui/react";
+import { Alert, Button, Heading, Input, Label, useToast } from "./ui";
 import { Spacer } from "../components/lib/Spacer";
 
 interface Props {
@@ -55,34 +44,31 @@ export function AddNickName({ nickname: existingNick }: Props) {
     <>
       <Heading size="md">Velg brukernavn</Heading>
       <Spacer />
-      {!existingNick ? <Text>Du ikke valgt kallenavn enda.</Text> : null}
+      {!existingNick ? <p>Du ikke valgt kallenavn enda.</p> : null}
       <Spacer />
       <form onSubmit={submitNickname}>
-        <FormControl>
-          <FormLabel htmlFor="nickname">
+        <div>
+          <Label htmlFor="nickname">
             {existingNick ? "Endre" : "Opprett"} brukernavn
-          </FormLabel>
-          <Flex>
+          </Label>
+          <div className="flex">
             <Input
-              mr="2"
-              maxWidth="22rem"
+              className="mr-2 max-w-[22rem]"
               id="nickname"
               onChange={(e) => setNickName(e.target.value)}
               value={nickName}
               type="text"
-            ></Input>
+            />
             <Button disabled={nickName.length < 3} type="submit">
               Endre
             </Button>
-          </Flex>
-        </FormControl>
+          </div>
+        </div>
       </form>
       <Spacer />
       {error ? (
-        <Alert status="error">
-          <AlertIcon />
-          <AlertTitle>Noe gikk galt</AlertTitle>
-          <AlertDescription>{error}</AlertDescription>
+        <Alert status="error" icon title="Noe gikk galt">
+          {error}
         </Alert>
       ) : null}
     </>

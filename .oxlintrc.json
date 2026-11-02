@@ -1,0 +1,38 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": [
+    "typescript",
+    "unicorn",
+    "oxc",
+    "react",
+    "nextjs",
+    "jsx-a11y",
+    "import",
+    "vitest"
+  ],
+  "categories": {
+    "correctness": "error"
+  },
+  "env": {
+    "browser": true,
+    "node": true
+  },
+  "rules": {
+    // The audio clips are the quiz itself; there are no captions to add.
+    "jsx-a11y/media-has-caption": "off",
+    // <div role="status"> is fine; <output> is meant for form results.
+    "jsx-a11y/prefer-tag-over-role": "off",
+    // react-hook-form's watch(); a warning in eslint-config-next too.
+    "react/incompatible-library": "warn"
+  },
+  "overrides": [
+    {
+      // Server components render once per request, so reading the clock is fine.
+      "files": ["app/**/page.tsx", "app/**/layout.tsx"],
+      "rules": {
+        "react/purity": "off"
+      }
+    }
+  ],
+  "ignorePatterns": [".next/**", "next-env.d.ts"]
+}

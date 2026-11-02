@@ -1,32 +1,27 @@
+"use client";
+
 import {
   Alert,
-  AlertDescription,
-  AlertIcon,
-  AlertTitle,
-  Box,
   Button,
   Heading,
   Input,
+  List,
   ListItem,
   Spinner,
-  Text,
-  UnorderedList,
   useToast,
-} from "@chakra-ui/react";
+} from "./ui";
 import Markdown from "react-markdown";
 import { useMutation } from "@tanstack/react-query";
 import { format } from "date-fns";
 import React, { useState } from "react";
-import { AdminEditLink, DayWithAdmin } from "../pages/p/[id]";
-import { PrimaryRed } from "./constants";
-import { Difficulty } from "./Difficulty";
+import { DayWithAdmin } from "./Day";
+import { AdminEditLink } from "./AdminEditLink";
 import Layout from "./Layout";
 import { Audio } from "./lib/Audio";
 import { Spacer } from "./lib/Spacer";
 import { YoutubeVideo } from "./lib/YoutubeVideo";
 import { Thumbnail } from "./Thumbnail";
-import Link from "next/link";
-import { Hint } from "./Hint";
+import { BackLink } from "./BackLink";
 import { BestDaily } from "./BestDaily";
 
 interface HintAndFile {
@@ -46,12 +41,10 @@ export const Today: React.FC<DayWithAdmin> = (props) => {
   );
 
   const [points, setPoints] = useState(props.points);
-  const [artist, setArtist] = useState<string | undefined>(undefined);
-  const [song, setSong] = useState<string | undefined>(undefined);
-  const [solved, setSolved] = useState(props.solved);
+  const solved = props.solved;
   const toast = useToast();
 
-  const { isLoading, isError, mutate } = useMutation({
+  const { isPending, isError, mutate } = useMutation({
     mutationFn: async () => {
       return await (await fetch(`/api/gethint?dayId=${props.id}`)).json();
     },
@@ -97,12 +90,8 @@ export const Today: React.FC<DayWithAdmin> = (props) => {
   if (isError) {
     return (
       <Layout whiteBg>
-        <Alert status="error">
-          <AlertIcon />
-          <AlertTitle>Feilmelding</AlertTitle>
-          <AlertDescription>
-            Noe gikk galt under henting av hint. Prøv igjen senere.
-          </AlertDescription>
+        <Alert status="error" icon title="Feilmelding">
+          Noe gikk galt under henting av hint. Prøv igjen senere.
         </Alert>
       </Layout>
     );
@@ -110,16 +99,14 @@ export const Today: React.FC<DayWithAdmin> = (props) => {
 
   return (
     <Layout whiteBg>
-      <AdminEditLink />
-      <Link href="/">
-        <Button>Tilbake</Button>
-      </Link>
+      <AdminEditLink id={props.id} />
+      <BackLink />
       <Spacer />
       <>
-        <Box display="flex" justifyContent="flex-end" alignItems="center">
+        <div className="flex items-center justify-end">
           <Thumbnail image={props.madeBy} />
-        </Box>
-        <Heading textAlign="center">
+        </div>
+        <Heading className="text-center">
           {format(new Date(props.date), "d 'desember")}
         </Heading>
         <Spacer multiply={0.5} />
@@ -136,17 +123,17 @@ export const Today: React.FC<DayWithAdmin> = (props) => {
         <Markdown>{props.description}</Markdown>
         <Spacer multiply={0.5} />
 
-        {isLoading ? <Spinner /> : null}
+        {isPending ? <Spinner /> : null}
         <Spacer />
 
         {solved ? (
-          <Text>
+          <p>
             På denne oppgaven høstet du <strong>{points}</strong> poeng!
-          </Text>
+          </p>
         ) : (
-          <Text>
+          <p>
             Denne oppgaven er nå verdt <strong>{points}</strong> poeng!
-          </Text>
+          </p>
         )}
         <Spacer multiply={0.5} />
 
@@ -155,9 +142,9 @@ export const Today: React.FC<DayWithAdmin> = (props) => {
             <Spacer />
             <Heading size="lg">Fasit:</Heading>
             <Spacer />
-            <Text>
-              {artist ?? props.artist} - {song ?? props.song}
-            </Text>
+            <p>
+              {props.artist} - {props.song}
+            </p>
             <Spacer />
             {props.solutionDescription ? (
               <>
@@ -171,7 +158,7 @@ export const Today: React.FC<DayWithAdmin> = (props) => {
             <Heading size="md">Svar</Heading>
             <Spacer />
             <form onSubmit={handleAnswer}>
-              <Box display="flex">
+              <div className="flex">
                 <Input
                   placeholder={
                     props.hasTextSolution
@@ -181,12 +168,12 @@ export const Today: React.FC<DayWithAdmin> = (props) => {
                   name="svar"
                   value={answer}
                   onChange={(e) => setAnswer(e.target.value)}
-                  mr="10px"
-                ></Input>
+                  className="mr-2.5"
+                />
                 <Button type="submit" disabled={answer === ""}>
                   Gjett
                 </Button>
-              </Box>
+              </div>
             </form>
             <Spacer multiply={0.5} />
           </>
@@ -200,19 +187,19 @@ export const Today: React.FC<DayWithAdmin> = (props) => {
           <Spacer />
         </>
       ) : (
-        <Text>Denne oppgaven har ingen hint.</Text>
+        <p>Denne oppgaven har ingen hint.</p>
       )}
 
       {props.hasHints && hints?.length < 3 && !solved ? (
         <>
-          <Text>Sitter du fast? Du kan få ekstra hint, men det koster!</Text>
-          <UnorderedList listStyleType="none" mt="2">
-            <ListItem ml="1">1 hint = vi trekker 2 poeng</ListItem>
-            <ListItem ml="1">2 hint = vi trekker 3 poeng</ListItem>
-            <ListItem ml="1">3 hint = vi trekker 4 poeng</ListItem>
-          </UnorderedList>
+          <p>Sitter du fast? Du kan få ekstra hint, men det koster!</p>
+          <List className="mt-2 ms-4">
+            <ListItem className="ml-1">1 hint = vi trekker 2 poeng</ListItem>
+            <ListItem className="ml-1">2 hint = vi trekker 3 poeng</ListItem>
+            <ListItem className="ml-1">3 hint = vi trekker 4 poeng</ListItem>
+          </List>
           <Spacer />
-          <Button onClick={hintPlease} disabled={isLoading}>
+          <Button onClick={hintPlease} disabled={isPending}>
             Klikk her for å få hint nummer {hints.length + 1}
           </Button>
           <Spacer multiply={0.5} />
@@ -223,12 +210,10 @@ export const Today: React.FC<DayWithAdmin> = (props) => {
         ? hints.map(({ hint, file }, index) => {
             return (
               <React.Fragment key={index}>
-                <Text>
-                  <Text display="inline" fontWeight="bold">
-                    Hint {index + 1}
-                  </Text>
-                  : {file ? "Lydfil:" : hint}
-                </Text>
+                <p>
+                  <span className="font-bold">Hint {index + 1}</span>:{" "}
+                  {file ? "Lydfil:" : hint}
+                </p>
 
                 {file ? (
                   <Audio
@@ -245,9 +230,7 @@ export const Today: React.FC<DayWithAdmin> = (props) => {
             );
           })
         : null}
-      <Text>
-        Denne dagen klarte {props.todayAnswers.length} personer oppgaven.
-      </Text>
+      <p>Denne dagen klarte {props.todayAnswers.length} personer oppgaven.</p>
       <Spacer />
       <BestDaily frontPage={false} todayAnswers={props.todayAnswers} />
     </Layout>

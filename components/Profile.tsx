@@ -1,50 +1,24 @@
 import React from "react";
-import styled from "styled-components";
-import Image from "next/legacy/image";
-import { Box, Heading } from "@chakra-ui/react";
+import Image from "next/image";
+import { Heading } from "./ui";
 import { Spacer } from "./lib/Spacer";
-import { PrimaryRed } from "./constants";
-
-const Wrapper = styled.div`
-  background-color: #fff;
-  border-radius: 5px;
-  text-align: center;
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-  margin-bottom: 1rem;
-  padding: 0.5rem 0;
-`;
-
-const StyledContent = styled.div`
-  margin-bottom: 2rem;
-  text-align: left;
-  padding: 0 1rem;
-`;
 
 export function Profile({ name, image, children }) {
   return (
-    <Wrapper>
-      <Box position="relative" display="inline-block">
+    <div className="mb-4 rounded-[5px] bg-white py-2 text-center shadow-[0_4px_8px_0_rgba(0,0,0,0.2)]">
+      <div className="relative inline-block">
         <Heading
           size="lg"
-          mb="2"
-          position="absolute"
-          right={{ base: "0px", lg: "-15px" }}
-          bottom={{ base: "0px", lg: "-15px" }}
-          zIndex="1"
-          backgroundColor={PrimaryRed}
-          padding="5px"
-          color="#fff"
-          borderRadius="5px"
-          opacity="0.9"
+          className="absolute right-0 bottom-0 z-[1] mb-2 rounded-[5px] bg-primary p-[5px] text-white opacity-90 lg:-right-[15px] lg:-bottom-[15px]"
         >
           {name}
         </Heading>
 
         <Image src={image} alt={name} style={{ borderRadius: "5px" }} />
-      </Box>
+      </div>
       <Spacer multiply={0.5} />
       <Spacer multiply={0.5} />
-      <StyledContent>{children}</StyledContent>
-    </Wrapper>
+      <div className="mb-8 px-4 text-left">{children}</div>
+    </div>
   );
 }
