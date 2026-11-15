@@ -40,14 +40,6 @@ export default async function SignIn({
           </Alert>
         ) : null}
 
-        <Alert status="info" className="flex-col text-center">
-          <div className="my-2 font-bold">Facebook</div>
-          <span>
-            Innlogging med Facebook er ikke lenger en mulighet. Håper du kan
-            bruke en av de andre alternativene!
-          </span>
-        </Alert>
-
         {socialProviders.map((provider) => (
           <div key={provider.id}>
             <SignInButton id={provider.id} name={provider.name} />
