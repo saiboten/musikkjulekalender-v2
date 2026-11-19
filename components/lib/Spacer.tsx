@@ -1,10 +1,9 @@
 /**
- * Vertical space of 1rem.
+ * Vertical space of `multiply` rem (default 1rem).
  *
- * `multiply` is accepted for compatibility but adds no space: the old
- * styled-components version produced invalid CSS for it (`margin-top: 1rem}`),
- * so the browser ignored it, and the current layout is built around that.
+ * Uses a fixed height rather than a margin, so stacked spacers add up instead
+ * of collapsing into a single margin.
  */
-export const Spacer = ({ multiply }: { multiply?: number }) => (
-  <div className={multiply ? undefined : "mt-4"} />
+export const Spacer = ({ multiply = 1 }: { multiply?: number }) => (
+  <div aria-hidden className="shrink-0" style={{ height: `${multiply}rem` }} />
 );
