@@ -14,6 +14,7 @@ import { YoutubeVideo } from "./lib/YoutubeVideo";
 import { Thumbnail } from "./Thumbnail";
 import { BackLink } from "./BackLink";
 import { BestDaily } from "./BestDaily";
+import { DayStats } from "./DayStats";
 
 function formatTime(iso?: string) {
   return iso ? format(new Date(iso), "HH:mm") : "";
@@ -234,7 +235,7 @@ export const Today: React.FC<DayWithAdmin> = (props) => {
             );
           })
         : null}
-      <p>Denne dagen klarte {props.todayAnswers.length} personer oppgaven.</p>
+      {props.stats ? <DayStats stats={props.stats} /> : null}
       <Spacer />
       <BestDaily frontPage={false} todayAnswers={props.todayAnswers} />
     </Layout>

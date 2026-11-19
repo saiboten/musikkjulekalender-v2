@@ -25,6 +25,21 @@ export async function GET(request: NextRequest) {
     return Response.json({ message: "Dag ikke åpen" }, { status: 401 });
   }
 
+  const solvedResponse = {
+    success: true,
+    artist: day.artist,
+    song: day.song,
+    solutionVideo: day.solutionVideo,
+  };
+
+  // Already solved: don't log the guess or store a second answer.
+  const existingAnswer = await prisma.answer.findFirst({
+    where: { dayId: day.id, userId: session.id },
+  });
+  if (existingAnswer) {
+    return Response.json(solvedResponse);
+  }
+
   const result = await prisma.solution.findMany({
     where: {
       dayId: day.id,
@@ -32,8 +47,19 @@ export async function GET(request: NextRequest) {
   });
 
   const rightAnswerList = result.map((el) => el.solution.toLowerCase());
+  const normalizedGuess = guess.trim().toLowerCase();
+  const correct = rightAnswerList.includes(guess.toLowerCase());
 
-  if (rightAnswerList.includes(guess.toLowerCase())) {
+  await prisma.guess.create({
+    data: {
+      guess: normalizedGuess,
+      correct,
+      dayId: day.id,
+      userId: session.id,
+    },
+  });
+
+  if (correct) {
     const now = new Date();
     await prisma.answer.create({
       data: {
@@ -43,12 +69,7 @@ export async function GET(request: NextRequest) {
         userId: session.id,
       },
     });
-    return Response.json({
-      success: true,
-      artist: day.artist,
-      song: day.song,
-      solutionVideo: day.solutionVideo,
-    });
+    return Response.json(solvedResponse);
   }
 
   return Response.json({ success: false });

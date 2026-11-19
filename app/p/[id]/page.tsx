@@ -4,6 +4,7 @@ import { isBefore, isSameDay } from "date-fns";
 import { prisma } from "../../../lib/prisma";
 import { getSession } from "../../../lib/auth";
 import { getSolvedAnswers } from "../../../lib/answers";
+import { getDayStats } from "../../../lib/dayStats";
 import { Today } from "../../../components/Today";
 import { OldDay } from "../../../components/OldDay";
 import { FutureDay } from "../../../components/FutureDay";
@@ -60,6 +61,8 @@ export default async function DayPage({
     !!day.hint3 || !!day.hasFileHint3,
   ];
 
+  const stats = isToday || isDayPassed ? await getDayStats(day) : undefined;
+
   const dayWithFixedDates = {
     ...day,
     date: day.date.toISOString(),
@@ -68,6 +71,7 @@ export default async function DayPage({
     now: now.toISOString(),
     hasHints,
     todayAnswers,
+    stats,
   };
 
   // The day's props are passed on as before; the client components only read
@@ -109,6 +113,7 @@ export default async function DayPage({
       id: day.id,
       description: day.description,
       todayAnswers,
+      stats,
     };
   } else {
     props = {

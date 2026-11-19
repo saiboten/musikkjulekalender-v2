@@ -1,5 +1,13 @@
 import { prisma } from "./prisma";
 
+/** The name shown for a user in lists and stats. */
+export function displayName(user: {
+  nickname: string | null;
+  email: string | null;
+}) {
+  return user.nickname ?? user.email?.split("@")[0] ?? "ukjent";
+}
+
 /** Everyone who solved the given day, best score first, then fastest first. */
 export async function getSolvedAnswers(dayId: number | undefined) {
   const answers = await prisma.answer.findMany({
@@ -23,7 +31,7 @@ export async function getSolvedAnswers(dayId: number | undefined) {
     })
     .map((e) => ({
       points: e.points,
-      user: e.user.nickname ?? e.user.email?.split("@")[0] ?? "ukjent",
+      user: displayName(e.user),
       time: e.timeOfEntry.toISOString(),
     }));
 }

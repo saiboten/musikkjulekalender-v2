@@ -14,6 +14,7 @@ import { Thumbnail } from "./Thumbnail";
 import { BackLink } from "./BackLink";
 import { Hint } from "./Hint";
 import { BestDaily } from "./BestDaily";
+import { DayStats } from "./DayStats";
 
 export const OldDay: React.FC<DayWithAdmin> = (props) => {
   const [showSolution, setShowSolution] = useState(false);
@@ -93,7 +94,7 @@ export const OldDay: React.FC<DayWithAdmin> = (props) => {
           <Spacer multiply={1} />
         </div>
       </div>
-      <p>Denne dagen klarte {props.todayAnswers.length} personer oppgaven.</p>
+      {props.stats ? <DayStats stats={props.stats} /> : null}
       <Spacer />
       <BestDaily frontPage={false} todayAnswers={props.todayAnswers} />
     </Layout>

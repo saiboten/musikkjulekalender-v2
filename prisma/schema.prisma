@@ -37,6 +37,7 @@ model Day {
   answers             Answer[]
   file                SongFile?
   Hint                Hint[]
+  guesses             Guess[]
 }
 
 model SongFile {
@@ -79,6 +80,21 @@ model Hint {
   user   User    @relation(fields: [userId], references: [id])
 
   @@unique([dayId, userId])
+}
+
+// Every guess on a day, right or wrong. Used for day statistics.
+model Guess {
+  id        Int      @id @default(autoincrement())
+  // Trimmed and lowercased.
+  guess     String
+  correct   Boolean
+  createdAt DateTime @default(now())
+  dayId     Int
+  day       Day      @relation(fields: [dayId], references: [id], onDelete: Cascade)
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([dayId])
 }
 
 model Account {
@@ -134,6 +150,8 @@ model User {
   answer Answer[]
 
   hints Hint[]
+
+  guesses Guess[]
 
   @@map(name: "users")
 }

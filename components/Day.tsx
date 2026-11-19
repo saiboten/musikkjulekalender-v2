@@ -4,6 +4,7 @@ import React from "react";
 import { useRouter } from "next/navigation";
 import { format, isBefore, isSameDay, parseISO } from "date-fns";
 import { cn } from "./ui";
+import type { DayStats } from "../utils/dayStats";
 
 export type DayProps = {
   id: number;
@@ -42,6 +43,8 @@ export type DayProps = {
   hintOpenTimes?: string[];
   /** Today only: whether hint 1, 2 and 3 exist for this day. */
   hintExists?: boolean[];
+  /** Today and passed days: statistics for the day. */
+  stats?: DayStats;
 };
 
 export interface DayWithAdmin extends DayProps {
