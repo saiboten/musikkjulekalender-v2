@@ -3,12 +3,7 @@ import { prisma } from "../../../../../lib/prisma";
 import { getToday } from "../../../../../utils/dates";
 import { getSession } from "../../../../../lib/auth";
 import { audioResponse, numberToHintFile } from "../../../../../lib/audio";
-
-const numberToHint = {
-  1: "hint1",
-  2: "hint2",
-  3: "hint3",
-} as const;
+import { getOpenHintCount } from "../../../../../utils/pointscalculator";
 
 export async function GET(
   _request: Request,
@@ -37,15 +32,11 @@ export async function GET(
     return Response.json({ error: "nope" });
   }
 
-  const hints = await prisma.hint.findFirst({
-    where: {
-      dayId,
-      userId: session.id,
-    },
-  });
-
-  // Passed days are open to everyone; otherwise the user must have taken the hint.
-  if (isBefore(day.date, getToday()) || hints?.[numberToHint[hintNumber]]) {
+  // Passed days are open to everyone; today, a hint opens N hours after the day opens.
+  if (
+    isBefore(day.date, getToday()) ||
+    getOpenHintCount(day.date, new Date()) >= hintNumber
+  ) {
     return audioResponse(day.file?.[numberToHintFile[hintNumber]]);
   }
 

@@ -1,7 +1,7 @@
 import { isSameDay } from "date-fns";
 import type { NextRequest } from "next/server";
 import { prisma } from "../../../lib/prisma";
-import { calculatePoints } from "../../../utils/pointscalculator";
+import { calculatePointsAt } from "../../../utils/pointscalculator";
 import { getToday } from "../../../utils/dates";
 import { getSession } from "../../../lib/auth";
 
@@ -31,20 +31,14 @@ export async function GET(request: NextRequest) {
     },
   });
 
-  const hints = await prisma.hint.findFirst({
-    where: {
-      dayId: day.id,
-      userId: session.id,
-    },
-  });
-
   const rightAnswerList = result.map((el) => el.solution.toLowerCase());
 
   if (rightAnswerList.includes(guess.toLowerCase())) {
+    const now = new Date();
     await prisma.answer.create({
       data: {
-        timeOfEntry: new Date(),
-        points: calculatePoints([hints?.hint1, hints?.hint2, hints?.hint3]),
+        timeOfEntry: now,
+        points: calculatePointsAt(day.date, now),
         dayId: day.id,
         userId: session.id,
       },

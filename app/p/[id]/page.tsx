@@ -8,27 +8,11 @@ import { Today } from "../../../components/Today";
 import { OldDay } from "../../../components/OldDay";
 import { FutureDay } from "../../../components/FutureDay";
 import { DayWithAdmin } from "../../../components/Day";
-import { calculatePoints } from "../../../utils/pointscalculator";
-
-async function getOrCreateHints(dayId: number, userId: number) {
-  const hints = await prisma.hint.findFirst({
-    where: { dayId, userId },
-  });
-
-  if (hints) {
-    return hints;
-  }
-
-  return prisma.hint.create({
-    data: {
-      hint1: false,
-      hint2: false,
-      hint3: false,
-      dayId,
-      userId,
-    },
-  });
-}
+import {
+  calculatePointsAt,
+  getHintOpenTime,
+  getOpenHintCount,
+} from "../../../utils/pointscalculator";
 
 export default async function DayPage({
   params,
@@ -61,13 +45,20 @@ export default async function DayPage({
     },
   });
 
-  const hints = await getOrCreateHints(day.id, session.id);
-
   const now = new Date();
   const isToday = isSameDay(day.date, now) && day.date < now;
   const isDayPassed = isBefore(day.date, now);
   const hasHints = day.hint1 !== "" || day.hasFileHint1;
-  const points = calculatePoints([hints.hint1, hints.hint2, hints.hint3]);
+  const openHints = getOpenHintCount(day.date, now);
+  const points = answer?.points ?? calculatePointsAt(day.date, now);
+  const hintOpenTimes = ([1, 2, 3] as const).map((n) =>
+    getHintOpenTime(day.date, n).toISOString()
+  );
+  const hintExists = [
+    !!day.hint1 || !!day.hasFileHint1,
+    !!day.hint2 || !!day.hasFileHint2,
+    !!day.hint3 || !!day.hasFileHint3,
+  ];
 
   const dayWithFixedDates = {
     ...day,
@@ -86,7 +77,14 @@ export default async function DayPage({
   if (isDayPassed && !isToday) {
     props = dayWithFixedDates;
   } else if (isToday && answer) {
-    props = { ...dayWithFixedDates, solved: true, points };
+    props = {
+      ...dayWithFixedDates,
+      solved: true,
+      points,
+      openHints: 3,
+      hintOpenTimes,
+      hintExists,
+    };
   } else if (isToday) {
     // Today, unsolved: only send what the user is allowed to see.
     props = {
@@ -96,12 +94,15 @@ export default async function DayPage({
       isDayPassed,
       hasTextSolution: day.hasTextSolution,
       hasHints,
-      hint1: hints.hint1 ? day.hint1 : null,
-      hint2: hints.hint2 ? day.hint2 : null,
-      hint3: hints.hint3 ? day.hint3 : null,
+      hint1: openHints >= 1 ? day.hint1 : null,
+      hint2: openHints >= 2 ? day.hint2 : null,
+      hint3: openHints >= 3 ? day.hint3 : null,
       hasFileHint1: day.hasFileHint1,
       hasFileHint2: day.hasFileHint2,
       hasFileHint3: day.hasFileHint3,
+      openHints,
+      hintOpenTimes,
+      hintExists,
       now: now.getTime(),
       video: day.video,
       points,

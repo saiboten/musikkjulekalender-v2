@@ -36,6 +36,12 @@ export type DayProps = {
   hasFileHint1?: boolean;
   hasFileHint2?: boolean;
   hasFileHint3?: boolean;
+  /** Today only: how many hints are open right now (0–3). */
+  openHints?: number;
+  /** Today only: ISO times when hint 1, 2 and 3 open. */
+  hintOpenTimes?: string[];
+  /** Today only: whether hint 1, 2 and 3 exist for this day. */
+  hintExists?: boolean[];
 };
 
 export interface DayWithAdmin extends DayProps {
