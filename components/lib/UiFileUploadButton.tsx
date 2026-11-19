@@ -1,6 +1,7 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState } from "react";
+import { buttonClasses } from "../ui";
 
 export interface IProps {
   acceptedFileTypes?: string;
@@ -9,44 +10,52 @@ export interface IProps {
   uploadFileName: string;
 }
 
-function getBase64(file) {
-  var reader = new FileReader();
+function getBase64(file: File) {
+  const reader = new FileReader();
   reader.readAsDataURL(file);
   return reader;
 }
 
 export const UiFileInputButton: React.FC<IProps> = (props) => {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-
-  const onClickHandler = () => {
-    fileInputRef.current?.click();
-  };
+  const [fileName, setFileName] = useState<string | null>(null);
 
   const onChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (!event.target.files?.length) {
+    const file = event.target.files?.[0];
+    if (!file) {
       return;
     }
 
-    const reader = getBase64(event.target.files[0]);
+    const reader = getBase64(file);
 
     reader.onload = () => {
+      setFileName(file.name);
       props.onChange(reader.result as string);
     };
   };
 
   return (
-    <>
-      <button type="button" onClick={onClickHandler}>
+    <div className="flex min-w-0 flex-wrap items-center gap-3">
+      <button
+        type="button"
+        onClick={() => fileInputRef.current?.click()}
+        className={buttonClasses("default", "h-9 text-sm")}
+      >
         {props.label}
       </button>
+      {fileName ? (
+        <span className="min-w-0 truncate text-sm text-gray-600">
+          Valgt: <span className="font-medium text-ink">{fileName}</span>
+        </span>
+      ) : null}
       <input
         accept={props.acceptedFileTypes ?? ""}
         name={props.uploadFileName}
         onChange={onChangeHandler}
         ref={fileInputRef}
-        style={{ display: "none" }}
+        className="hidden"
         type="file"
       />
-    </>
+    </div>
   );
 };

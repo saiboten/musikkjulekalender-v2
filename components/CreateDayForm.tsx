@@ -12,13 +12,14 @@ import {
   Heading,
   Input,
   Label,
-  Radio,
+  buttonClasses,
+  cn,
 } from "./ui";
-import { Controller, useFieldArray, useForm } from "react-hook-form";
-import { Spacer } from "../components/lib/Spacer";
+import { Control, Controller, useFieldArray, useForm } from "react-hook-form";
 import { YoutubeVideo } from "./lib/YoutubeVideo";
 import { UiFileInputButton } from "./lib/UiFileUploadButton";
 import { format, parseISO } from "date-fns";
+import { nb } from "date-fns/locale";
 import Link from "next/link";
 
 import {
@@ -76,17 +77,22 @@ const madeByOptions: [string, string][] = [
   ["Arild", "Arild"],
 ];
 
+const primaryButton =
+  "bg-primary text-white hover:bg-[#741111] active:bg-[#5c0d0d] disabled:hover:bg-primary";
+
 export const CreateDayForm: React.FC<CreateDayFormProps> = (props) => {
   const [solution, setSolution] = useState("");
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const isEdit = !!props.deleteAction;
 
   const {
     control,
     register,
     handleSubmit,
     watch,
-    formState: { isDirty, isValid },
+    formState: { isDirty, isValid, errors, isSubmitting },
   } = useForm<FormData>({
+    mode: "onChange",
     defaultValues: {
       description: props.description,
       artist: props.artist,
@@ -109,101 +115,180 @@ export const CreateDayForm: React.FC<CreateDayFormProps> = (props) => {
   });
 
   const { fields, append, remove } = useFieldArray({
-    control, // control props comes from useForm (optional: if you are using FormContext)
-    name: "solutions", // unique name for your Field Array
+    control,
+    name: "solutions",
   });
+
+  function addSolution() {
+    const value = solution.trim();
+    if (!value) return;
+    append({ value });
+    setSolution("");
+  }
+
+  const date = watch("date");
+  const video = watch("video");
+  const songFile = watch("file");
+  const canSave = isDirty && isValid && !isSubmitting;
+  const submitText = props.submitButtonText ?? "Opprett luke";
 
   return (
     <Layout whiteBg>
-      <Link href="/admin" className="hover:underline">
-        Til oversikt
-      </Link>
-      <Spacer />
-      <div>
-        <form onSubmit={handleSubmit(props.onSubmit)}>
-          <Spacer />
-          <Button
-            disabled={!isDirty || !isValid} // here
-            type="submit"
-          >
-            {props.submitButtonText ? props.submitButtonText : "Opprett rute"}
-          </Button>
-
-          <Spacer />
-          <div className="flex justify-between">
-            <Heading size="lg">Luke</Heading>
-            <div>
-              {props.deleteAction ? (
-                <Button
-                  aria-label="Slett dag"
-                  onClick={() => setIsDeleteOpen(true)}
-                >
-                  <DeleteIcon />
-                </Button>
+      <form onSubmit={handleSubmit(props.onSubmit)} className="space-y-6">
+        <header className="flex flex-wrap items-start justify-between gap-3">
+          <div className="min-w-0">
+            <Link
+              href="/admin"
+              className="text-sm text-gray-600 hover:text-primary hover:underline"
+            >
+              ← Til oversikt
+            </Link>
+            <Heading size="lg" className="mt-1">
+              {isEdit ? "Rediger luke" : "Ny luke"}
+              {date ? (
+                <span className="text-gray-500">
+                  {" "}
+                  · {format(date, "d. MMMM", { locale: nb })}
+                </span>
               ) : null}
+            </Heading>
+          </div>
+          {isEdit ? (
+            <Button
+              variant="danger"
+              className="h-9 text-sm"
+              onClick={() => setIsDeleteOpen(true)}
+            >
+              <DeleteIcon />
+              Slett luke
+            </Button>
+          ) : null}
+        </header>
+
+        <ConfirmDialog
+          isOpen={isDeleteOpen}
+          onClose={() => setIsDeleteOpen(false)}
+          onConfirm={() => props.deleteAction?.()}
+          title="Slett luke"
+          cancelText="Avbryt"
+          confirmText="Slett"
+        >
+          Er du sikker? Luken, svarene og statistikken for den slettes.
+        </ConfirmDialog>
+
+        <Section title="Grunninfo">
+          <div className="grid gap-5 md:grid-cols-[auto_1fr]">
+            <div>
+              <Label htmlFor="date-input">Dato</Label>
+              <Controller
+                name="date"
+                control={control}
+                render={({ field }) => (
+                  <Input
+                    id="date-input"
+                    name="date-input"
+                    type="date"
+                    className="w-auto"
+                    value={field.value ? format(field.value, "yyyy-MM-dd") : ""}
+                    onChange={(e) => {
+                      if (!e.target.value) return;
+                      const [year, month, day] = e.target.value
+                        .split("-")
+                        .map(Number);
+                      field.onChange(new Date(year, month - 1, day));
+                    }}
+                  />
+                )}
+              />
+            </div>
+
+            <div className="flex items-end md:pb-2">
+              <Controller
+                name="hasTextSolution"
+                control={control}
+                render={({ field }) => (
+                  <Checkbox
+                    checked={!!field.value}
+                    onChange={(e) => field.onChange(e.target.checked)}
+                  >
+                    Tekstoppgave{" "}
+                    <span className="text-sm text-gray-500">
+                      (ingen sang, svaret er tekst)
+                    </span>
+                  </Checkbox>
+                )}
+              />
             </div>
           </div>
 
-          <ConfirmDialog
-            isOpen={isDeleteOpen}
-            onClose={() => setIsDeleteOpen(false)}
-            onConfirm={() => props.deleteAction?.()}
-            title="Slett dag"
-            cancelText="Avbryt"
-            confirmText="Slett"
-          >
-            Er du sikker?
-          </ConfirmDialog>
-
-          <Spacer />
-
           <div>
-            <Label htmlFor="date-input">Dato</Label>
+            <p className="mb-2 text-base font-medium" id="made-by-label">
+              Laget av
+            </p>
             <Controller
-              name="date"
+              name="madeBy"
               control={control}
               render={({ field }) => (
-                <Input
-                  id="date-input"
-                  name="date-input"
-                  type="date"
-                  className="w-auto"
-                  value={field.value ? format(field.value, "yyyy-MM-dd") : ""}
-                  onChange={(e) => {
-                    if (!e.target.value) return;
-                    const [year, month, day] = e.target.value
-                      .split("-")
-                      .map(Number);
-                    field.onChange(new Date(year, month - 1, day));
-                  }}
-                />
+                <div
+                  role="radiogroup"
+                  aria-labelledby="made-by-label"
+                  className="flex flex-wrap gap-2"
+                >
+                  {madeByOptions.map(([value, label]) => {
+                    const checked = field.value === value;
+                    return (
+                      <label
+                        key={value}
+                        className={cn(
+                          "cursor-pointer rounded-full border px-3 py-1 text-sm transition-colors",
+                          "has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-[#4299e1]/60",
+                          checked
+                            ? "border-primary bg-primary text-white"
+                            : "border-gray-300 hover:border-primary"
+                        )}
+                      >
+                        <input
+                          type="radio"
+                          className="sr-only"
+                          name={field.name}
+                          value={value}
+                          checked={checked}
+                          onChange={() => field.onChange(value)}
+                          onBlur={field.onBlur}
+                        />
+                        {label}
+                      </label>
+                    );
+                  })}
+                </div>
               )}
             />
           </div>
+        </Section>
 
-          <Spacer multiply={0.5} />
-
+        <Section
+          title="Oppgave"
+          description="Det spillerne ser når luken åpner."
+        >
           <div>
             <Label htmlFor="description">Beskrivelse</Label>
-
-            <Controller
-              name="description"
-              control={control}
-              render={({ field }) => {
-                return (
+            <div className="overflow-hidden rounded-md border border-[#e2e8f0] focus-within:border-[#3182ce]">
+              <Controller
+                name="description"
+                control={control}
+                render={({ field }) => (
                   <MDXEditor
                     markdown={field.value ?? ""}
                     onChange={field.onChange}
+                    contentEditableClassName="min-h-32"
                     plugins={[
                       headingsPlugin(),
                       listsPlugin(),
                       quotePlugin(),
                       thematicBreakPlugin(),
                       toolbarPlugin({
-                        toolbarClassName: "my-classname",
                         toolbarContents: () => (
                           <>
-                            {" "}
                             <UndoRedo />
                             <BoldItalicUnderlineToggles />
                             <BlockTypeSelect />
@@ -212,325 +297,290 @@ export const CreateDayForm: React.FC<CreateDayFormProps> = (props) => {
                       }),
                     ]}
                   />
-                );
-              }}
-            />
-          </div>
-
-          <Spacer multiply={0.5} />
-
-          <Controller
-            name="madeBy"
-            control={control}
-            render={({ field }) => (
-              <div
-                role="radiogroup"
-                aria-label="Laget av"
-                className="flex flex-col gap-2 lg:flex-row lg:flex-wrap"
-              >
-                {madeByOptions.map(([value, label]) => (
-                  <Radio
-                    key={value}
-                    name={field.name}
-                    value={value}
-                    checked={field.value === value}
-                    onChange={() => field.onChange(value)}
-                    onBlur={field.onBlur}
-                  >
-                    {label}
-                  </Radio>
-                ))}
-              </div>
-            )}
-          />
-
-          <Spacer multiply={0.5} />
-
-          <div>
-            <Controller
-              name="file"
-              control={control}
-              render={({ field }) => (
-                <UiFileInputButton
-                  label="Klikk her for å laste opp sang"
-                  uploadFileName="theFiles"
-                  onChange={field.onChange}
-                />
-              )}
-            />
-          </div>
-          <Spacer />
-          <div>
-            <Controller
-              name="hasTextSolution"
-              control={control}
-              render={({ field }) => {
-                return (
-                  <Checkbox
-                    checked={!!field.value}
-                    onChange={(e) => field.onChange(e.target.checked)}
-                  >
-                    Tekstoppgave
-                  </Checkbox>
-                );
-              }}
-            ></Controller>
-          </div>
-
-          <Spacer multiply={0.5} />
-
-          <audio
-            controls
-            preload="none"
-            src={watch("file") ? watch("file") : `/api/admin/file/${props.id}`}
-          >
-            Your browser does not support the
-            <code>audio</code> element.
-          </audio>
-
-          <Spacer multiply={0.5} />
-
-          <div>
-            <Label htmlFor="video">Valgfri oppgavevideo</Label>
-            <Input
-              id="video"
-              name="video"
-              {...register("video")}
-              placeholder="Video"
-              type="text"
-            />
-          </div>
-
-          <Spacer multiply={0.5} />
-
-          <YoutubeVideo link={watch("video")} />
-
-          <Spacer multiply={0.5} />
-
-          <div>
-            <Label htmlFor="artist">Artist</Label>
-            <Input
-              id="artist"
-              name="artist"
-              {...register("artist", { required: true })}
-              placeholder="Artist"
-              type="text"
-            />
-          </div>
-
-          <Spacer multiply={0.5} />
-
-          <div>
-            <Label htmlFor="song">Sang</Label>
-            <Input
-              id="song"
-              name="song"
-              {...register("song", { required: true })}
-              placeholder="Sang"
-              type="text"
-            />
-          </div>
-
-          <Spacer multiply={0.5} />
-
-          <div>
-            <Label htmlFor="solutionDescription">Løsningstekst</Label>
-            <Input
-              id="solutionDescription"
-              name="solutionDescription"
-              {...register("solutionDescription", { required: false })}
-              placeholder="Løsningstekst"
-              type="text"
-            />
-          </div>
-
-          <Spacer multiply={0.5} />
-
-          <div>
-            <Label htmlFor="hint1">Hint 1</Label>
-            <Input
-              id="hint1"
-              name="hint1"
-              {...register("hint1")}
-              placeholder="Hint1"
-              type="text"
-            />
-          </div>
-
-          <Spacer multiply={0.5} />
-
-          <div>
-            <Controller
-              name="hint1file"
-              control={control}
-              render={({ field }) => (
-                <UiFileInputButton
-                  label="Klikk her for å laste opp hint 1"
-                  uploadFileName="theFiles"
-                  onChange={field.onChange}
-                />
-              )}
-            />
-          </div>
-
-          <Spacer multiply={0.5} />
-
-          <audio
-            controls
-            preload="none"
-            src={
-              watch("hint1file")
-                ? watch("hint1file")
-                : `/api/admin/${props.id}/1`
-            }
-          >
-            Your browser does not support the
-            <code>audio</code> element.
-          </audio>
-
-          <Spacer multiply={0.5} />
-
-          <div>
-            <Label htmlFor="hint2">Hint 2</Label>
-            <Input
-              id="hint2"
-              name="hint2"
-              {...register("hint2")}
-              placeholder="Hint2"
-              type="text"
-            />
-          </div>
-
-          <Spacer multiply={0.5} />
-
-          <div>
-            <Controller
-              name="hint2file"
-              control={control}
-              render={({ field }) => (
-                <UiFileInputButton
-                  label="Klikk her for å laste opp hint 2"
-                  uploadFileName="theFiles"
-                  onChange={field.onChange}
-                />
-              )}
-            />
-          </div>
-
-          <Spacer multiply={0.5} />
-
-          <audio
-            controls
-            preload="none"
-            src={
-              watch("hint2file")
-                ? watch("hint2file")
-                : `/api/admin/${props.id}/2`
-            }
-          >
-            Your browser does not support the
-            <code>audio</code> element.
-          </audio>
-
-          <Spacer multiply={0.5} />
-
-          <div>
-            <Label htmlFor="hint3">Hint 3</Label>
-            <Input
-              id="hint3"
-              name="hint3"
-              {...register("hint3")}
-              placeholder="Hint3"
-              type="text"
-            />
-          </div>
-
-          <Spacer multiply={0.5} />
-
-          <audio
-            controls
-            preload="none"
-            src={
-              watch("hint3file")
-                ? watch("hint3file")
-                : `/api/admin/${props.id}/3`
-            }
-          >
-            Your browser does not support the
-            <code>audio</code> element.
-          </audio>
-
-          <Spacer multiply={0.5} />
-
-          <div>
-            <Controller
-              name="hint3file"
-              control={control}
-              render={({ field }) => (
-                <UiFileInputButton
-                  label="Klikk her for å laste opp hint 3"
-                  uploadFileName="theFiles"
-                  onChange={field.onChange}
-                />
-              )}
-            />
-          </div>
-
-          <Spacer multiply={0.5} />
-
-          <div>
-            <Label htmlFor="singlesolution">Legg til løsning</Label>
-            <div className="flex">
-              <Input
-                id="singlesolution"
-                value={solution}
-                placeholder="Løsning"
-                type="text"
-                onChange={(e) => setSolution(e.target.value)}
-                className="mr-5"
+                )}
               />
-              <Button
-                type="button"
-                onClick={() => {
-                  append({ value: solution });
-                  setSolution("");
-                }}
-              >
-                Legg til løsning
-              </Button>
             </div>
           </div>
 
-          <Spacer multiply={0.5} />
+          <AudioField
+            label="Sang"
+            control={control}
+            name="file"
+            buttonLabel={songFile || isEdit ? "Bytt lydfil" : "Last opp lydfil"}
+            previewSrc={
+              songFile
+                ? songFile
+                : isEdit
+                  ? `/api/admin/file/${props.id}`
+                  : null
+            }
+          />
 
-          {fields.map((field, index) => (
-            <p
-              key={field.id} // important to include key with field's id
-            >
-              <Button
-                aria-label="Fjern løsning"
-                className="mr-3 mb-3"
-                onClick={() => remove(index)}
-              >
-                <DeleteIcon />
-              </Button>
-              {field.value}
+          <div>
+            <Label htmlFor="video">
+              Oppgavevideo{" "}
+              <span className="text-sm font-normal text-gray-500">
+                (valgfri, YouTube-ID)
+              </span>
+            </Label>
+            <Input
+              id="video"
+              {...register("video")}
+              placeholder="f.eks. dQw4w9WgXcQ"
+              type="text"
+            />
+            {video ? (
+              <div className="mt-3 max-w-xl overflow-hidden rounded-md">
+                <YoutubeVideo link={video} />
+              </div>
+            ) : null}
+          </div>
+        </Section>
+
+        <Section title="Fasit">
+          <div className="grid gap-5 md:grid-cols-2">
+            <TextField
+              id="artist"
+              label="Artist"
+              required
+              error={errors.artist ? "Artist må fylles ut" : undefined}
+              {...register("artist", { required: true })}
+            />
+            <TextField
+              id="song"
+              label="Sang"
+              required
+              error={errors.song ? "Sang må fylles ut" : undefined}
+              {...register("song", { required: true })}
+            />
+          </div>
+
+          <TextField
+            id="solutionDescription"
+            label="Løsningstekst"
+            hint="Vises sammen med fasiten."
+            {...register("solutionDescription")}
+          />
+
+          <div>
+            <Label htmlFor="singlesolution">Godkjente svar</Label>
+            <p className="-mt-1 mb-2 text-sm text-gray-500">
+              Spillerens svar må være likt ett av disse (store og små bokstaver
+              spiller ingen rolle).
             </p>
-          ))}
+            <div className="flex gap-2">
+              <Input
+                id="singlesolution"
+                value={solution}
+                placeholder="Skriv et svar og trykk Enter"
+                type="text"
+                onChange={(e) => setSolution(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    addSolution();
+                  }
+                }}
+              />
+              <Button onClick={addSolution} disabled={!solution.trim()}>
+                Legg til
+              </Button>
+            </div>
 
-          <Spacer />
+            {fields.length > 0 ? (
+              <ul className="mt-3 flex flex-wrap gap-2">
+                {fields.map((field, index) => (
+                  <li
+                    key={field.id}
+                    className="flex items-center gap-1 rounded-full bg-gray-100 py-1 pr-1 pl-3 font-mono text-sm"
+                  >
+                    {field.value}
+                    <button
+                      type="button"
+                      aria-label={`Fjern svaret ${field.value}`}
+                      className="flex size-6 items-center justify-center rounded-full text-gray-500 hover:bg-gray-200 hover:text-[#e53e3e]"
+                      onClick={() => remove(index)}
+                    >
+                      ×
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="mt-3 text-sm text-[#c53030]">
+                Ingen godkjente svar ennå. Uten svar kan ingen løse luken.
+              </p>
+            )}
+          </div>
+        </Section>
 
-          <Button
-            disabled={!isDirty || !isValid} // here
-            type="submit"
-          >
-            {props.submitButtonText ? props.submitButtonText : "Opprett rute"}
-          </Button>
-          <Link href="/admin" className="ml-4">
-            eller avbryt
+        <Section
+          title="Hint"
+          description="Hint 1, 2 og 3 åpner kl. 10, 11 og 12. Bruk tekst, lydfil eller begge."
+        >
+          <div className="grid gap-4 lg:grid-cols-3">
+            {([1, 2, 3] as const).map((n) => {
+              const fileName = `hint${n}file` as const;
+              const uploaded = watch(fileName);
+              const hasExisting = isEdit && !!props[`hasFileHint${n}`];
+              return (
+                <div
+                  key={n}
+                  className="space-y-4 rounded-lg border border-gray-200 bg-gray-50/60 p-4"
+                >
+                  <p className="font-bold">
+                    Hint {n}{" "}
+                    <span className="text-sm font-normal text-gray-500">
+                      kl. {9 + n}:00
+                    </span>
+                  </p>
+                  <TextField
+                    id={`hint${n}`}
+                    label="Tekst"
+                    {...register(`hint${n}`)}
+                  />
+                  <AudioField
+                    label="Lydfil"
+                    control={control}
+                    name={fileName}
+                    buttonLabel={
+                      uploaded || hasExisting ? "Bytt lydfil" : "Last opp"
+                    }
+                    previewSrc={
+                      uploaded
+                        ? uploaded
+                        : hasExisting
+                          ? `/api/admin/${props.id}/${n}`
+                          : null
+                    }
+                  />
+                </div>
+              );
+            })}
+          </div>
+        </Section>
+
+        <div className="sticky bottom-0 z-10 -mx-4 flex flex-wrap items-center justify-end gap-3 border-t border-gray-200 bg-white/95 px-4 py-3 backdrop-blur">
+          {!isDirty ? (
+            <span className="mr-auto text-sm text-gray-500">
+              Ingen endringer
+            </span>
+          ) : !isValid ? (
+            <span className="mr-auto text-sm text-[#c53030]">
+              Fyll ut artist og sang
+            </span>
+          ) : null}
+          <Link href="/admin" className={buttonClasses("default")}>
+            Avbryt
           </Link>
-        </form>
-      </div>
+          <button
+            type="submit"
+            disabled={!canSave}
+            className={buttonClasses("default", primaryButton)}
+          >
+            {isSubmitting ? "Lagrer …" : submitText}
+          </button>
+        </div>
+      </form>
     </Layout>
   );
 };
+
+function Section({
+  title,
+  description,
+  children,
+}: {
+  title: string;
+  description?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <section className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm sm:p-6">
+      <Heading size="md">{title}</Heading>
+      {description ? (
+        <p className="mt-1 text-sm text-gray-500">{description}</p>
+      ) : null}
+      <div className="mt-5 space-y-5">{children}</div>
+    </section>
+  );
+}
+
+type TextFieldProps = React.InputHTMLAttributes<HTMLInputElement> & {
+  id: string;
+  label: string;
+  hint?: string;
+  error?: string;
+  ref?: React.Ref<HTMLInputElement>;
+};
+
+function TextField({
+  id,
+  label,
+  hint,
+  error,
+  required,
+  ...rest
+}: TextFieldProps) {
+  return (
+    <div>
+      <Label htmlFor={id}>
+        {label}
+        {required ? <span className="text-[#c53030]"> *</span> : null}
+      </Label>
+      <Input
+        id={id}
+        type="text"
+        aria-invalid={!!error}
+        className={cn(error && "border-[#e53e3e]")}
+        {...rest}
+      />
+      {error ? (
+        <p className="mt-1 text-sm text-[#c53030]">{error}</p>
+      ) : hint ? (
+        <p className="mt-1 text-sm text-gray-500">{hint}</p>
+      ) : null}
+    </div>
+  );
+}
+
+function AudioField({
+  label,
+  control,
+  name,
+  buttonLabel,
+  previewSrc,
+}: {
+  label: string;
+  control: Control<FormData>;
+  name: "file" | "hint1file" | "hint2file" | "hint3file";
+  buttonLabel: string;
+  previewSrc: string | null;
+}) {
+  return (
+    <div>
+      <p className="mb-2 text-base font-medium">{label}</p>
+      <div className="space-y-3">
+        <Controller
+          name={name}
+          control={control}
+          render={({ field }) => (
+            <UiFileInputButton
+              label={buttonLabel}
+              uploadFileName="theFiles"
+              acceptedFileTypes="audio/*"
+              onChange={field.onChange}
+            />
+          )}
+        />
+        {previewSrc ? (
+          <audio controls preload="none" src={previewSrc} className="w-full">
+            Nettleseren din støtter ikke lydavspilling.
+          </audio>
+        ) : (
+          <p className="text-sm text-gray-500 italic">Ingen lydfil</p>
+        )}
+      </div>
+    </div>
+  );
+}
