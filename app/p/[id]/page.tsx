@@ -49,7 +49,6 @@ export default async function DayPage({
   const now = new Date();
   const isToday = isSameDay(day.date, now) && day.date < now;
   const isDayPassed = isBefore(day.date, now);
-  const hasHints = day.hint1 !== "" || day.hasFileHint1;
   const openHints = getOpenHintCount(day.date, now);
   const points = answer?.points ?? calculatePointsAt(day.date, now);
   const hintOpenTimes = ([1, 2, 3] as const).map((n) =>
@@ -60,6 +59,8 @@ export default async function DayPage({
     !!day.hint2 || !!day.hasFileHint2,
     !!day.hint3 || !!day.hasFileHint3,
   ];
+  // A hint exists if it has text or an audio file; empty text is stored as null or "".
+  const hasHints = hintExists.some(Boolean);
 
   const stats = isToday || isDayPassed ? await getDayStats(day) : undefined;
 
@@ -70,6 +71,7 @@ export default async function DayPage({
     isDayPassed,
     now: now.toISOString(),
     hasHints,
+    hintExists,
     todayAnswers,
     stats,
   };

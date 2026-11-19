@@ -2,7 +2,7 @@
 
 import { Button, Heading } from "./ui";
 import { format, parseISO } from "date-fns";
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import { DayWithAdmin } from "./Day";
 import { AdminEditLink } from "./AdminEditLink";
 import Layout from "./Layout";
@@ -45,32 +45,21 @@ export const OldDay: React.FC<DayWithAdmin> = (props) => {
           <Markdown>{props.description}</Markdown>
 
           <Spacer multiply={0.5} />
-          {props.hasHints ? (
-            <>
-              <Hint
-                hint={props.hint1}
-                hintNumber={1}
-                id={props.id}
-                fileHintExists={props.hasFileHint1}
-              />
-
-              <Spacer multiply={0.5} />
-              <Hint
-                hint={props.hint2}
-                hintNumber={2}
-                id={props.id}
-                fileHintExists={props.hasFileHint2}
-              />
-
-              <Spacer multiply={0.5} />
-              <Hint
-                hint={props.hint3}
-                hintNumber={3}
-                id={props.id}
-                fileHintExists={props.hasFileHint3}
-              />
-            </>
-          ) : null}
+          {props.hasHints
+            ? ([1, 2, 3] as const).map((n) =>
+                props.hintExists?.[n - 1] ? (
+                  <Fragment key={n}>
+                    <Hint
+                      hint={props[`hint${n}`] ?? ""}
+                      hintNumber={n}
+                      id={props.id}
+                      fileHintExists={props[`hasFileHint${n}`]}
+                    />
+                    <Spacer multiply={0.5} />
+                  </Fragment>
+                ) : null
+              )
+            : null}
 
           <Spacer multiply={0.5} />
           {showSolution ? null : (
