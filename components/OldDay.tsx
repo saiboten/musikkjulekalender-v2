@@ -72,6 +72,11 @@ export const OldDay: React.FC<DayWithAdmin> = (props) => {
               <p className="text-center text-[22px] font-bold">
                 {props.artist} - {props.song}
               </p>
+              {props.dualAnswer ? (
+                <p className="text-center text-[22px] font-bold">
+                  {props.artist2} - {props.song2}
+                </p>
+              ) : null}
               {props.solutionDescription ? (
                 <>
                   {props.solutionDescription}

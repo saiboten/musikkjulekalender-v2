@@ -14,6 +14,7 @@ import {
   getHintOpenTime,
   getOpenHintCount,
 } from "../../../utils/pointscalculator";
+import { dayParts } from "../../../utils/matchGuess";
 
 export default async function DayPage({
   params,
@@ -39,18 +40,22 @@ export default async function DayPage({
 
   const todayAnswers = await getSolvedAnswers(day.id);
 
-  const answer = await prisma.answer.findFirst({
+  const answers = await prisma.answer.findMany({
     where: {
       dayId: day.id,
       userId: session.id,
     },
   });
+  const foundParts = answers.map((a) => a.part).sort((a, b) => a - b);
+  const solved = dayParts(day).every((p) => foundParts.includes(p));
+  const earnedPoints = answers.reduce((sum, a) => sum + a.points, 0);
 
   const now = new Date();
   const isToday = isSameDay(day.date, now) && day.date < now;
   const isDayPassed = isBefore(day.date, now);
   const openHints = getOpenHintCount(day.date, now);
-  const points = answer?.points ?? calculatePointsAt(day.date, now);
+  // The points one (more) song is worth right now, or the total once solved.
+  const points = solved ? earnedPoints : calculatePointsAt(day.date, now);
   const hintOpenTimes = ([1, 2, 3] as const).map((n) =>
     getHintOpenTime(day.date, n).toISOString()
   );
@@ -74,6 +79,8 @@ export default async function DayPage({
     hintExists,
     todayAnswers,
     stats,
+    foundParts,
+    earnedPoints,
   };
 
   // The day's props are passed on as before; the client components only read
@@ -82,7 +89,7 @@ export default async function DayPage({
 
   if (isDayPassed && !isToday) {
     props = dayWithFixedDates;
-  } else if (isToday && answer) {
+  } else if (isToday && solved) {
     props = {
       ...dayWithFixedDates,
       solved: true,
@@ -99,6 +106,14 @@ export default async function DayPage({
       isToday,
       isDayPassed,
       hasTextSolution: day.hasTextSolution,
+      dualAnswer: day.dualAnswer,
+      foundParts,
+      earnedPoints,
+      // Only reveal the songs the player has already found.
+      artist: foundParts.includes(1) ? day.artist : undefined,
+      song: foundParts.includes(1) ? day.song : undefined,
+      artist2: foundParts.includes(2) ? day.artist2 : undefined,
+      song2: foundParts.includes(2) ? day.song2 : undefined,
       hasHints,
       hint1: openHints >= 1 ? day.hint1 : null,
       hint2: openHints >= 2 ? day.hint2 : null,

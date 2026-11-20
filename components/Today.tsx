@@ -29,6 +29,12 @@ export const Today: React.FC<DayWithAdmin> = (props) => {
   const toast = useToast();
   const openHints = props.openHints ?? 0;
   const hintOpenTimes = props.hintOpenTimes ?? [];
+  const dual = !!props.dualAnswer;
+  const foundParts = props.foundParts ?? [];
+  const songs = [
+    { part: 1, artist: props.artist, song: props.song },
+    ...(dual ? [{ part: 2, artist: props.artist2, song: props.song2 }] : []),
+  ];
 
   const hints = [
     { hint: props.hint1, file: props.hasFileHint1 },
@@ -70,26 +76,41 @@ export const Today: React.FC<DayWithAdmin> = (props) => {
   async function handleAnswer(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setAnswer("");
-    const res = await (
-      await fetch(`/api/answer?guess=${answer.trim()}&dayId=${props.id}`)
-    ).json();
+    const params = new URLSearchParams({
+      guess: answer.trim(),
+      dayId: String(props.id),
+    });
+    const res = await (await fetch(`/api/answer?${params}`)).json();
+
+    if (res.alreadyFound) {
+      toast({
+        title: "Allerede funnet",
+        description: "Den sangen har du allerede funnet. Finn den andre!",
+        status: "info",
+        duration: 6000,
+        isClosable: true,
+      });
+      return;
+    }
+
     toast({
       title: res.success ? "Riktig" : "Galt",
-      description: res.success
-        ? "Du klarte oppgaven!"
-        : "Det var dessverre feil, prøv igjen!",
+      description: !res.success
+        ? "Det var dessverre feil, prøv igjen!"
+        : !dual
+          ? "Du klarte oppgaven!"
+          : res.done
+            ? "Du fant begge sangene!"
+            : "Du fant én av sangene – én igjen!",
       status: res.success ? "success" : "error",
       duration: 6000,
       isClosable: true,
     });
 
-    if (res.success) {
-      // setArtist(res.artist);
-      // setSong(res.song);
-      // setSolutionVideo(res.solutionVideo);
-      // setSolved(true);
-      // setHints(res.hints);
+    if (res.done) {
       window.location.reload();
+    } else if (res.success) {
+      router.refresh();
     }
   }
 
@@ -125,6 +146,19 @@ export const Today: React.FC<DayWithAdmin> = (props) => {
           <p>
             På denne oppgaven høstet du <strong>{points}</strong> poeng!
           </p>
+        ) : dual ? (
+          <>
+            <p>
+              Denne dagen har <strong>to sanger</strong>, og hver sang gir poeng
+              for seg. Hver sang er nå verdt <strong>{points}</strong> poeng!
+            </p>
+            {foundParts.length > 0 ? (
+              <p>
+                Du har <strong>{props.earnedPoints ?? 0}</strong> poeng så
+                langt.
+              </p>
+            ) : null}
+          </>
         ) : (
           <p>
             Denne oppgaven er nå verdt <strong>{points}</strong> poeng!
@@ -134,7 +168,10 @@ export const Today: React.FC<DayWithAdmin> = (props) => {
 
         {!solved ? (
           <>
-            <p>Jo tidligere du svarer, jo flere poeng får du:</p>
+            <p>
+              Jo tidligere du svarer, jo flere poeng får du
+              {dual ? " per sang" : ""}:
+            </p>
             <List className="mt-2 ms-4">
               {pointSteps.map(({ label, points: stepPoints }) => (
                 <ListItem key={label} className="ml-1">
@@ -151,9 +188,12 @@ export const Today: React.FC<DayWithAdmin> = (props) => {
             <Spacer />
             <Heading size="lg">Fasit:</Heading>
             <Spacer />
-            <p>
-              {props.artist} - {props.song}
-            </p>
+            {songs.map(({ part, artist, song }) => (
+              <p key={part}>
+                {dual ? <strong>Sang {part}: </strong> : null}
+                {artist} - {song}
+              </p>
+            ))}
             <Spacer />
             {props.solutionDescription ? (
               <>
@@ -166,6 +206,36 @@ export const Today: React.FC<DayWithAdmin> = (props) => {
           <>
             <Heading size="md">Svar</Heading>
             <Spacer />
+            {dual ? (
+              <>
+                <ul className="space-y-1">
+                  {songs.map(({ part, artist, song }) => {
+                    const found = foundParts.includes(part);
+                    return (
+                      <li key={part} className="flex gap-2">
+                        <span
+                          aria-hidden
+                          className={found ? "text-green-700" : "text-gray-400"}
+                        >
+                          {found ? "✓" : "○"}
+                        </span>
+                        <span>
+                          <strong>Sang {part}:</strong>{" "}
+                          {found ? (
+                            `${artist} - ${song}`
+                          ) : (
+                            <span className="text-gray-500">
+                              ikke funnet ennå
+                            </span>
+                          )}
+                        </span>
+                      </li>
+                    );
+                  })}
+                </ul>
+                <Spacer multiply={0.5} />
+              </>
+            ) : null}
             <form onSubmit={handleAnswer}>
               <div className="flex">
                 <Input

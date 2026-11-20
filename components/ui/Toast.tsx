@@ -4,7 +4,7 @@ import React, { useCallback, useContext, useRef, useState } from "react";
 import { cn } from "./cn";
 import { CheckIcon, CloseIcon, WarningIcon } from "./icons";
 
-type ToastStatus = "success" | "error";
+type ToastStatus = "success" | "error" | "info";
 
 export interface ToastOptions {
   title: string;
@@ -59,7 +59,11 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
               role="status"
               className={cn(
                 "pointer-events-auto relative flex w-full max-w-[560px] min-w-[300px] items-start rounded-md py-3 ps-4 pe-8 text-white shadow-lg",
-                t.status === "success" ? "bg-[#38a169]" : "bg-[#e53e3e]"
+                t.status === "success"
+                  ? "bg-[#38a169]"
+                  : t.status === "info"
+                    ? "bg-[#3182ce]"
+                    : "bg-[#e53e3e]"
               )}
             >
               <Icon className="me-3 mt-0.5 size-5" />

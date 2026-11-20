@@ -1,6 +1,7 @@
 import { prisma } from "../../../../lib/prisma";
 import { getSession } from "../../../../lib/auth";
 import { isAdminRole } from "../../../../utils/adminRoles";
+import { toSolutionRows } from "../../../../utils/solutionRows";
 
 type Context = { params: Promise<{ id: string }> };
 
@@ -30,13 +31,20 @@ export async function PUT(request: Request, { params }: Context) {
 
   const dayId = Number((await params).id);
 
-  const { solutions, file, hint1file, hint2file, hint3file, ...body } =
-    await request.json();
+  const {
+    solutions,
+    solutions2,
+    file,
+    hint1file,
+    hint2file,
+    hint3file,
+    ...body
+  } = await request.json();
 
-  const storeSolutions = solutions.map((solution: string) => ({
-    dayId,
-    solution,
-  }));
+  const storeSolutions = toSolutionRows(
+    solutions,
+    body.dualAnswer ? solutions2 : []
+  ).map((row) => ({ ...row, dayId }));
 
   const existingDay = await prisma.day.findUnique({
     where: {

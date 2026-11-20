@@ -8,30 +8,59 @@ export function displayName(user: {
   return user.nickname ?? user.email?.split("@")[0] ?? "ukjent";
 }
 
-/** Everyone who solved the given day, best score first, then fastest first. */
+/**
+ * Everyone who found something on the given day, best score first, then fastest first.
+ * On dual-answer days a player's two finds are summed; the time is the latest find.
+ */
 export async function getSolvedAnswers(dayId: number | undefined) {
-  const answers = await prisma.answer.findMany({
-    include: {
-      user: true,
-    },
-    where: {
-      points: {
-        gt: 0,
+  const [day, answers] = await Promise.all([
+    prisma.day.findUnique({
+      where: { id: dayId ?? -1 },
+      select: { dualAnswer: true },
+    }),
+    prisma.answer.findMany({
+      include: {
+        user: true,
       },
-      dayId: dayId ?? -1,
-    },
-  });
+      where: {
+        points: {
+          gt: 0,
+        },
+        dayId: dayId ?? -1,
+      },
+    }),
+  ]);
 
-  return answers
+  const parts = day?.dualAnswer ? 2 : 1;
+  const byUser = new Map<
+    number,
+    { points: number; user: string; time: Date; found: number }
+  >();
+  for (const answer of answers) {
+    const entry = byUser.get(answer.userId) ?? {
+      points: 0,
+      user: displayName(answer.user),
+      time: answer.timeOfEntry,
+      found: 0,
+    };
+    entry.points += answer.points;
+    entry.found++;
+    if (answer.timeOfEntry > entry.time) entry.time = answer.timeOfEntry;
+    byUser.set(answer.userId, entry);
+  }
+
+  return [...byUser.values()]
     .sort((el1, el2) => {
       if (el1.points !== el2.points) {
         return el2.points - el1.points;
       }
-      return el1.timeOfEntry.getTime() - el2.timeOfEntry.getTime();
+      return el1.time.getTime() - el2.time.getTime();
     })
     .map((e) => ({
       points: e.points,
-      user: displayName(e.user),
-      time: e.timeOfEntry.toISOString(),
+      user: e.user,
+      time: e.time.toISOString(),
+      found: e.found,
+      parts,
     }));
 }

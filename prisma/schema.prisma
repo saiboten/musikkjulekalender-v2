@@ -33,6 +33,10 @@ model Day {
   hasFileHint2        Boolean?
   hasFileHint3        Boolean?
   madeBy              String?
+  // Two songs to find; each is scored on its own.
+  dualAnswer          Boolean    @default(false)
+  artist2             String?
+  song2               String?
   solution            Solution[]
   answers             Answer[]
   file                SongFile?
@@ -53,6 +57,8 @@ model SongFile {
 model Solution {
   id       Int    @id @default(autoincrement())
   solution String
+  // Which song this answer belongs to (1, or 2 on dual-answer days).
+  part     Int    @default(1)
   dayId    Int
   day      Day    @relation(fields: [dayId], references: [id], onDelete: Cascade)
 }
@@ -61,12 +67,14 @@ model Answer {
   id          Int      @id @default(autoincrement())
   points      Int
   timeOfEntry DateTime
+  // Which song was found (1, or 2 on dual-answer days).
+  part        Int      @default(1)
   dayId       Int
   day         Day      @relation(fields: [dayId], references: [id], onDelete: Cascade)
   userId      Int
   user        User     @relation(fields: [userId], references: [id])
 
-  @@unique([dayId, userId])
+  @@unique([dayId, userId, part])
 }
 
 model Hint {

@@ -49,6 +49,11 @@ export type FormData = {
   song: string;
   artist: string;
   solutions: { id?: string; value: string }[];
+  /** Dual-answer days: the second song and its accepted answers. */
+  dualAnswer: boolean;
+  artist2: string;
+  song2: string;
+  solutions2: { id?: string; value: string }[];
   madeBy: string;
   video: string;
   file: string;
@@ -61,6 +66,20 @@ export type FormData = {
   hint3: string;
   hint3file: string;
 };
+
+/** The JSON body the day API expects. */
+export function toDayPayload(data: FormData, openingHour: number) {
+  const { solutions, solutions2, date, ...rest } = data;
+  date.setHours(openingHour);
+  return {
+    ...rest,
+    artist2: data.dualAnswer ? data.artist2 : null,
+    song2: data.dualAnswer ? data.song2 : null,
+    solutions: solutions.map((el) => el.value),
+    solutions2: data.dualAnswer ? (solutions2 ?? []).map((el) => el.value) : [],
+    date,
+  };
+}
 
 const madeByOptions: [string, string][] = [
   ["Stein", "Stein"],
@@ -81,7 +100,6 @@ const primaryButton =
   "bg-primary text-white hover:bg-[#741111] active:bg-[#5c0d0d] disabled:hover:bg-primary";
 
 export const CreateDayForm: React.FC<CreateDayFormProps> = (props) => {
-  const [solution, setSolution] = useState("");
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const isEdit = !!props.deleteAction;
 
@@ -101,7 +119,15 @@ export const CreateDayForm: React.FC<CreateDayFormProps> = (props) => {
       madeBy: props.madeBy,
       song: props.song,
       video: props.video,
-      solutions: props.solution?.map((el) => ({ value: el.solution })),
+      solutions: props.solution
+        ?.filter((el) => (el.part ?? 1) === 1)
+        .map((el) => ({ value: el.solution })),
+      dualAnswer: props.dualAnswer ?? false,
+      artist2: props.artist2 ?? "",
+      song2: props.song2 ?? "",
+      solutions2: props.solution
+        ?.filter((el) => el.part === 2)
+        .map((el) => ({ value: el.solution })),
       solutionVideo: props.solutionVideo,
       solutionDescription: props.solutionDescription,
       file: props.file?.file,
@@ -114,21 +140,10 @@ export const CreateDayForm: React.FC<CreateDayFormProps> = (props) => {
     },
   });
 
-  const { fields, append, remove } = useFieldArray({
-    control,
-    name: "solutions",
-  });
-
-  function addSolution() {
-    const value = solution.trim();
-    if (!value) return;
-    append({ value });
-    setSolution("");
-  }
-
   const date = watch("date");
   const video = watch("video");
   const songFile = watch("file");
+  const dual = watch("dualAnswer");
   const canSave = isDirty && isValid && !isSubmitting;
   const submitText = props.submitButtonText ?? "Opprett luke";
 
@@ -220,6 +235,22 @@ export const CreateDayForm: React.FC<CreateDayFormProps> = (props) => {
               />
             </div>
           </div>
+
+          <Controller
+            name="dualAnswer"
+            control={control}
+            render={({ field }) => (
+              <Checkbox
+                checked={!!field.value}
+                onChange={(e) => field.onChange(e.target.checked)}
+              >
+                Dobbeltsvar{" "}
+                <span className="text-sm text-gray-500">
+                  (to sanger å finne, hver gir poeng for seg)
+                </span>
+              </Checkbox>
+            )}
+          />
 
           <div>
             <p className="mb-2 text-base font-medium" id="made-by-label">
@@ -337,23 +368,69 @@ export const CreateDayForm: React.FC<CreateDayFormProps> = (props) => {
           </div>
         </Section>
 
-        <Section title="Fasit">
-          <div className="grid gap-5 md:grid-cols-2">
-            <TextField
-              id="artist"
-              label="Artist"
-              required
-              error={errors.artist ? "Artist må fylles ut" : undefined}
-              {...register("artist", { required: true })}
+        <Section
+          title="Fasit"
+          description={
+            dual
+              ? "Spillerne gjetter i ett felt. Hvert svar sjekkes mot begge sangene."
+              : undefined
+          }
+        >
+          <SongFields
+            title={dual ? "Sang 1" : undefined}
+            control={control}
+            artist={
+              <TextField
+                id="artist"
+                label="Artist"
+                required
+                error={errors.artist ? "Artist må fylles ut" : undefined}
+                {...register("artist", { required: true })}
+              />
+            }
+            song={
+              <TextField
+                id="song"
+                label="Sang"
+                required
+                error={errors.song ? "Sang må fylles ut" : undefined}
+                {...register("song", { required: true })}
+              />
+            }
+            solutionsName="solutions"
+          />
+
+          {dual ? (
+            <SongFields
+              title="Sang 2"
+              control={control}
+              artist={
+                <TextField
+                  id="artist2"
+                  label="Artist"
+                  required
+                  error={errors.artist2 ? "Artist må fylles ut" : undefined}
+                  {...register("artist2", {
+                    validate: (value, values) =>
+                      !values.dualAnswer || !!value?.trim(),
+                  })}
+                />
+              }
+              song={
+                <TextField
+                  id="song2"
+                  label="Sang"
+                  required
+                  error={errors.song2 ? "Sang må fylles ut" : undefined}
+                  {...register("song2", {
+                    validate: (value, values) =>
+                      !values.dualAnswer || !!value?.trim(),
+                  })}
+                />
+              }
+              solutionsName="solutions2"
             />
-            <TextField
-              id="song"
-              label="Sang"
-              required
-              error={errors.song ? "Sang må fylles ut" : undefined}
-              {...register("song", { required: true })}
-            />
-          </div>
+          ) : null}
 
           <TextField
             id="solutionDescription"
@@ -361,57 +438,6 @@ export const CreateDayForm: React.FC<CreateDayFormProps> = (props) => {
             hint="Vises sammen med fasiten."
             {...register("solutionDescription")}
           />
-
-          <div>
-            <Label htmlFor="singlesolution">Godkjente svar</Label>
-            <p className="-mt-1 mb-2 text-sm text-gray-500">
-              Spillerens svar må være likt ett av disse (store og små bokstaver
-              spiller ingen rolle).
-            </p>
-            <div className="flex gap-2">
-              <Input
-                id="singlesolution"
-                value={solution}
-                placeholder="Skriv et svar og trykk Enter"
-                type="text"
-                onChange={(e) => setSolution(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    e.preventDefault();
-                    addSolution();
-                  }
-                }}
-              />
-              <Button onClick={addSolution} disabled={!solution.trim()}>
-                Legg til
-              </Button>
-            </div>
-
-            {fields.length > 0 ? (
-              <ul className="mt-3 flex flex-wrap gap-2">
-                {fields.map((field, index) => (
-                  <li
-                    key={field.id}
-                    className="flex items-center gap-1 rounded-full bg-gray-100 py-1 pr-1 pl-3 font-mono text-sm"
-                  >
-                    {field.value}
-                    <button
-                      type="button"
-                      aria-label={`Fjern svaret ${field.value}`}
-                      className="flex size-6 items-center justify-center rounded-full text-gray-500 hover:bg-gray-200 hover:text-[#e53e3e]"
-                      onClick={() => remove(index)}
-                    >
-                      ×
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p className="mt-3 text-sm text-[#c53030]">
-                Ingen godkjente svar ennå. Uten svar kan ingen løse luken.
-              </p>
-            )}
-          </div>
         </Section>
 
         <Section
@@ -467,7 +493,7 @@ export const CreateDayForm: React.FC<CreateDayFormProps> = (props) => {
             </span>
           ) : !isValid ? (
             <span className="mr-auto text-sm text-[#c53030]">
-              Fyll ut artist og sang
+              Fyll ut artist og sang{dual ? " for begge sangene" : ""}
             </span>
           ) : null}
           <Link href="/admin" className={buttonClasses("default")}>
@@ -485,6 +511,111 @@ export const CreateDayForm: React.FC<CreateDayFormProps> = (props) => {
     </Layout>
   );
 };
+
+function SongFields({
+  title,
+  control,
+  artist,
+  song,
+  solutionsName,
+}: {
+  title?: string;
+  control: Control<FormData>;
+  artist: React.ReactNode;
+  song: React.ReactNode;
+  solutionsName: "solutions" | "solutions2";
+}) {
+  const content = (
+    <>
+      <div className="grid gap-5 md:grid-cols-2">
+        {artist}
+        {song}
+      </div>
+      <SolutionsField control={control} name={solutionsName} />
+    </>
+  );
+
+  if (!title) return <div className="space-y-5">{content}</div>;
+
+  return (
+    <div className="space-y-5 rounded-lg border border-gray-200 bg-gray-50/60 p-4">
+      <p className="font-bold">{title}</p>
+      {content}
+    </div>
+  );
+}
+
+function SolutionsField({
+  control,
+  name,
+}: {
+  control: Control<FormData>;
+  name: "solutions" | "solutions2";
+}) {
+  const [solution, setSolution] = useState("");
+  const { fields, append, remove } = useFieldArray({ control, name });
+  const inputId = `${name}-input`;
+
+  function addSolution() {
+    const value = solution.trim();
+    if (!value) return;
+    append({ value });
+    setSolution("");
+  }
+
+  return (
+    <div>
+      <Label htmlFor={inputId}>Godkjente svar</Label>
+      <p className="-mt-1 mb-2 text-sm text-gray-500">
+        Spillerens svar må være likt ett av disse (store og små bokstaver
+        spiller ingen rolle).
+      </p>
+      <div className="flex gap-2">
+        <Input
+          id={inputId}
+          value={solution}
+          placeholder="Skriv et svar og trykk Enter"
+          type="text"
+          onChange={(e) => setSolution(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              addSolution();
+            }
+          }}
+        />
+        <Button onClick={addSolution} disabled={!solution.trim()}>
+          Legg til
+        </Button>
+      </div>
+
+      {fields.length > 0 ? (
+        <ul className="mt-3 flex flex-wrap gap-2">
+          {fields.map((field, index) => (
+            <li
+              key={field.id}
+              className="flex items-center gap-1 rounded-full bg-white py-1 pr-1 pl-3 font-mono text-sm ring-1 ring-gray-200"
+            >
+              {field.value}
+              <button
+                type="button"
+                aria-label={`Fjern svaret ${field.value}`}
+                className="flex size-6 items-center justify-center rounded-full text-gray-500 hover:bg-gray-200 hover:text-[#e53e3e]"
+                onClick={() => remove(index)}
+              >
+                ×
+              </button>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p className="mt-3 text-sm text-[#c53030]">
+          Ingen godkjente svar ennå. Uten svar kan ingen finne denne sangen.
+        </p>
+      )}
+    </div>
+  );
+}
 
 function Section({
   title,

@@ -2,25 +2,37 @@
 
 import React from "react";
 import { useRouter } from "next/navigation";
-import { CreateDayForm, FormData } from "../../components/CreateDayForm";
+import {
+  CreateDayForm,
+  FormData,
+  toDayPayload,
+} from "../../components/CreateDayForm";
+import { useToast } from "../../components/ui";
 import { openingHour } from "../../components/constants";
 
 export function CreateDay({ standardDate }: { standardDate: string }) {
   const router = useRouter();
+  const toast = useToast();
 
   const onSubmit = async (data: FormData) => {
-    const solutions = data.solutions.map((el) => el.value);
-    const { solutions: _solutions, date, ...rest } = data;
-    date.setHours(openingHour);
-
     try {
-      const body = { ...rest, solutions, date };
+      const body = toDayPayload(data, openingHour);
 
-      await fetch(`/api/day`, {
+      const res = await fetch(`/api/day`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
       });
+      if (!res.ok) {
+        toast({
+          title: "Kunne ikke lagre",
+          description: `Serveren svarte ${res.status}. Prøv igjen.`,
+          status: "error",
+          duration: 8000,
+          isClosable: true,
+        });
+        return;
+      }
       router.push("/");
     } catch (error) {
       console.error(error);

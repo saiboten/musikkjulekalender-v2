@@ -31,9 +31,7 @@ export default async function AdminPage() {
   const days =
     role === "admin" ? allDays : allDays.filter((day) => day.madeBy === role);
 
-  const readyCount = days.filter(
-    (day) => isFilledIn(day) && day.solution.length > 0
-  ).length;
+  const readyCount = days.filter(isReady).length;
 
   return (
     <Layout whiteBg>
@@ -88,19 +86,43 @@ export default async function AdminPage() {
 }
 
 const dayInclude = {
-  solution: { select: { id: true, solution: true } },
-  _count: { select: { answers: true } },
+  solution: { select: { id: true, solution: true, part: true } },
+  // Only the user ids: a player has two rows on dual-answer days.
+  answers: { select: { userId: true } },
 } satisfies Prisma.DayInclude;
 
 type AdminDay = Prisma.DayGetPayload<{ include: typeof dayInclude }>;
 
-function isFilledIn(day: { artist: string; song: string }) {
-  const empty = (value: string) => !value.trim() || value.trim() === "TBA";
-  return !empty(day.artist) && !empty(day.song);
+const isEmpty = (value: string | null) =>
+  !value?.trim() || value.trim() === "TBA";
+
+function isFilledIn(day: AdminDay) {
+  const song1 = !isEmpty(day.artist) && !isEmpty(day.song);
+  const song2 = !isEmpty(day.artist2) && !isEmpty(day.song2);
+  return song1 && (!day.dualAnswer || song2);
+}
+
+function songsOf(day: AdminDay) {
+  const parts = day.dualAnswer ? [1, 2] : [1];
+  return parts.map((part) => ({
+    part,
+    artist: part === 1 ? day.artist : day.artist2,
+    song: part === 1 ? day.song : day.song2,
+    solutions: day.solution.filter((s) => s.part === part),
+  }));
+}
+
+function isReady(day: AdminDay) {
+  return (
+    isFilledIn(day) && songsOf(day).every((song) => song.solutions.length > 0)
+  );
 }
 
 function DayCard({ day, hasSong }: { day: AdminDay; hasSong: boolean }) {
   const filledIn = isFilledIn(day);
+  const songs = songsOf(day);
+  const missingAnswers = songs.some((song) => song.solutions.length === 0);
+  const players = new Set(day.answers.map((a) => a.userId)).size;
   const hints = [
     { text: day.hint1, file: day.hasFileHint1 },
     { text: day.hint2, file: day.hasFileHint2 },
@@ -120,10 +142,12 @@ function DayCard({ day, hasSong }: { day: AdminDay; hasSong: boolean }) {
         </div>
         <div className="min-w-0 flex-1">
           {filledIn ? (
-            <>
-              <p className="font-bold break-words">{day.artist}</p>
-              <p className="break-words text-gray-700">{day.song}</p>
-            </>
+            songs.map(({ part, artist, song }) => (
+              <div key={part} className={part > 1 ? "mt-2" : undefined}>
+                <p className="font-bold break-words">{artist}</p>
+                <p className="break-words text-gray-700">{song}</p>
+              </div>
+            ))
           ) : (
             <p className="font-bold text-gray-400 italic">Ikke fylt ut</p>
           )}
@@ -141,11 +165,10 @@ function DayCard({ day, hasSong }: { day: AdminDay; hasSong: boolean }) {
           <Badge tone={hasSong ? "good" : "bad"}>
             {hasSong ? "Lydfil" : "Mangler lydfil"}
           </Badge>
-          <Badge tone={day.solution.length > 0 ? "good" : "bad"}>
-            {day.solution.length > 0
-              ? `${day.solution.length} svar`
-              : "Mangler svar"}
+          <Badge tone={missingAnswers ? "bad" : "good"}>
+            {missingAnswers ? "Mangler svar" : `${day.solution.length} svar`}
           </Badge>
+          {day.dualAnswer ? <Badge tone="neutral">Dobbeltsvar</Badge> : null}
           {day.hasTextSolution ? (
             <Badge tone="neutral">Tekstoppgave</Badge>
           ) : null}
@@ -153,7 +176,7 @@ function DayCard({ day, hasSong }: { day: AdminDay; hasSong: boolean }) {
             <Badge tone="neutral">Vanskelighet {day.difficulty}/3</Badge>
           ) : null}
           <Badge tone="neutral">
-            {day._count.answers} {day._count.answers === 1 ? "løser" : "løsere"}
+            {players} {players === 1 ? "løser" : "løsere"}
           </Badge>
         </div>
 
@@ -167,22 +190,29 @@ function DayCard({ day, hasSong }: { day: AdminDay; hasSong: boolean }) {
           )}
         </Field>
 
-        <Field label="Godkjente svar">
-          {day.solution.length > 0 ? (
-            <ul className="flex flex-wrap gap-1.5">
-              {day.solution.map((s) => (
-                <li
-                  key={s.id}
-                  className="rounded bg-gray-100 px-2 py-0.5 font-mono text-xs"
-                >
-                  {s.solution}
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <Missing />
-          )}
-        </Field>
+        {songs.map(({ part, solutions }) => (
+          <Field
+            key={part}
+            label={
+              day.dualAnswer ? `Godkjente svar, sang ${part}` : "Godkjente svar"
+            }
+          >
+            {solutions.length > 0 ? (
+              <ul className="flex flex-wrap gap-1.5">
+                {solutions.map((s) => (
+                  <li
+                    key={s.id}
+                    className="rounded bg-gray-100 px-2 py-0.5 font-mono text-xs"
+                  >
+                    {s.solution}
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <Missing />
+            )}
+          </Field>
+        ))}
 
         <Field label="Hint">
           <ol className="space-y-1">

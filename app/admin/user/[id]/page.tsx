@@ -43,8 +43,8 @@ export default async function AdminUserPage({
       <List>
         {user.answer.map((el) => {
           const dayDetails = days.find((day) => day.id === el.dayId);
-          const output = `DagId: ${el.dayId} (${dayDetails?.artist} - ${dayDetails?.song}) ${el.points} poeng. Solution time: ${el.timeOfEntry.toISOString()}`;
-          return <ListItem key={el.dayId}>{output}</ListItem>;
+          const output = `DagId: ${el.dayId} (${dayDetails?.artist} - ${dayDetails?.song}) ${el.points} poeng${el.part > 1 ? ` (sang ${el.part})` : ""}. Solution time: ${el.timeOfEntry.toISOString()}`;
+          return <ListItem key={el.id}>{output}</ListItem>;
         })}
       </List>
     </Layout>

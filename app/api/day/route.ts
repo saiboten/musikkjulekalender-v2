@@ -1,6 +1,7 @@
 import { prisma } from "../../../lib/prisma";
 import { getSession } from "../../../lib/auth";
 import { isAdminRole } from "../../../utils/adminRoles";
+import { toSolutionRows } from "../../../utils/solutionRows";
 
 export async function POST(request: Request) {
   const session = await getSession();
@@ -14,6 +15,10 @@ export async function POST(request: Request) {
     date,
     madeBy,
     solutions,
+    solutions2,
+    dualAnswer,
+    artist2,
+    song2,
     song,
     video,
     file,
@@ -33,6 +38,9 @@ export async function POST(request: Request) {
       madeBy,
       video,
       song,
+      dualAnswer: !!dualAnswer,
+      artist2: dualAnswer ? artist2 : null,
+      song2: dualAnswer ? song2 : null,
       hint1,
       hint2,
       hint3,
@@ -40,7 +48,7 @@ export async function POST(request: Request) {
       hasFileHint2: !!hint2file,
       hasFileHint3: !!hint3file,
       solution: {
-        create: solutions.map((el: string) => ({ solution: el })),
+        create: toSolutionRows(solutions, dualAnswer ? solutions2 : []),
       },
       file: {
         create: {

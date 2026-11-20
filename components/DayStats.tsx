@@ -36,17 +36,24 @@ const splitLabels = [
 
 export function DayStats({ stats }: { stats: Stats }) {
   const { guesses } = stats;
+  const dual = stats.partialCount !== null;
 
   return (
     <FrontPageBox>
       <Heading size="md">Statistikk</Heading>
       <Spacer multiply={0.5} />
 
-      {stats.solvedCount === 0 ? (
+      {stats.partialCount ? (
+        <Row label="Fant én av to sanger">
+          {stats.partialCount}{" "}
+          {stats.partialCount === 1 ? "person" : "personer"}
+        </Row>
+      ) : null}
+      {stats.solvedCount === 0 && !stats.partialCount ? (
         <p>Ingen har løst denne ennå.</p>
-      ) : (
+      ) : stats.solvedCount === 0 ? null : (
         <>
-          <Row label="Løst av">
+          <Row label={dual ? "Fant begge sangene" : "Løst av"}>
             {stats.solvedCount}{" "}
             {stats.solvedCount === 1 ? "person" : "personer"}
             {stats.solveRate !== null
@@ -64,7 +71,9 @@ export function DayStats({ stats }: { stats: Stats }) {
           ) : null}
 
           <Spacer multiply={0.5} />
-          <p className="font-bold">Poengfordeling:</p>
+          <p className="font-bold">
+            Poengfordeling{dual ? " (per sang funnet)" : ""}:
+          </p>
           <ul className="ms-4">
             {splitLabels.map(([points, label]) => (
               <li key={points}>

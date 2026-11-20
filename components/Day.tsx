@@ -17,7 +17,7 @@ export type DayProps = {
   date: string;
   artist: string;
   song: string;
-  solution: { solution: string; id: string; dayId: string }[];
+  solution: { solution: string; id: string; dayId: string; part?: number }[];
   madeBy?: string;
   isToday: boolean;
   isDayPassed: boolean;
@@ -43,6 +43,14 @@ export type DayProps = {
   hintOpenTimes?: string[];
   /** Today only: whether hint 1, 2 and 3 exist for this day. */
   hintExists?: boolean[];
+  /** Two songs to find, each scored on its own. */
+  dualAnswer?: boolean;
+  artist2?: string;
+  song2?: string;
+  /** Which songs (1, 2) the player has found. */
+  foundParts?: number[];
+  /** Points the player has earned on this day so far. */
+  earnedPoints?: number;
   /** Today and passed days: statistics for the day. */
   stats?: DayStats;
 };
@@ -51,7 +59,13 @@ export interface DayWithAdmin extends DayProps {
   solved: boolean;
   now: Date;
   id: number;
-  todayAnswers: { points: number; user: string; time: string }[];
+  todayAnswers: {
+    points: number;
+    user: string;
+    time: string;
+    found?: number;
+    parts?: number;
+  }[];
 }
 
 const doorClasses =
