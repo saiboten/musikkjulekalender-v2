@@ -1,12 +1,14 @@
 import { prisma } from "./prisma";
 import { displayName } from "./answers";
 import { computeDayStats } from "../utils/dayStats";
+import { dayTargets } from "../utils/matchGuess";
 
 /** Stats for one day. Active players = users with a correct answer that calendar year. */
 export async function getDayStats(day: {
   id: number;
   date: Date;
   dualAnswer: boolean;
+  hasTextSolution: boolean | null;
 }) {
   const year = day.date.getUTCFullYear();
   const yearStart = new Date(Date.UTC(year, 0, 1));
@@ -37,6 +39,6 @@ export async function getDayStats(day: {
     })),
     guesses,
     activePlayers: activePlayers.length,
-    parts: day.dualAnswer ? 2 : 1,
+    targets: dayTargets(day).length,
   });
 }

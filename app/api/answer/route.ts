@@ -5,14 +5,30 @@ import { calculatePointsAt } from "../../../utils/pointscalculator";
 import { getToday } from "../../../utils/dates";
 import { getSession } from "../../../lib/auth";
 import {
-  dayParts,
+  type AnswerKind,
+  type Target,
+  acceptedAnswers,
+  dayTargets,
   matchGuess,
   normalizeGuess,
 } from "../../../utils/matchGuess";
 
+export type FieldResult = "correct" | "wrong" | "alreadyFound";
+
+export type AnswerResponse = {
+  /** Result per field that was filled in. */
+  results: Partial<Record<AnswerKind, FieldResult>>;
+  /** Everything on the day has been found. */
+  done: boolean;
+};
+
+/**
+ * Checks a guess. `artist` and `song` are checked on their own, and each one
+ * found is scored by the clock. Text puzzles only use `song`.
+ */
 export async function GET(request: NextRequest) {
-  const guess = request.nextUrl.searchParams.get("guess") ?? "";
-  const dayId = Number(request.nextUrl.searchParams.get("dayId"));
+  const params = request.nextUrl.searchParams;
+  const dayId = Number(params.get("dayId"));
 
   const session = await getSession();
 
@@ -30,63 +46,72 @@ export async function GET(request: NextRequest) {
     return Response.json({ message: "Dag ikke åpen" }, { status: 401 });
   }
 
-  const parts = dayParts(day);
-  const existingAnswers = await prisma.answer.findMany({
+  const targets = dayTargets(day);
+  const existing = await prisma.answer.findMany({
     where: { dayId: day.id, userId: session.id },
-    select: { part: true },
+    select: { part: true, kind: true },
   });
-  const foundParts = existingAnswers.map((a) => a.part);
-  const isDone = (found: number[]) => parts.every((p) => found.includes(p));
+  const found: Target[] = existing.map((a) => ({
+    part: a.part,
+    kind: a.kind as AnswerKind,
+  }));
+  const isDone = () =>
+    targets.every((t) =>
+      found.some((f) => f.part === t.part && f.kind === t.kind)
+    );
 
-  // Already solved: don't log the guess or store another answer.
-  if (isDone(foundParts)) {
-    return Response.json({ success: true, done: true });
+  // Already solved: don't log the guess or store more answers.
+  if (isDone()) {
+    return Response.json({ results: {}, done: true } satisfies AnswerResponse);
   }
 
-  const solutions = await prisma.solution.findMany({
-    where: { dayId: day.id, part: { in: parts } },
-    select: { solution: true, part: true },
+  const extras = await prisma.solution.findMany({
+    where: { dayId: day.id },
+    select: { solution: true, part: true, kind: true },
   });
+  const accepted = acceptedAnswers(day, extras);
+  const fields = [...new Set(targets.map((t) => t.kind))] as AnswerKind[];
 
-  const match = matchGuess(guess, solutions, foundParts);
-
-  if (match.kind === "alreadyFound") {
-    return Response.json({
-      success: false,
-      alreadyFound: true,
-      part: match.part,
-    });
-  }
-
-  const correct = match.kind === "new";
-
-  await prisma.guess.create({
-    data: {
-      guess: normalizeGuess(guess),
-      correct,
-      dayId: day.id,
-      userId: session.id,
-    },
-  });
-
-  if (!correct) {
-    return Response.json({ success: false });
-  }
-
+  const results: AnswerResponse["results"] = {};
   const now = new Date();
-  await prisma.answer.create({
-    data: {
-      timeOfEntry: now,
-      points: calculatePointsAt(day.date, now),
-      part: match.part,
-      dayId: day.id,
-      userId: session.id,
-    },
-  });
 
-  return Response.json({
-    success: true,
-    part: match.part,
-    done: isDone([...foundParts, match.part]),
-  });
+  for (const field of fields) {
+    const guess = params.get(field) ?? "";
+    if (!guess.trim()) continue;
+
+    const match = matchGuess(guess, field, accepted, found);
+    if (match.kind === "alreadyFound") {
+      // Typing something you already found again costs nothing.
+      results[field] = "alreadyFound";
+      continue;
+    }
+
+    const correct = match.kind === "new";
+    await prisma.guess.create({
+      data: {
+        guess: normalizeGuess(guess),
+        kind: field,
+        correct,
+        dayId: day.id,
+        userId: session.id,
+      },
+    });
+
+    if (correct) {
+      await prisma.answer.create({
+        data: {
+          timeOfEntry: now,
+          points: calculatePointsAt(day.date, now),
+          part: match.part,
+          kind: field,
+          dayId: day.id,
+          userId: session.id,
+        },
+      });
+      found.push({ part: match.part, kind: field });
+    }
+    results[field] = correct ? "correct" : "wrong";
+  }
+
+  return Response.json({ results, done: isDone() } satisfies AnswerResponse);
 }

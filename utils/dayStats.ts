@@ -1,11 +1,11 @@
 export type DayStats = {
-  /** Players who found every song (one, or two on dual-answer days). */
+  /** Players who found everything (artist and song, for every song). */
   solvedCount: number;
-  /** Dual-answer days: players who found one of the two songs. Null on ordinary days. */
+  /** Players who found some but not all. Null when there is only one thing to find. */
   partialCount: number | null;
   /** Share of active players (0–1) who solved the day; null if nobody is active yet. */
   solveRate: number | null;
-  /** Number of songs found per point value: 5 = no hints, 3/2/1 = after hint 1/2/3. */
+  /** Number of correct answers per point value: 5 = no hints, 3/2/1 = after hint 1/2/3. */
   pointsSplit: Record<5 | 3 | 2 | 1, number>;
   firstSolver: { name: string; minutesAfterOpen: number } | null;
   medianMinutes: number | null;
@@ -22,7 +22,7 @@ export type DayStats = {
 
 type Input = {
   dayDate: Date;
-  /** One row per song found. `userId` groups a player's finds; it defaults to the name. */
+  /** One row per correct answer. `userId` groups a player's answers; it defaults to the name. */
   answers: {
     points: number;
     timeOfEntry: Date;
@@ -31,8 +31,8 @@ type Input = {
   }[];
   guesses: { userId: number; correct: boolean }[];
   activePlayers: number;
-  /** Songs to find: 1, or 2 on dual-answer days. */
-  parts?: number;
+  /** Things to find on the day: artist and song per song, or 1 on text puzzles. */
+  targets?: number;
 };
 
 const minutesBetween = (from: Date, to: Date) =>
@@ -52,7 +52,7 @@ export function computeDayStats({
   answers,
   guesses,
   activePlayers,
-  parts = 1,
+  targets = 1,
 }: Input): DayStats {
   const pointsSplit: DayStats["pointsSplit"] = { 5: 0, 3: 0, 2: 0, 1: 0 };
   for (const { points } of answers) {
@@ -61,7 +61,7 @@ export function computeDayStats({
     }
   }
 
-  // A player has solved the day once they found every song; the time is their last find.
+  // A player has solved the day once they found everything; the time is their last find.
   const players = new Map<
     number | string,
     { name: string; found: number; time: Date }
@@ -77,7 +77,7 @@ export function computeDayStats({
     if (a.timeOfEntry > entry.time) entry.time = a.timeOfEntry;
     players.set(key, entry);
   }
-  const solvers = [...players.values()].filter((p) => p.found >= parts);
+  const solvers = [...players.values()].filter((p) => p.found >= targets);
   const solvedCount = solvers.length;
 
   const byTime = [...solvers].sort(
@@ -87,7 +87,7 @@ export function computeDayStats({
 
   return {
     solvedCount,
-    partialCount: parts > 1 ? players.size - solvedCount : null,
+    partialCount: targets > 1 ? players.size - solvedCount : null,
     solveRate: activePlayers > 0 ? solvedCount / activePlayers : null,
     pointsSplit,
     firstSolver: first

@@ -17,7 +17,13 @@ export type DayProps = {
   date: string;
   artist: string;
   song: string;
-  solution: { solution: string; id: string; dayId: string; part?: number }[];
+  solution: {
+    solution: string;
+    id: string;
+    dayId: string;
+    part?: number;
+    kind?: string;
+  }[];
   madeBy?: string;
   isToday: boolean;
   isDayPassed: boolean;
@@ -47,8 +53,8 @@ export type DayProps = {
   dualAnswer?: boolean;
   artist2?: string;
   song2?: string;
-  /** Which songs (1, 2) the player has found. */
-  foundParts?: number[];
+  /** What the player has found, as "part-kind" keys such as "1-artist". */
+  found?: string[];
   /** Points the player has earned on this day so far. */
   earnedPoints?: number;
   /** Today and passed days: statistics for the day. */

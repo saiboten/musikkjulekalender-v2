@@ -8,7 +8,7 @@ interface Props {
     points: number;
     user: string;
     time: string;
-    /** Songs found, out of `parts` (2 on dual-answer days). */
+    /** Correct answers, out of `parts` things to find on the day. */
     found?: number;
     parts?: number;
   }[];
@@ -31,7 +31,7 @@ export const BestDaily = ({ frontPage, todayAnswers, className }: Props) => {
                 {el.user} @ {format(parseISO(el.time), "HH:mm:ss")} -{" "}
                 {el.points} poeng
                 {el.parts && el.parts > 1 && (el.found ?? 0) < el.parts
-                  ? ` (${el.found}/${el.parts} sanger)`
+                  ? ` (${el.found}/${el.parts} riktige)`
                   : null}
               </ListItem>
             );

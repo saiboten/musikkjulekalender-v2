@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, Input, cn, useToast } from "./ui";
+import { Button, Input, Label, cn, useToast } from "./ui";
 import { format } from "date-fns";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
@@ -23,8 +23,17 @@ function formatTime(iso?: string) {
   return iso ? format(new Date(iso), "HH:mm") : "";
 }
 
+type FieldResult = "correct" | "wrong" | "alreadyFound";
+
+const resultText: Record<FieldResult, string> = {
+  correct: "riktig ✓",
+  wrong: "feil",
+  alreadyFound: "allerede funnet",
+};
+
 export const Today: React.FC<DayWithAdmin> = (props) => {
-  const [answer, setAnswer] = useState("");
+  const [artistGuess, setArtistGuess] = useState("");
+  const [songGuess, setSongGuess] = useState("");
   const router = useRouter();
 
   const points = props.points;
@@ -33,11 +42,21 @@ export const Today: React.FC<DayWithAdmin> = (props) => {
   const openHints = props.openHints ?? 0;
   const hintOpenTimes = props.hintOpenTimes ?? [];
   const dual = !!props.dualAnswer;
-  const foundParts = props.foundParts ?? [];
+  const text = !!props.hasTextSolution;
+  const found = props.found ?? [];
+  const has = (part: number, kind: "artist" | "song") =>
+    found.includes(`${part}-${kind}`);
   const songs = [
     { part: 1, artist: props.artist, song: props.song },
     ...(dual ? [{ part: 2, artist: props.artist2, song: props.song2 }] : []),
   ];
+  const parts = songs.map((s) => s.part);
+  const needArtist = !text && parts.some((p) => !has(p, "artist"));
+  const needSong = parts.some((p) => !has(p, "song"));
+  const songLabel = text ? "Svar" : "Sang";
+  const kinds = text ? (["song"] as const) : (["artist", "song"] as const);
+  // A plain text puzzle has one answer; other days have several things to find.
+  const severalTargets = !text || dual;
 
   const hints = [
     { hint: props.hint1, file: props.hasFileHint1 },
@@ -70,43 +89,67 @@ export const Today: React.FC<DayWithAdmin> = (props) => {
     return () => clearTimeout(timeout);
   }, [nextChange, router]);
 
+  const canGuess =
+    (needArtist && artistGuess.trim() !== "") ||
+    (needSong && songGuess.trim() !== "");
+
   async function handleAnswer(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setAnswer("");
-    const params = new URLSearchParams({
-      guess: answer.trim(),
-      dayId: String(props.id),
-    });
-    const res = await (await fetch(`/api/answer?${params}`)).json();
+    const params = new URLSearchParams({ dayId: String(props.id) });
+    if (needArtist && artistGuess.trim()) {
+      params.set("artist", artistGuess.trim());
+    }
+    if (needSong && songGuess.trim()) params.set("song", songGuess.trim());
+    setArtistGuess("");
+    setSongGuess("");
 
-    if (res.alreadyFound) {
+    const res: {
+      results?: Partial<Record<"artist" | "song", FieldResult>>;
+      done?: boolean;
+    } = await (await fetch(`/api/answer?${params}`)).json();
+
+    const entries = Object.entries(res.results ?? {}) as [
+      "artist" | "song",
+      FieldResult,
+    ][];
+    const anyCorrect = entries.some(([, r]) => r === "correct");
+    const allCorrect =
+      entries.length > 0 && entries.every(([, r]) => r === "correct");
+    const onlyAlreadyFound =
+      entries.length > 0 && entries.every(([, r]) => r === "alreadyFound");
+
+    if (entries.length > 0) {
+      const title = res.done
+        ? "Riktig!"
+        : allCorrect
+          ? "Riktig"
+          : anyCorrect
+            ? "Delvis riktig"
+            : onlyAlreadyFound
+              ? "Allerede funnet"
+              : "Galt";
+      const description = res.done
+        ? "Du fant alt – godt jobba!"
+        : severalTargets
+          ? entries
+              .map(
+                ([field, r]) =>
+                  `${field === "artist" ? "Artist" : songLabel}: ${resultText[r]}`
+              )
+              .join(" · ")
+          : "Det var dessverre feil, prøv igjen!";
       toast({
-        title: "Allerede funnet",
-        description: "Den sangen har du allerede funnet. Finn den andre!",
-        status: "info",
+        title,
+        description,
+        status: anyCorrect ? "success" : onlyAlreadyFound ? "info" : "error",
         duration: 6000,
         isClosable: true,
       });
-      return;
     }
-
-    toast({
-      title: res.success ? "Riktig" : "Galt",
-      description: !res.success
-        ? "Det var dessverre feil, prøv igjen!"
-        : !dual
-          ? "Du klarte oppgaven!"
-          : res.done
-            ? "Du fant begge sangene!"
-            : "Du fant én av sangene – én igjen!",
-      status: res.success ? "success" : "error",
-      duration: 6000,
-      isClosable: true,
-    });
 
     if (res.done) {
       window.location.reload();
-    } else if (res.success) {
+    } else if (anyCorrect) {
       router.refresh();
     }
   }
@@ -136,42 +179,60 @@ export const Today: React.FC<DayWithAdmin> = (props) => {
           title="Ditt svar"
           aside={
             <Pill>
-              {dual
-                ? `${points} poeng per sang nå`
+              {severalTargets
+                ? `${points} poeng per riktig svar nå`
                 : `Verdt ${points} poeng nå`}
             </Pill>
           }
         >
-          {dual ? (
-            <div className="mb-4 space-y-3">
+          {severalTargets ? (
+            <div className="mb-5 space-y-3">
               <p className="text-gray-700">
-                Denne dagen skjuler <strong>to sanger</strong>. Hver sang gir
-                poeng for seg, og du gjetter begge i samme felt.
+                {dual ? (
+                  <>
+                    Denne dagen skjuler <strong>to sanger</strong>.{" "}
+                  </>
+                ) : null}
+                {text
+                  ? "Hvert riktig svar gir poeng for seg."
+                  : "Gjett både artist og sang – hvert riktig svar gir poeng for seg."}
               </p>
-              <ul className="grid gap-2 sm:grid-cols-2">
-                {songs.map(({ part, artist, song }) => {
-                  const found = foundParts.includes(part);
-                  return (
-                    <li
-                      key={part}
-                      className={cn(
-                        "rounded-lg border px-3 py-2",
-                        found
-                          ? "border-green-200 bg-green-50 text-green-900"
-                          : "border-dashed border-gray-300 text-gray-500"
-                      )}
-                    >
-                      <span className="block text-xs font-semibold tracking-wide uppercase">
-                        {found ? "✓ " : ""}Sang {part}
+              <ul className={cn("grid gap-2", dual && "sm:grid-cols-2")}>
+                {songs.map((s) => (
+                  <li
+                    key={s.part}
+                    className="rounded-lg border border-gray-200 px-3 py-2"
+                  >
+                    {dual ? (
+                      <span className="mb-1 block text-xs font-semibold tracking-wide text-gray-500 uppercase">
+                        Sang {s.part}
                       </span>
-                      <span className="font-medium">
-                        {found ? `${artist} – ${song}` : "Ikke funnet ennå"}
-                      </span>
-                    </li>
-                  );
-                })}
+                    ) : null}
+                    <dl className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1">
+                      {kinds.map((kind) => {
+                        const ok = has(s.part, kind);
+                        const value = kind === "artist" ? s.artist : s.song;
+                        return (
+                          <React.Fragment key={kind}>
+                            <dt className="text-gray-600">
+                              {kind === "artist" ? "Artist" : songLabel}
+                            </dt>
+                            <dd
+                              className={cn(
+                                "font-medium",
+                                ok ? "text-green-800" : "text-gray-400"
+                              )}
+                            >
+                              {ok ? `✓ ${value}` : "Ikke funnet ennå"}
+                            </dd>
+                          </React.Fragment>
+                        );
+                      })}
+                    </dl>
+                  </li>
+                ))}
               </ul>
-              {foundParts.length > 0 ? (
+              {found.length > 0 ? (
                 <p className="text-sm text-gray-700">
                   Du har <strong>{props.earnedPoints ?? 0}</strong> poeng så
                   langt.
@@ -180,22 +241,50 @@ export const Today: React.FC<DayWithAdmin> = (props) => {
             </div>
           ) : null}
 
-          <form onSubmit={handleAnswer} className="flex gap-2">
-            <Input
-              placeholder={
-                props.hasTextSolution
-                  ? "Skriv ditt svar her"
-                  : "Hvilken sang skal vi fram til?"
-              }
-              aria-label="Ditt svar"
-              name="svar"
-              value={answer}
-              onChange={(e) => setAnswer(e.target.value)}
-              className="h-11 text-base"
-            />
+          <form
+            onSubmit={handleAnswer}
+            className={cn(
+              "grid items-end gap-2",
+              needArtist && needSong
+                ? "sm:grid-cols-[1fr_1fr_auto]"
+                : "grid-cols-[1fr_auto]"
+            )}
+          >
+            {needArtist ? (
+              <div>
+                <Label htmlFor="artist-guess" className="mb-1 text-sm">
+                  Artist
+                </Label>
+                <Input
+                  id="artist-guess"
+                  placeholder="Hvem er artisten?"
+                  autoComplete="off"
+                  value={artistGuess}
+                  onChange={(e) => setArtistGuess(e.target.value)}
+                  className="h-11 text-base"
+                />
+              </div>
+            ) : null}
+            {needSong ? (
+              <div>
+                <Label htmlFor="song-guess" className="mb-1 text-sm">
+                  {songLabel}
+                </Label>
+                <Input
+                  id="song-guess"
+                  placeholder={
+                    text ? "Skriv ditt svar her" : "Hva heter sangen?"
+                  }
+                  autoComplete="off"
+                  value={songGuess}
+                  onChange={(e) => setSongGuess(e.target.value)}
+                  className="h-11 text-base"
+                />
+              </div>
+            ) : null}
             <Button
               type="submit"
-              disabled={answer === ""}
+              disabled={!canGuess}
               className="h-11 bg-primary text-white hover:bg-[#741111] active:bg-[#5c0d0d] disabled:hover:bg-primary"
             >
               Gjett
@@ -204,7 +293,8 @@ export const Today: React.FC<DayWithAdmin> = (props) => {
 
           <div className="mt-5">
             <p className="mb-2 text-sm text-gray-600">
-              Jo tidligere du svarer, jo flere poeng{dual ? " per sang" : ""}:
+              Jo tidligere du svarer, jo flere poeng
+              {severalTargets ? " per riktig svar" : ""}:
             </p>
             <ol className="grid grid-cols-2 gap-2 sm:grid-cols-4">
               {pointSteps.map((step, index) => {

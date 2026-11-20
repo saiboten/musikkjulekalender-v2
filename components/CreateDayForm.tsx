@@ -49,12 +49,15 @@ export type FormData = {
   hasTextSolution: boolean;
   song: string;
   artist: string;
+  /** Extra accepted spellings of the song and artist (the answer key always counts). */
   solutions: { id?: string; value: string }[];
+  artistSolutions: { id?: string; value: string }[];
   /** Dual-answer days: the second song and its accepted answers. */
   dualAnswer: boolean;
   artist2: string;
   song2: string;
   solutions2: { id?: string; value: string }[];
+  artistSolutions2: { id?: string; value: string }[];
   madeBy: string;
   video: string;
   file: string;
@@ -70,16 +73,37 @@ export type FormData = {
 
 /** The JSON body the day API expects. */
 export function toDayPayload(data: FormData, openingHour: number) {
-  const { solutions, solutions2, date, ...rest } = data;
+  const {
+    solutions,
+    solutions2,
+    artistSolutions,
+    artistSolutions2,
+    date,
+    ...rest
+  } = data;
   date.setHours(openingHour);
+  const values = (list?: { value: string }[]) =>
+    (list ?? []).map((el) => el.value);
   return {
     ...rest,
     artist2: data.dualAnswer ? data.artist2 : null,
     song2: data.dualAnswer ? data.song2 : null,
-    solutions: solutions.map((el) => el.value),
-    solutions2: data.dualAnswer ? (solutions2 ?? []).map((el) => el.value) : [],
+    solutions: values(solutions),
+    artistSolutions: values(artistSolutions),
+    solutions2: data.dualAnswer ? values(solutions2) : [],
+    artistSolutions2: data.dualAnswer ? values(artistSolutions2) : [],
     date,
   };
+}
+
+function extrasFor(
+  solutions: DayProps["solution"] | undefined,
+  part: number,
+  kind: "song" | "artist"
+) {
+  return (solutions ?? [])
+    .filter((el) => (el.part ?? 1) === part && (el.kind ?? "song") === kind)
+    .map((el) => ({ value: el.solution }));
 }
 
 const madeByOptions: [string, string][] = [
@@ -120,15 +144,13 @@ export const CreateDayForm: React.FC<CreateDayFormProps> = (props) => {
       madeBy: props.madeBy,
       song: props.song,
       video: props.video,
-      solutions: props.solution
-        ?.filter((el) => (el.part ?? 1) === 1)
-        .map((el) => ({ value: el.solution })),
+      solutions: extrasFor(props.solution, 1, "song"),
+      artistSolutions: extrasFor(props.solution, 1, "artist"),
       dualAnswer: props.dualAnswer ?? false,
       artist2: props.artist2 ?? "",
       song2: props.song2 ?? "",
-      solutions2: props.solution
-        ?.filter((el) => el.part === 2)
-        .map((el) => ({ value: el.solution })),
+      solutions2: extrasFor(props.solution, 2, "song"),
+      artistSolutions2: extrasFor(props.solution, 2, "artist"),
       solutionVideo: props.solutionVideo,
       solutionDescription: props.solutionDescription,
       file: props.file?.file,
@@ -373,7 +395,7 @@ export const CreateDayForm: React.FC<CreateDayFormProps> = (props) => {
           title="Fasit"
           description={
             dual
-              ? "Spillerne gjetter i ett felt. Hvert svar sjekkes mot begge sangene."
+              ? "Spillerne gjetter artist og sang i hvert sitt felt, og hvert svar sjekkes mot begge sangene."
               : undefined
           }
         >
@@ -398,7 +420,7 @@ export const CreateDayForm: React.FC<CreateDayFormProps> = (props) => {
                 {...register("song", { required: true })}
               />
             }
-            solutionsName="solutions"
+            part={1}
           />
 
           {dual ? (
@@ -429,7 +451,7 @@ export const CreateDayForm: React.FC<CreateDayFormProps> = (props) => {
                   })}
                 />
               }
-              solutionsName="solutions2"
+              part={2}
             />
           ) : null}
 
@@ -524,13 +546,13 @@ function SongFields({
   control,
   artist,
   song,
-  solutionsName,
+  part,
 }: {
   title?: string;
   control: Control<FormData>;
   artist: React.ReactNode;
   song: React.ReactNode;
-  solutionsName: "solutions" | "solutions2";
+  part: 1 | 2;
 }) {
   const content = (
     <>
@@ -538,7 +560,22 @@ function SongFields({
         {artist}
         {song}
       </div>
-      <SolutionsField control={control} name={solutionsName} />
+      <div className="grid gap-5 md:grid-cols-2">
+        <SolutionsField
+          control={control}
+          name={part === 1 ? "artistSolutions" : "artistSolutions2"}
+          label="Ekstra godkjente artistsvar"
+        />
+        <SolutionsField
+          control={control}
+          name={part === 1 ? "solutions" : "solutions2"}
+          label="Ekstra godkjente sangsvar"
+        />
+      </div>
+      <p className="-mt-2 text-sm text-gray-500">
+        Artist og sang fra fasiten godkjennes alltid (store og små bokstaver
+        spiller ingen rolle). Legg til andre skrivemåter som også skal telle.
+      </p>
     </>
   );
 
@@ -555,9 +592,11 @@ function SongFields({
 function SolutionsField({
   control,
   name,
+  label,
 }: {
   control: Control<FormData>;
-  name: "solutions" | "solutions2";
+  name: "solutions" | "solutions2" | "artistSolutions" | "artistSolutions2";
+  label: string;
 }) {
   const [solution, setSolution] = useState("");
   const { fields, append, remove } = useFieldArray({ control, name });
@@ -572,16 +611,12 @@ function SolutionsField({
 
   return (
     <div>
-      <Label htmlFor={inputId}>Godkjente svar</Label>
-      <p className="-mt-1 mb-2 text-sm text-gray-500">
-        Spillerens svar må være likt ett av disse (store og små bokstaver
-        spiller ingen rolle).
-      </p>
+      <Label htmlFor={inputId}>{label}</Label>
       <div className="flex gap-2">
         <Input
           id={inputId}
           value={solution}
-          placeholder="Skriv et svar og trykk Enter"
+          placeholder="Skriv og trykk Enter"
           type="text"
           onChange={(e) => setSolution(e.target.value)}
           onKeyDown={(e) => {
@@ -597,7 +632,7 @@ function SolutionsField({
       </div>
 
       {fields.length > 0 ? (
-        <ul className="mt-3 flex flex-wrap gap-2">
+        <ul className="mt-2 flex flex-wrap gap-2">
           {fields.map((field, index) => (
             <li
               key={field.id}
@@ -616,9 +651,7 @@ function SolutionsField({
           ))}
         </ul>
       ) : (
-        <p className="mt-3 text-sm text-[#c53030]">
-          Ingen godkjente svar ennå. Uten svar kan ingen finne denne sangen.
-        </p>
+        <p className="mt-2 text-sm text-gray-400 italic">Ingen ekstra</p>
       )}
     </div>
   );

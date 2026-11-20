@@ -59,6 +59,8 @@ model Solution {
   solution String
   // Which song this answer belongs to (1, or 2 on dual-answer days).
   part     Int    @default(1)
+  // An extra accepted spelling of the "song" or the "artist".
+  kind     String @default("song")
   dayId    Int
   day      Day    @relation(fields: [dayId], references: [id], onDelete: Cascade)
 }
@@ -69,12 +71,14 @@ model Answer {
   timeOfEntry DateTime
   // Which song was found (1, or 2 on dual-answer days).
   part        Int      @default(1)
+  // What was found: the "song" or the "artist".
+  kind        String   @default("song")
   dayId       Int
   day         Day      @relation(fields: [dayId], references: [id], onDelete: Cascade)
   userId      Int
   user        User     @relation(fields: [userId], references: [id])
 
-  @@unique([dayId, userId, part])
+  @@unique([dayId, userId, part, kind])
 }
 
 model Hint {
@@ -95,6 +99,8 @@ model Guess {
   id        Int      @id @default(autoincrement())
   // Trimmed and lowercased.
   guess     String
+  // Which field the guess was typed in: "song" or "artist".
+  kind      String   @default("song")
   correct   Boolean
   createdAt DateTime @default(now())
   dayId     Int

@@ -1,4 +1,5 @@
 import { prisma } from "./prisma";
+import { dayTargets } from "../utils/matchGuess";
 
 /** The name shown for a user in lists and stats. */
 export function displayName(user: {
@@ -10,13 +11,14 @@ export function displayName(user: {
 
 /**
  * Everyone who found something on the given day, best score first, then fastest first.
- * On dual-answer days a player's two finds are summed; the time is the latest find.
+ * A player's correct answers (artist, song, both songs on dual days) are summed;
+ * the time is the latest one.
  */
 export async function getSolvedAnswers(dayId: number | undefined) {
   const [day, answers] = await Promise.all([
     prisma.day.findUnique({
       where: { id: dayId ?? -1 },
-      select: { dualAnswer: true },
+      select: { dualAnswer: true, hasTextSolution: true },
     }),
     prisma.answer.findMany({
       include: {
@@ -31,7 +33,7 @@ export async function getSolvedAnswers(dayId: number | undefined) {
     }),
   ]);
 
-  const parts = day?.dualAnswer ? 2 : 1;
+  const parts = day ? dayTargets(day).length : 1;
   const byUser = new Map<
     number,
     { points: number; user: string; time: Date; found: number }

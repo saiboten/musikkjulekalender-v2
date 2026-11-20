@@ -86,7 +86,7 @@ export default async function AdminPage() {
 }
 
 const dayInclude = {
-  solution: { select: { id: true, solution: true, part: true } },
+  solution: { select: { id: true, solution: true, part: true, kind: true } },
   // Only the user ids: a player has two rows on dual-answer days.
   answers: { select: { userId: true } },
 } satisfies Prisma.DayInclude;
@@ -112,16 +112,13 @@ function songsOf(day: AdminDay) {
   }));
 }
 
-function isReady(day: AdminDay) {
-  return (
-    isFilledIn(day) && songsOf(day).every((song) => song.solutions.length > 0)
-  );
-}
+// The answer key's artist and song always count, so a day is ready once
+// they are filled in; extra accepted answers are optional.
+const isReady = isFilledIn;
 
 function DayCard({ day, hasSong }: { day: AdminDay; hasSong: boolean }) {
   const filledIn = isFilledIn(day);
   const songs = songsOf(day);
-  const missingAnswers = songs.some((song) => song.solutions.length === 0);
   const players = new Set(day.answers.map((a) => a.userId)).size;
   const hints = [
     { text: day.hint1, file: day.hasFileHint1 },
@@ -165,9 +162,6 @@ function DayCard({ day, hasSong }: { day: AdminDay; hasSong: boolean }) {
           <Badge tone={hasSong ? "good" : "bad"}>
             {hasSong ? "Lydfil" : "Mangler lydfil"}
           </Badge>
-          <Badge tone={missingAnswers ? "bad" : "good"}>
-            {missingAnswers ? "Mangler svar" : `${day.solution.length} svar`}
-          </Badge>
           {day.dualAnswer ? <Badge tone="neutral">Dobbeltsvar</Badge> : null}
           {day.hasTextSolution ? (
             <Badge tone="neutral">Tekstoppgave</Badge>
@@ -190,29 +184,32 @@ function DayCard({ day, hasSong }: { day: AdminDay; hasSong: boolean }) {
           )}
         </Field>
 
-        {songs.map(({ part, solutions }) => (
-          <Field
-            key={part}
-            label={
-              day.dualAnswer ? `Godkjente svar, sang ${part}` : "Godkjente svar"
-            }
-          >
-            {solutions.length > 0 ? (
+        {songs.map(({ part, solutions }) =>
+          solutions.length > 0 ? (
+            <Field
+              key={part}
+              label={
+                day.dualAnswer
+                  ? `Ekstra godkjente svar, sang ${part}`
+                  : "Ekstra godkjente svar"
+              }
+            >
               <ul className="flex flex-wrap gap-1.5">
                 {solutions.map((s) => (
                   <li
                     key={s.id}
-                    className="rounded bg-gray-100 px-2 py-0.5 font-mono text-xs"
+                    className="rounded bg-gray-100 px-2 py-0.5 text-xs"
                   >
-                    {s.solution}
+                    <span className="text-gray-500">
+                      {s.kind === "artist" ? "Artist" : "Sang"}:
+                    </span>{" "}
+                    <span className="font-mono">{s.solution}</span>
                   </li>
                 ))}
               </ul>
-            ) : (
-              <Missing />
-            )}
-          </Field>
-        ))}
+            </Field>
+          ) : null
+        )}
 
         <Field label="Hint">
           <ol className="space-y-1">

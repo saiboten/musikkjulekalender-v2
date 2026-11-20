@@ -34,6 +34,8 @@ export async function PUT(request: Request, { params }: Context) {
   const {
     solutions,
     solutions2,
+    artistSolutions,
+    artistSolutions2,
     file,
     hint1file,
     hint2file,
@@ -41,10 +43,12 @@ export async function PUT(request: Request, { params }: Context) {
     ...body
   } = await request.json();
 
-  const storeSolutions = toSolutionRows(
+  const storeSolutions = toSolutionRows({
     solutions,
-    body.dualAnswer ? solutions2 : []
-  ).map((row) => ({ ...row, dayId }));
+    artistSolutions,
+    solutions2: body.dualAnswer ? solutions2 : [],
+    artistSolutions2: body.dualAnswer ? artistSolutions2 : [],
+  }).map((row) => ({ ...row, dayId }));
 
   const existingDay = await prisma.day.findUnique({
     where: {

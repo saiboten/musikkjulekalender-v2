@@ -95,10 +95,10 @@ describe("computeDayStats", () => {
     });
   });
 
-  test("dual-answer day: solved once both songs are found", () => {
+  test("artist and song: solved once both are found", () => {
     const stats = computeDayStats({
       dayDate,
-      parts: 2,
+      targets: 2,
       answers: [
         { ...answer("Ola", 10, 5), userId: 1 },
         { ...answer("Ola", 130, 2), userId: 1 },
@@ -112,7 +112,7 @@ describe("computeDayStats", () => {
     expect(stats.solvedCount).toBe(2);
     expect(stats.partialCount).toBe(1);
     expect(stats.solveRate).toBe(0.5);
-    // Each song found counts in the split.
+    // Each correct answer counts in the split.
     expect(stats.pointsSplit).toEqual({ 5: 4, 3: 0, 2: 1, 1: 0 });
     // Kari found her second song at 50 min, before Ola's at 130.
     expect(stats.firstSolver).toEqual({ name: "Kari", minutesAfterOpen: 50 });

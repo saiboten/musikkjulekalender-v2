@@ -42,7 +42,7 @@ export function DayStats({
   className?: string;
 }) {
   const { guesses } = stats;
-  const dual = stats.partialCount !== null;
+  const several = stats.partialCount !== null;
 
   return (
     <FrontPageBox className={className}>
@@ -50,7 +50,7 @@ export function DayStats({
       <Spacer multiply={0.5} />
 
       {stats.partialCount ? (
-        <Row label="Fant én av to sanger">
+        <Row label="Fant noe, men ikke alt">
           {stats.partialCount}{" "}
           {stats.partialCount === 1 ? "person" : "personer"}
         </Row>
@@ -59,7 +59,7 @@ export function DayStats({
         <p>Ingen har løst denne ennå.</p>
       ) : stats.solvedCount === 0 ? null : (
         <>
-          <Row label={dual ? "Fant begge sangene" : "Løst av"}>
+          <Row label={several ? "Fant alt" : "Løst av"}>
             {stats.solvedCount}{" "}
             {stats.solvedCount === 1 ? "person" : "personer"}
             {stats.solveRate !== null
@@ -78,7 +78,7 @@ export function DayStats({
 
           <Spacer multiply={0.5} />
           <p className="font-bold">
-            Poengfordeling{dual ? " (per sang funnet)" : ""}:
+            Poengfordeling{several ? " (per riktig svar)" : ""}:
           </p>
           <ul className="ms-4">
             {splitLabels.map(([points, label]) => (

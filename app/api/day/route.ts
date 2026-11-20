@@ -16,6 +16,8 @@ export async function POST(request: Request) {
     madeBy,
     solutions,
     solutions2,
+    artistSolutions,
+    artistSolutions2,
     dualAnswer,
     artist2,
     song2,
@@ -48,7 +50,12 @@ export async function POST(request: Request) {
       hasFileHint2: !!hint2file,
       hasFileHint3: !!hint3file,
       solution: {
-        create: toSolutionRows(solutions, dualAnswer ? solutions2 : []),
+        create: toSolutionRows({
+          solutions,
+          artistSolutions,
+          solutions2: dualAnswer ? solutions2 : [],
+          artistSolutions2: dualAnswer ? artistSolutions2 : [],
+        }),
       },
       file: {
         create: {
