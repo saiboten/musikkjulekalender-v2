@@ -2,7 +2,7 @@ export { cn } from "./cn";
 export { Heading } from "./Heading";
 export { Button, buttonClasses } from "./Button";
 export { Alert } from "./Alert";
-export { Input, Label, Checkbox, Radio } from "./Form";
+export { Input, Textarea, Label, Checkbox, Radio } from "./Form";
 export { List, UnorderedList, ListItem } from "./List";
 export { Spinner } from "./Spinner";
 export { Menu, MenuItem } from "./Menu";

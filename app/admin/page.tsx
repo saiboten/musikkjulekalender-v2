@@ -225,7 +225,9 @@ function DayCard({ day, hasSong }: { day: AdminDay; hasSong: boolean }) {
                   {hint.file ? (
                     <Badge tone="neutral">Lydfil</Badge>
                   ) : hint.text ? (
-                    <span className="break-words">{hint.text}</span>
+                    <span className="break-words whitespace-pre-line">
+                      {hint.text}
+                    </span>
                   ) : (
                     <Missing />
                   )}

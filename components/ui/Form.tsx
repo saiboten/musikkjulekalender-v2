@@ -18,6 +18,23 @@ export function Input({ className, ...rest }: InputProps) {
   );
 }
 
+interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
+  ref?: React.Ref<HTMLTextAreaElement>;
+}
+
+export function Textarea({ className, ...rest }: TextareaProps) {
+  return (
+    <textarea
+      className={cn(
+        "block min-h-28 w-full min-w-0 resize-y rounded-md border border-[#e2e8f0] bg-transparent px-4 py-2 text-base leading-relaxed transition-colors duration-200 outline-none",
+        "hover:border-[#cbd5e0] focus:border-[#3182ce] focus:ring-1 focus:ring-[#3182ce] focus:hover:border-[#3182ce]",
+        className
+      )}
+      {...rest}
+    />
+  );
+}
+
 export function Label({
   className,
   ...rest

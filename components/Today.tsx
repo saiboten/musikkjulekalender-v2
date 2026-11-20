@@ -246,7 +246,9 @@ export const Today: React.FC<DayWithAdmin> = (props) => {
                   </p>
                 ) : (
                   <>
-                    {hint ? <p>{hint}</p> : null}
+                    {hint ? (
+                      <p className="whitespace-pre-line">{hint}</p>
+                    ) : null}
                     {file ? <HintAudio id={props.id} number={number} /> : null}
                   </>
                 )}

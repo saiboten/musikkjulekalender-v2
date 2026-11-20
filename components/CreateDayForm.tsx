@@ -12,6 +12,7 @@ import {
   Heading,
   Input,
   Label,
+  Textarea,
   buttonClasses,
   cn,
 } from "./ui";
@@ -444,7 +445,7 @@ export const CreateDayForm: React.FC<CreateDayFormProps> = (props) => {
           title="Hint"
           description="Hint 1, 2 og 3 åpner kl. 10, 11 og 12. Bruk tekst, lydfil eller begge."
         >
-          <div className="grid gap-4 lg:grid-cols-3">
+          <div className="space-y-4">
             {([1, 2, 3] as const).map((n) => {
               const fileName = `hint${n}file` as const;
               const uploaded = watch(fileName);
@@ -460,26 +461,32 @@ export const CreateDayForm: React.FC<CreateDayFormProps> = (props) => {
                       kl. {9 + n}:00
                     </span>
                   </p>
-                  <TextField
-                    id={`hint${n}`}
-                    label="Tekst"
-                    {...register(`hint${n}`)}
-                  />
-                  <AudioField
-                    label="Lydfil"
-                    control={control}
-                    name={fileName}
-                    buttonLabel={
-                      uploaded || hasExisting ? "Bytt lydfil" : "Last opp"
-                    }
-                    previewSrc={
-                      uploaded
-                        ? uploaded
-                        : hasExisting
-                          ? `/api/admin/${props.id}/${n}`
-                          : null
-                    }
-                  />
+                  <div className="grid gap-4 md:grid-cols-[1fr_16rem]">
+                    <div>
+                      <Label htmlFor={`hint${n}`}>Tekst</Label>
+                      <Textarea
+                        id={`hint${n}`}
+                        rows={4}
+                        className="bg-white"
+                        {...register(`hint${n}`)}
+                      />
+                    </div>
+                    <AudioField
+                      label="Lydfil"
+                      control={control}
+                      name={fileName}
+                      buttonLabel={
+                        uploaded || hasExisting ? "Bytt lydfil" : "Last opp"
+                      }
+                      previewSrc={
+                        uploaded
+                          ? uploaded
+                          : hasExisting
+                            ? `/api/admin/${props.id}/${n}`
+                            : null
+                      }
+                    />
+                  </div>
                 </div>
               );
             })}

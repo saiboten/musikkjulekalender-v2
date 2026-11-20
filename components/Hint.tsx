@@ -22,7 +22,7 @@ export function Hint({
     <HintRow number={hintNumber}>
       {show ? (
         <>
-          {hint ? <p>{hint}</p> : null}
+          {hint ? <p className="whitespace-pre-line">{hint}</p> : null}
           {fileHintExists ? <HintAudio id={id} number={hintNumber} /> : null}
         </>
       ) : (
