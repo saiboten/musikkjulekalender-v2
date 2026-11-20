@@ -22,7 +22,13 @@ const thumbnailMap = {
   Rune: rune,
 };
 
-export const Thumbnail = ({ image }: { image: string }) => {
+export const Thumbnail = ({
+  image,
+  size = 132,
+}: {
+  image: string;
+  size?: number;
+}) => {
   let imageSrc = thumbnailMap[image];
 
   return (
@@ -34,9 +40,9 @@ export const Thumbnail = ({ image }: { image: string }) => {
         >
           <Image
             src={imageSrc}
-            alt="Profile picture"
-            width={132}
-            height={132}
+            alt="Profilbilde"
+            width={size}
+            height={size}
             style={{ borderRadius: "50%", cursor: "pointer" }}
           />
         </NextLink>

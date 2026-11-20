@@ -13,11 +13,12 @@ interface Props {
     parts?: number;
   }[];
   frontPage: boolean;
+  className?: string;
 }
 
-export const BestDaily = ({ frontPage, todayAnswers }: Props) => {
+export const BestDaily = ({ frontPage, todayAnswers, className }: Props) => {
   return (
-    <FrontPageBox>
+    <FrontPageBox className={className}>
       <Heading size="md">
         {frontPage ? "Dagens beste" : "Disse har klart oppgaven"}
       </Heading>

@@ -34,12 +34,18 @@ const splitLabels = [
   [1, "Etter hint 3"],
 ] as const;
 
-export function DayStats({ stats }: { stats: Stats }) {
+export function DayStats({
+  stats,
+  className,
+}: {
+  stats: Stats;
+  className?: string;
+}) {
   const { guesses } = stats;
   const dual = stats.partialCount !== null;
 
   return (
-    <FrontPageBox>
+    <FrontPageBox className={className}>
       <Heading size="md">Statistikk</Heading>
       <Spacer multiply={0.5} />
 

@@ -1,96 +1,83 @@
 "use client";
 
-import { Button, Heading } from "./ui";
-import { format, parseISO } from "date-fns";
-import { Fragment, useState } from "react";
+import { useState } from "react";
+import { Button } from "./ui";
 import { DayWithAdmin } from "./Day";
-import { AdminEditLink } from "./AdminEditLink";
-import Layout from "./Layout";
-import Markdown from "react-markdown";
-import { Audio } from "./lib/Audio";
-import { Spacer } from "./lib/Spacer";
-import { YoutubeVideo } from "./lib/YoutubeVideo";
-import { Thumbnail } from "./Thumbnail";
-import { BackLink } from "./BackLink";
 import { Hint } from "./Hint";
 import { BestDaily } from "./BestDaily";
 import { DayStats } from "./DayStats";
+import {
+  Card,
+  DayFooter,
+  DayShell,
+  DayTask,
+  SongList,
+  dayBoxClasses,
+} from "./DayLayout";
 
 export const OldDay: React.FC<DayWithAdmin> = (props) => {
   const [showSolution, setShowSolution] = useState(false);
+  const dual = !!props.dualAnswer;
+  const songs = [
+    { part: 1, artist: props.artist, song: props.song },
+    ...(dual ? [{ part: 2, artist: props.artist2, song: props.song2 }] : []),
+  ];
 
   return (
-    <Layout whiteBg>
-      <AdminEditLink id={props.id} />
-      <BackLink />
-      <Spacer />
-      <div className="text-center">
-        <div className="flex items-center justify-end">
-          <Thumbnail image={props.madeBy} />
-        </div>
+    <DayShell id={props.id} date={props.date} madeBy={props.madeBy}>
+      <DayTask
+        id={props.id}
+        video={props.video}
+        hasTextSolution={props.hasTextSolution}
+        description={props.description}
+      />
 
-        <Heading>{format(parseISO(props.date), "d 'desember")}</Heading>
-        <Spacer multiply={0.5} />
-        {props.video ? (
-          <YoutubeVideo link={props.video}></YoutubeVideo>
-        ) : props.hasTextSolution ? null : (
-          <Audio controls preload="none" src={`/api/song/${props.id}`}>
-            Your browser does not support the
-            <code>audio</code> element.
-          </Audio>
-        )}
+      {props.hasHints ? (
+        <Card title="Hint">
+          <ol className="space-y-4">
+            {([1, 2, 3] as const).map((n) =>
+              props.hintExists?.[n - 1] ? (
+                <Hint
+                  key={n}
+                  hint={props[`hint${n}`] ?? ""}
+                  hintNumber={n}
+                  id={props.id}
+                  fileHintExists={props[`hasFileHint${n}`]}
+                />
+              ) : null
+            )}
+          </ol>
+        </Card>
+      ) : null}
 
-        <Spacer multiply={0.5} />
-        <div className="mx-auto max-w-[30rem] text-left">
-          <Markdown>{props.description}</Markdown>
-
-          <Spacer multiply={0.5} />
-          {props.hasHints
-            ? ([1, 2, 3] as const).map((n) =>
-                props.hintExists?.[n - 1] ? (
-                  <Fragment key={n}>
-                    <Hint
-                      hint={props[`hint${n}`] ?? ""}
-                      hintNumber={n}
-                      id={props.id}
-                      fileHintExists={props[`hasFileHint${n}`]}
-                    />
-                    <Spacer multiply={0.5} />
-                  </Fragment>
-                ) : null
-              )
-            : null}
-
-          <Spacer multiply={0.5} />
-          {showSolution ? null : (
-            <Button onClick={() => setShowSolution(true)}>Vis fasit</Button>
-          )}
-          {showSolution ? (
-            <>
-              <Heading>Fasit</Heading>
-
-              <p className="text-center text-[22px] font-bold">
-                {props.artist} - {props.song}
-              </p>
-              {props.dualAnswer ? (
-                <p className="text-center text-[22px] font-bold">
-                  {props.artist2} - {props.song2}
-                </p>
-              ) : null}
-              {props.solutionDescription ? (
-                <>
-                  {props.solutionDescription}
-                  <Spacer />
-                </>
-              ) : null}
-            </>
+      {showSolution ? (
+        <Card tone="success" title="Fasit">
+          <SongList songs={songs} numbered={dual} />
+          {props.solutionDescription ? (
+            <p className="mt-3 text-gray-700">{props.solutionDescription}</p>
           ) : null}
-          <Spacer multiply={1} />
+        </Card>
+      ) : (
+        <div className="text-center">
+          <Button
+            className="bg-primary text-white hover:bg-[#741111] active:bg-[#5c0d0d]"
+            onClick={() => setShowSolution(true)}
+          >
+            Vis fasit
+          </Button>
         </div>
-      </div>
-      {props.stats ? <DayStats stats={props.stats} /> : null}
-      <Spacer />
-      <BestDaily frontPage={false} todayAnswers={props.todayAnswers} />
-    </Layout>
+      )}
+
+      <DayFooter>
+        {props.stats ? (
+          <DayStats stats={props.stats} className={dayBoxClasses} />
+        ) : null}
+        <BestDaily
+          frontPage={false}
+          todayAnswers={props.todayAnswers}
+          className={dayBoxClasses}
+        />
+      </DayFooter>
+    </DayShell>
   );
 };

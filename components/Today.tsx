@@ -1,20 +1,23 @@
 "use client";
 
-import { Button, Heading, Input, List, ListItem, useToast } from "./ui";
-import Markdown from "react-markdown";
+import { Button, Input, cn, useToast } from "./ui";
 import { format } from "date-fns";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { DayWithAdmin } from "./Day";
-import { AdminEditLink } from "./AdminEditLink";
-import Layout from "./Layout";
-import { Audio } from "./lib/Audio";
-import { Spacer } from "./lib/Spacer";
-import { YoutubeVideo } from "./lib/YoutubeVideo";
-import { Thumbnail } from "./Thumbnail";
-import { BackLink } from "./BackLink";
 import { BestDaily } from "./BestDaily";
 import { DayStats } from "./DayStats";
+import {
+  Card,
+  DayFooter,
+  DayShell,
+  DayTask,
+  dayBoxClasses,
+  HintAudio,
+  HintRow,
+  Pill,
+  SongList,
+} from "./DayLayout";
 
 function formatTime(iso?: string) {
   return iso ? format(new Date(iso), "HH:mm") : "";
@@ -51,16 +54,10 @@ export const Today: React.FC<DayWithAdmin> = (props) => {
     .filter((el) => el.exists);
 
   const pointSteps = [
-    { label: `Før kl. ${formatTime(hintOpenTimes[0])}`, points: 5 },
-    {
-      label: `${formatTime(hintOpenTimes[0])}–${formatTime(hintOpenTimes[1])}`,
-      points: 3,
-    },
-    {
-      label: `${formatTime(hintOpenTimes[1])}–${formatTime(hintOpenTimes[2])}`,
-      points: 2,
-    },
-    { label: `Etter kl. ${formatTime(hintOpenTimes[2])}`, points: 1 },
+    { label: `Før ${formatTime(hintOpenTimes[0])}`, points: 5 },
+    { label: `Fra ${formatTime(hintOpenTimes[0])}`, points: 3 },
+    { label: `Fra ${formatTime(hintOpenTimes[1])}`, points: 2 },
+    { label: `Fra ${formatTime(hintOpenTimes[2])}`, points: 1 },
   ];
 
   // Refresh when the next hint opens (and the points drop), so the page
@@ -115,199 +112,164 @@ export const Today: React.FC<DayWithAdmin> = (props) => {
   }
 
   return (
-    <Layout whiteBg>
-      <AdminEditLink id={props.id} />
-      <BackLink />
-      <Spacer />
-      <>
-        <div className="flex items-center justify-end">
-          <Thumbnail image={props.madeBy} />
-        </div>
-        <Heading className="text-center">
-          {format(new Date(props.date), "d 'desember")}
-        </Heading>
-        <Spacer multiply={0.5} />
-        {props.video ? <YoutubeVideo link={props.video}></YoutubeVideo> : null}
+    <DayShell id={props.id} date={props.date} madeBy={props.madeBy}>
+      <DayTask
+        id={props.id}
+        video={props.video}
+        hasTextSolution={props.hasTextSolution}
+        description={props.description}
+      />
 
-        {props.hasTextSolution ? null : (
-          <Audio controls preload="none" src={`/api/song/${props.id}`}>
-            Your browser does not support the
-            <code>audio</code> element.
-          </Audio>
-        )}
-        <Spacer multiply={0.5} />
-
-        <Markdown>{props.description}</Markdown>
-        <Spacer multiply={0.5} />
-
-        <Spacer />
-
-        {solved ? (
-          <p>
-            På denne oppgaven høstet du <strong>{points}</strong> poeng!
-          </p>
-        ) : dual ? (
-          <>
-            <p>
-              Denne dagen har <strong>to sanger</strong>, og hver sang gir poeng
-              for seg. Hver sang er nå verdt <strong>{points}</strong> poeng!
-            </p>
-            {foundParts.length > 0 ? (
-              <p>
-                Du har <strong>{props.earnedPoints ?? 0}</strong> poeng så
-                langt.
-              </p>
-            ) : null}
-          </>
-        ) : (
-          <p>
-            Denne oppgaven er nå verdt <strong>{points}</strong> poeng!
-          </p>
-        )}
-        <Spacer multiply={0.5} />
-
-        {!solved ? (
-          <>
-            <p>
-              Jo tidligere du svarer, jo flere poeng får du
-              {dual ? " per sang" : ""}:
-            </p>
-            <List className="mt-2 ms-4">
-              {pointSteps.map(({ label, points: stepPoints }) => (
-                <ListItem key={label} className="ml-1">
-                  {label}: {stepPoints} poeng
-                </ListItem>
-              ))}
-            </List>
-            <Spacer />
-          </>
-        ) : null}
-
-        {solved ? (
-          <>
-            <Spacer />
-            <Heading size="lg">Fasit:</Heading>
-            <Spacer />
-            {songs.map(({ part, artist, song }) => (
-              <p key={part}>
-                {dual ? <strong>Sang {part}: </strong> : null}
-                {artist} - {song}
-              </p>
-            ))}
-            <Spacer />
-            {props.solutionDescription ? (
-              <>
-                {props.solutionDescription}
-                <Spacer />
-              </>
-            ) : null}
-          </>
-        ) : (
-          <>
-            <Heading size="md">Svar</Heading>
-            <Spacer />
-            {dual ? (
-              <>
-                <ul className="space-y-1">
-                  {songs.map(({ part, artist, song }) => {
-                    const found = foundParts.includes(part);
-                    return (
-                      <li key={part} className="flex gap-2">
-                        <span
-                          aria-hidden
-                          className={found ? "text-green-700" : "text-gray-400"}
-                        >
-                          {found ? "✓" : "○"}
-                        </span>
-                        <span>
-                          <strong>Sang {part}:</strong>{" "}
-                          {found ? (
-                            `${artist} - ${song}`
-                          ) : (
-                            <span className="text-gray-500">
-                              ikke funnet ennå
-                            </span>
-                          )}
-                        </span>
-                      </li>
-                    );
-                  })}
-                </ul>
-                <Spacer multiply={0.5} />
-              </>
-            ) : null}
-            <form onSubmit={handleAnswer}>
-              <div className="flex">
-                <Input
-                  placeholder={
-                    props.hasTextSolution
-                      ? "Skriv ditt svar her"
-                      : "Hvilken sang skal vi fram til?"
-                  }
-                  name="svar"
-                  value={answer}
-                  onChange={(e) => setAnswer(e.target.value)}
-                  className="mr-2.5"
-                />
-                <Button type="submit" disabled={answer === ""}>
-                  Gjett
-                </Button>
-              </div>
-            </form>
-            <Spacer multiply={0.5} />
-          </>
-        )}
-      </>
-
-      {props.hasHints ? (
-        <>
-          <Spacer />
-          <Heading size="md">Hint</Heading>
-          <Spacer />
-        </>
+      {solved ? (
+        <Card
+          tone="success"
+          title="Fasit"
+          aside={<Pill tone="success">Du fikk {points} poeng</Pill>}
+        >
+          <SongList songs={songs} numbered={dual} />
+          {props.solutionDescription ? (
+            <p className="mt-3 text-gray-700">{props.solutionDescription}</p>
+          ) : null}
+        </Card>
       ) : (
-        <p>Denne oppgaven har ingen hint.</p>
+        <Card
+          title="Ditt svar"
+          aside={
+            <Pill>
+              {dual
+                ? `${points} poeng per sang nå`
+                : `Verdt ${points} poeng nå`}
+            </Pill>
+          }
+        >
+          {dual ? (
+            <div className="mb-4 space-y-3">
+              <p className="text-gray-700">
+                Denne dagen skjuler <strong>to sanger</strong>. Hver sang gir
+                poeng for seg, og du gjetter begge i samme felt.
+              </p>
+              <ul className="grid gap-2 sm:grid-cols-2">
+                {songs.map(({ part, artist, song }) => {
+                  const found = foundParts.includes(part);
+                  return (
+                    <li
+                      key={part}
+                      className={cn(
+                        "rounded-lg border px-3 py-2",
+                        found
+                          ? "border-green-200 bg-green-50 text-green-900"
+                          : "border-dashed border-gray-300 text-gray-500"
+                      )}
+                    >
+                      <span className="block text-xs font-semibold tracking-wide uppercase">
+                        {found ? "✓ " : ""}Sang {part}
+                      </span>
+                      <span className="font-medium">
+                        {found ? `${artist} – ${song}` : "Ikke funnet ennå"}
+                      </span>
+                    </li>
+                  );
+                })}
+              </ul>
+              {foundParts.length > 0 ? (
+                <p className="text-sm text-gray-700">
+                  Du har <strong>{props.earnedPoints ?? 0}</strong> poeng så
+                  langt.
+                </p>
+              ) : null}
+            </div>
+          ) : null}
+
+          <form onSubmit={handleAnswer} className="flex gap-2">
+            <Input
+              placeholder={
+                props.hasTextSolution
+                  ? "Skriv ditt svar her"
+                  : "Hvilken sang skal vi fram til?"
+              }
+              aria-label="Ditt svar"
+              name="svar"
+              value={answer}
+              onChange={(e) => setAnswer(e.target.value)}
+              className="h-11 text-base"
+            />
+            <Button
+              type="submit"
+              disabled={answer === ""}
+              className="h-11 bg-primary text-white hover:bg-[#741111] active:bg-[#5c0d0d] disabled:hover:bg-primary"
+            >
+              Gjett
+            </Button>
+          </form>
+
+          <div className="mt-5">
+            <p className="mb-2 text-sm text-gray-600">
+              Jo tidligere du svarer, jo flere poeng{dual ? " per sang" : ""}:
+            </p>
+            <ol className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+              {pointSteps.map((step, index) => {
+                const current = index === Math.min(openHints, 3);
+                const past = index < openHints;
+                return (
+                  <li
+                    key={step.points}
+                    aria-current={current ? "step" : undefined}
+                    className={cn(
+                      "rounded-lg border px-3 py-2 text-center",
+                      current
+                        ? "border-primary bg-primary/5 text-primary"
+                        : past
+                          ? "border-gray-100 text-gray-400 line-through"
+                          : "border-gray-200 text-gray-700"
+                    )}
+                  >
+                    <span className="block text-lg leading-tight font-bold">
+                      {step.points} p
+                    </span>
+                    <span className="text-xs">{step.label}</span>
+                  </li>
+                );
+              })}
+            </ol>
+          </div>
+        </Card>
       )}
 
-      {props.hasHints
-        ? hints.map(({ number, hint, file, isOpen, openTime }) => {
-            if (!isOpen) {
-              return (
-                <React.Fragment key={number}>
-                  <p>
-                    <span className="font-bold">Hint {number}</span>: åpner kl.{" "}
-                    {formatTime(openTime)}
+      {props.hasHints ? (
+        <Card title="Hint">
+          <ol className="space-y-4">
+            {hints.map(({ number, hint, file, isOpen, openTime }) => (
+              <HintRow key={number} number={number} locked={!isOpen}>
+                {!isOpen ? (
+                  <p className="text-gray-500">
+                    Åpner kl. {formatTime(openTime)}
                   </p>
-                  <Spacer multiply={0.5} />
-                </React.Fragment>
-              );
-            }
+                ) : (
+                  <>
+                    {hint ? <p>{hint}</p> : null}
+                    {file ? <HintAudio id={props.id} number={number} /> : null}
+                  </>
+                )}
+              </HintRow>
+            ))}
+          </ol>
+        </Card>
+      ) : (
+        <p className="text-center text-sm text-gray-500">
+          Denne oppgaven har ingen hint.
+        </p>
+      )}
 
-            return (
-              <React.Fragment key={number}>
-                <p>
-                  <span className="font-bold">Hint {number}</span>:{" "}
-                  {file ? "Lydfil:" : hint}
-                </p>
-
-                {file ? (
-                  <Audio
-                    controls
-                    preload="none"
-                    src={`/api/hint/${props.id}/${number}`}
-                  >
-                    Your browser does not support the
-                    <code>audio</code> element.
-                  </Audio>
-                ) : null}
-                <Spacer multiply={0.5} />
-              </React.Fragment>
-            );
-          })
-        : null}
-      {props.stats ? <DayStats stats={props.stats} /> : null}
-      <Spacer />
-      <BestDaily frontPage={false} todayAnswers={props.todayAnswers} />
-    </Layout>
+      <DayFooter>
+        {props.stats ? (
+          <DayStats stats={props.stats} className={dayBoxClasses} />
+        ) : null}
+        <BestDaily
+          frontPage={false}
+          todayAnswers={props.todayAnswers}
+          className={dayBoxClasses}
+        />
+      </DayFooter>
+    </DayShell>
   );
 };
