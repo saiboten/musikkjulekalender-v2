@@ -66,22 +66,19 @@ export async function PUT(request: Request, { params }: Context) {
     },
   });
 
-  if (file) {
+  // The edit page doesn't load stored files, so only the ones uploaded in this
+  // edit arrive here. Save each on its own; a hint can change without the song.
+  const uploads = Object.fromEntries(
+    Object.entries({ file, hint1file, hint2file, hint3file }).filter(
+      ([, value]) => !!value
+    )
+  );
+
+  if (Object.keys(uploads).length > 0) {
     await prisma.songFile.upsert({
       where: { dayId },
-      create: {
-        hint1file,
-        hint2file,
-        hint3file,
-        file,
-        dayId,
-      },
-      update: {
-        file,
-        hint1file,
-        hint2file,
-        hint3file,
-      },
+      create: { file: "", ...uploads, dayId },
+      update: uploads,
     });
   }
 
